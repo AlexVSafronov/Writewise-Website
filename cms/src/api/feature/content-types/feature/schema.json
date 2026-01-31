@@ -24,7 +24,17 @@
     },
     "icon": {
       "type": "enumeration",
-      "enum": ["PenTool", "MessageSquare", "Brain", "Target", "Sparkles", "Award"],
+      "enum": [
+        "PenTool",
+        "MessageSquare",
+        "Brain",
+        "Target",
+        "Sparkles",
+        "Award",
+        "BookOpen",
+        "Users",
+        "Zap"
+      ],
       "required": true
     },
     "order": {
