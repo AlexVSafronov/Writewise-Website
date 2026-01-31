@@ -6,7 +6,7 @@ This repository contains the marketing website and content management system (CM
 
 ```
 Writewise-Website/
-├── cms/                    # Strapi CMS
+├── cms/                    # Strapi CMS (Node.js)
 │   ├── config/            # Strapi configuration
 │   ├── src/               # API and content types
 │   │   └── api/
@@ -17,9 +17,17 @@ Writewise-Website/
 │   │       ├── pricing-plan/
 │   │       └── page/
 │   ├── Dockerfile         # Docker configuration for Cloud Run
-│   ├── .dockerignore      # Docker build exclusions
 │   └── package.json       # Node.js dependencies
-├── website/               # Marketing website (coming soon)
+├── website/               # Marketing website (React + Vite + TypeScript)
+│   ├── src/               # React application source
+│   │   ├── components/    # React components (shadcn/ui)
+│   │   ├── pages/         # Page components
+│   │   ├── hooks/         # Custom React hooks
+│   │   └── lib/           # Utilities
+│   ├── public/            # Static assets
+│   ├── index.html         # Entry HTML
+│   ├── vite.config.ts     # Vite configuration
+│   └── package.json       # Website dependencies
 └── .github/workflows/     # CI/CD pipelines
     └── deploy-cms.yml     # CMS deployment workflow
 ```

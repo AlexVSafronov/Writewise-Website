@@ -45,3 +45,11 @@ cms/license.txt
 # Test
 coverage/
 .nyc_output/
+
+# Website (Vite/React)
+website/node_modules/
+website/dist/
+website/.env.local
+website/.env.development.local
+website/.env.production.local
+website/bun.lockb
