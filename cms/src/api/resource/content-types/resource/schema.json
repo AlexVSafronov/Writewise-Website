@@ -1,0 +1,44 @@
+{
+  "kind": "collectionType",
+  "collectionName": "resources",
+  "info": {
+    "singularName": "resource",
+    "pluralName": "resources",
+    "displayName": "Resource",
+    "description": "Learning resources for the WriteWise website"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true,
+      "maxLength": 150
+    },
+    "description": {
+      "type": "text",
+      "required": true,
+      "maxLength": 500
+    },
+    "category": {
+      "type": "enumeration",
+      "enum": ["Guides", "Tools", "Articles", "Videos"],
+      "required": true
+    },
+    "link": {
+      "type": "string",
+      "required": true,
+      "maxLength": 500
+    },
+    "icon": {
+      "type": "string",
+      "maxLength": 50
+    },
+    "featured": {
+      "type": "boolean",
+      "default": false
+    }
+  }
+}

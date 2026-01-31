@@ -1,0 +1,48 @@
+# Dependencies
+node_modules/
+npm-debug.log
+yarn-error.log
+package-lock.json
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Build artifacts
+dist/
+build/
+.tmp/
+.cache/
+
+# Database files
+*.db
+*.db-*
+
+# Logs
+logs/
+*.log
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Strapi
+cms/.tmp/
+cms/.cache/
+cms/public/uploads/*
+!cms/public/uploads/.gitkeep
+cms/exports/
+cms/.strapi-updater.json
+cms/license.txt
+
+# Test
+coverage/
+.nyc_output/

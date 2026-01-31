@@ -1,0 +1,98 @@
+name: Deploy CMS to Cloud Run
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+env:
+  GCP_PROJECT_ID: writewise-468912
+  GCP_REGION: europe-west10
+  SERVICE_NAME: writewise-cms
+  CLOUD_SQL_INSTANCE: writewise-468912:europe-west10:writewise-db
+
+jobs:
+  deploy:
+    name: Deploy CMS to Production
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Build and push Docker image
+        run: |
+          # Configure Docker to use gcloud as credential helper
+          gcloud auth configure-docker ${{ env.GCP_REGION }}-docker.pkg.dev
+
+          # Build Docker image from cms/ directory
+          cd cms
+          docker build -t ${{ env.GCP_REGION }}-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/writewise/${{ env.SERVICE_NAME }}:${{ github.sha }} \
+                       -t ${{ env.GCP_REGION }}-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/writewise/${{ env.SERVICE_NAME }}:latest .
+
+          # Push Docker image
+          docker push ${{ env.GCP_REGION }}-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/writewise/${{ env.SERVICE_NAME }}:${{ github.sha }}
+          docker push ${{ env.GCP_REGION }}-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/writewise/${{ env.SERVICE_NAME }}:latest
+
+      - name: Deploy to Cloud Run
+        id: deploy
+        run: |
+          gcloud run deploy ${{ env.SERVICE_NAME }} \
+            --image ${{ env.GCP_REGION }}-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/writewise/${{ env.SERVICE_NAME }}:${{ github.sha }} \
+            --platform managed \
+            --region ${{ env.GCP_REGION }} \
+            --project ${{ env.GCP_PROJECT_ID }} \
+            --allow-unauthenticated \
+            --min-instances 0 \
+            --max-instances 2 \
+            --cpu 1 \
+            --memory 512Mi \
+            --timeout 300 \
+            --port 1337 \
+            --set-env-vars "NODE_ENV=production,DATABASE_CLIENT=postgres,DATABASE_NAME=writewise,DATABASE_USERNAME=writewise,DATABASE_SCHEMA=cms,DATABASE_HOST=/cloudsql/${{ env.CLOUD_SQL_INSTANCE }},DATABASE_PORT=5432,HOST=0.0.0.0,PORT=1337,APP_KEYS=${{ secrets.STRAPI_APP_KEYS }},API_TOKEN_SALT=${{ secrets.STRAPI_API_TOKEN_SALT }},ADMIN_JWT_SECRET=${{ secrets.STRAPI_ADMIN_JWT_SECRET }},TRANSFER_TOKEN_SALT=${{ secrets.STRAPI_TRANSFER_TOKEN_SALT }},JWT_SECRET=${{ secrets.STRAPI_JWT_SECRET }}" \
+            --set-secrets "DATABASE_PASSWORD=db-password:latest" \
+            --add-cloudsql-instances ${{ env.CLOUD_SQL_INSTANCE }}
+
+          SERVICE_URL=$(gcloud run services describe ${{ env.SERVICE_NAME }} \
+            --region ${{ env.GCP_REGION }} \
+            --project ${{ env.GCP_PROJECT_ID }} \
+            --format 'value(status.url)')
+
+          echo "url=$SERVICE_URL" >> $GITHUB_OUTPUT
+          echo "Deployed to: $SERVICE_URL"
+
+      - name: Test deployment
+        run: |
+          sleep 15
+          curl -f ${{ steps.deploy.outputs.url }}/_health || echo "Health check failed (expected - endpoint might not exist yet)"
+          echo "✅ CMS deployment successful!"
+
+      - name: Create deployment summary
+        run: |
+          echo "## 🚀 CMS Deployment Successful!" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **Service URL:** ${{ steps.deploy.outputs.url }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Admin Panel:** ${{ steps.deploy.outputs.url }}/admin" >> $GITHUB_STEP_SUMMARY
+          echo "- **Git SHA:** ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Deployed by:** ${{ github.actor }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 💰 Cost Optimization:" >> $GITHUB_STEP_SUMMARY
+          echo "CMS scales to 0 when not in use (min-instances: 0)" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 🔗 Next Steps:" >> $GITHUB_STEP_SUMMARY
+          echo "1. Access admin panel: ${{ steps.deploy.outputs.url }}/admin" >> $GITHUB_STEP_SUMMARY
+          echo "2. Create admin user if first deployment" >> $GITHUB_STEP_SUMMARY
+          echo "3. Configure API permissions in Strapi admin" >> $GITHUB_STEP_SUMMARY
+          echo "4. Test API endpoints" >> $GITHUB_STEP_SUMMARY

@@ -1,0 +1,64 @@
+{
+  "kind": "collectionType",
+  "collectionName": "pricing_plans",
+  "info": {
+    "singularName": "pricing-plan",
+    "pluralName": "pricing-plans",
+    "displayName": "PricingPlan",
+    "description": "Subscription pricing plans for WriteWise"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true,
+      "maxLength": 50
+    },
+    "code": {
+      "type": "string",
+      "required": true,
+      "maxLength": 20,
+      "unique": true
+    },
+    "price": {
+      "type": "decimal",
+      "required": true,
+      "min": 0
+    },
+    "priceYearly": {
+      "type": "decimal",
+      "min": 0
+    },
+    "currency": {
+      "type": "string",
+      "required": true,
+      "default": "EUR",
+      "maxLength": 3
+    },
+    "description": {
+      "type": "text",
+      "required": true,
+      "maxLength": 500
+    },
+    "features": {
+      "type": "json",
+      "required": true
+    },
+    "highlighted": {
+      "type": "boolean",
+      "default": false
+    },
+    "stripePriceId": {
+      "type": "string",
+      "maxLength": 100
+    },
+    "order": {
+      "type": "integer",
+      "required": true,
+      "min": 1
+    }
+  }
+}

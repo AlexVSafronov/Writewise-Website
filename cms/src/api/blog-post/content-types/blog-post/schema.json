@@ -1,0 +1,72 @@
+{
+  "kind": "collectionType",
+  "collectionName": "blog_posts",
+  "info": {
+    "singularName": "blog-post",
+    "pluralName": "blog-posts",
+    "displayName": "BlogPost",
+    "description": "Blog posts for the WriteWise website"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true,
+      "maxLength": 255
+    },
+    "slug": {
+      "type": "uid",
+      "targetField": "title",
+      "required": true
+    },
+    "excerpt": {
+      "type": "text",
+      "required": true,
+      "maxLength": 500
+    },
+    "content": {
+      "type": "richtext",
+      "required": true
+    },
+    "author": {
+      "type": "string",
+      "required": true,
+      "maxLength": 100
+    },
+    "authorRole": {
+      "type": "string",
+      "maxLength": 100
+    },
+    "publishedDate": {
+      "type": "date",
+      "required": true
+    },
+    "readTime": {
+      "type": "string",
+      "required": true,
+      "maxLength": 50
+    },
+    "category": {
+      "type": "enumeration",
+      "enum": ["Tips", "AI", "Success Stories", "Research"],
+      "required": true
+    },
+    "featuredImage": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": ["images"]
+    },
+    "seoDescription": {
+      "type": "text",
+      "maxLength": 160
+    },
+    "featured": {
+      "type": "boolean",
+      "default": false
+    }
+  }
+}

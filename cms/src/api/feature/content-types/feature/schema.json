@@ -1,0 +1,36 @@
+{
+  "kind": "collectionType",
+  "collectionName": "features",
+  "info": {
+    "singularName": "feature",
+    "pluralName": "features",
+    "displayName": "Feature",
+    "description": "Features displayed on the WriteWise website"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true,
+      "maxLength": 100
+    },
+    "description": {
+      "type": "text",
+      "required": true,
+      "maxLength": 500
+    },
+    "icon": {
+      "type": "enumeration",
+      "enum": ["PenTool", "MessageSquare", "Brain", "Target", "Sparkles", "Award"],
+      "required": true
+    },
+    "order": {
+      "type": "integer",
+      "required": true,
+      "min": 1
+    }
+  }
+}

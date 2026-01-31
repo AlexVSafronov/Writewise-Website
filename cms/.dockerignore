@@ -1,0 +1,56 @@
+# Dependencies
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Development files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Build artifacts
+.tmp/
+.cache/
+dist/
+build/
+
+# Database files
+*.db
+*.db-*
+
+# Logs
+logs/
+*.log
+
+# Git
+.git/
+.gitignore
+
+# Docker
+Dockerfile
+.dockerignore
+docker-compose*.yml
+
+# Documentation
+README.md
+*.md
+!node_modules/**/*.md
+
+# Test files
+test/
+tests/
+__tests__/
+*.test.js
+*.spec.js
+
+# CI/CD
+.github/
+.gitlab-ci.yml
+.travis.yml
