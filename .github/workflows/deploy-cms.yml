@@ -26,7 +26,8 @@ jobs:
 
       - name: Authenticate to Google Cloud
         run: |
-          echo "${{ secrets.GCP_SA_KEY_BASE64 }}" | base64 -d > $HOME/gcp-key.json
+          # Remove any whitespace and decode base64
+          echo "${{ secrets.GCP_SA_KEY_BASE64 }}" | tr -d '[:space:]' | base64 -d > $HOME/gcp-key.json
           gcloud auth activate-service-account --key-file=$HOME/gcp-key.json
           gcloud config set project ${{ env.GCP_PROJECT_ID }}
 
