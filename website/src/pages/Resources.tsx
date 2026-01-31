@@ -2,80 +2,10 @@ import { Layout } from "@/components/layout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Play, FileText, Download, Clock, BookOpen, Video, HelpCircle, ArrowRight, ExternalLink } from "lucide-react";
-
-const videos = [
-  {
-    title: "Getting Started with WriteWise",
-    description: "A complete walkthrough of setting up your account and taking your first assessment.",
-    duration: "5:30",
-    category: "Getting Started",
-    thumbnail: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=400&h=225&fit=crop",
-  },
-  {
-    title: "Understanding Your Learning Dashboard",
-    description: "Learn how to read your progress metrics and optimize your study sessions.",
-    duration: "8:15",
-    category: "Features",
-    thumbnail: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=400&h=225&fit=crop",
-  },
-  {
-    title: "How to Use AI Feedback Effectively",
-    description: "Get the most out of WriteWise's AI mentor with these pro tips.",
-    duration: "12:00",
-    category: "Tips & Tricks",
-    thumbnail: "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=400&h=225&fit=crop",
-  },
-  {
-    title: "Writing Better Business Emails",
-    description: "Master professional email communication with practical examples.",
-    duration: "15:20",
-    category: "Business Writing",
-    thumbnail: "https://images.unsplash.com/photo-1596526131083-e8c633c948d2?w=400&h=225&fit=crop",
-  },
-  {
-    title: "Common Grammar Mistakes and How to Avoid Them",
-    description: "Learn to identify and fix the most common errors in your writing.",
-    duration: "10:45",
-    category: "Grammar",
-    thumbnail: "https://images.unsplash.com/photo-1456324504439-367cee3b3c32?w=400&h=225&fit=crop",
-  },
-  {
-    title: "Creating Your Personal Study Plan",
-    description: "Build a sustainable learning routine that fits your schedule.",
-    duration: "7:30",
-    category: "Getting Started",
-    thumbnail: "https://images.unsplash.com/photo-1484480974693-6ca0a78fb36b?w=400&h=225&fit=crop",
-  },
-];
-
-const guides = [
-  {
-    title: "Complete CEFR Level Guide",
-    description: "Everything you need to know about CEFR levels and how WriteWise maps to them.",
-    pages: 24,
-    format: "PDF",
-  },
-  {
-    title: "Business Writing Handbook",
-    description: "Professional templates and examples for emails, reports, and presentations.",
-    pages: 48,
-    format: "PDF",
-  },
-  {
-    title: "Grammar Quick Reference",
-    description: "A handy reference guide for common grammar rules and exceptions.",
-    pages: 16,
-    format: "PDF",
-  },
-  {
-    title: "Vocabulary Building Strategies",
-    description: "Proven techniques to expand and retain new vocabulary effectively.",
-    pages: 20,
-    format: "PDF",
-  },
-];
+import { Play, FileText, Download, Clock, BookOpen, Video, HelpCircle, ArrowRight, ExternalLink, Wrench } from "lucide-react";
+import { useResources } from "@/hooks/use-strapi";
 
 const faqs = [
   {
@@ -105,6 +35,16 @@ const faqs = [
 ];
 
 const Resources = () => {
+  const { data: resourcesData, isLoading: resourcesLoading } = useResources();
+
+  const allResources = resourcesData?.data || [];
+
+  // Organize resources by category
+  const videos = allResources.filter(r => r.category === 'Videos');
+  const guides = allResources.filter(r => r.category === 'Guides');
+  const tools = allResources.filter(r => r.category === 'Tools');
+  const articles = allResources.filter(r => r.category === 'Articles');
+
   return (
     <Layout>
       {/* Hero */}
@@ -124,15 +64,23 @@ const Resources = () => {
       {/* Tabs Content */}
       <section className="py-16">
         <div className="container mx-auto px-4">
-          <Tabs defaultValue="videos" className="w-full">
-            <TabsList className="mb-8 grid w-full max-w-md mx-auto grid-cols-3">
-              <TabsTrigger value="videos" className="flex items-center gap-2">
-                <Video className="h-4 w-4" />
-                Videos
-              </TabsTrigger>
+          <Tabs defaultValue="guides" className="w-full">
+            <TabsList className="mb-8 grid w-full max-w-2xl mx-auto grid-cols-5">
               <TabsTrigger value="guides" className="flex items-center gap-2">
                 <FileText className="h-4 w-4" />
                 Guides
+              </TabsTrigger>
+              <TabsTrigger value="tools" className="flex items-center gap-2">
+                <Wrench className="h-4 w-4" />
+                Tools
+              </TabsTrigger>
+              <TabsTrigger value="articles" className="flex items-center gap-2">
+                <BookOpen className="h-4 w-4" />
+                Articles
+              </TabsTrigger>
+              <TabsTrigger value="videos" className="flex items-center gap-2">
+                <Video className="h-4 w-4" />
+                Videos
               </TabsTrigger>
               <TabsTrigger value="faq" className="flex items-center gap-2">
                 <HelpCircle className="h-4 w-4" />
@@ -140,67 +88,171 @@ const Resources = () => {
               </TabsTrigger>
             </TabsList>
 
-            {/* Videos Tab */}
-            <TabsContent value="videos">
-              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                {videos.map((video) => (
-                  <Card key={video.title} className="card-elevated group cursor-pointer overflow-hidden border-0 transition-transform hover:-translate-y-1">
-                    <div className="relative aspect-video overflow-hidden">
-                      <img
-                        src={video.thumbnail}
-                        alt={video.title}
-                        className="h-full w-full object-cover transition-transform group-hover:scale-105"
-                      />
-                      <div className="absolute inset-0 flex items-center justify-center bg-black/30 opacity-0 transition-opacity group-hover:opacity-100">
-                        <div className="flex h-14 w-14 items-center justify-center rounded-full bg-white shadow-lg">
-                          <Play className="h-6 w-6 text-primary" />
-                        </div>
-                      </div>
-                      <div className="absolute bottom-2 right-2 flex items-center gap-1 rounded bg-black/70 px-2 py-1 text-xs text-white">
-                        <Clock className="h-3 w-3" />
-                        {video.duration}
-                      </div>
-                    </div>
-                    <CardContent className="p-4">
-                      <Badge className="mb-2 bg-primary/10 text-primary hover:bg-primary/20">
-                        {video.category}
-                      </Badge>
-                      <h3 className="mb-2 font-semibold text-foreground group-hover:text-primary">
-                        {video.title}
-                      </h3>
-                      <p className="text-sm text-muted-foreground">{video.description}</p>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            </TabsContent>
-
             {/* Guides Tab */}
             <TabsContent value="guides">
-              <div className="grid gap-6 md:grid-cols-2">
-                {guides.map((guide) => (
-                  <Card key={guide.title} className="card-elevated border-0">
-                    <CardContent className="flex items-start gap-4 p-6">
-                      <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-gradient-brand">
-                        <BookOpen className="h-6 w-6 text-white" />
-                      </div>
-                      <div className="flex-1">
-                        <h3 className="mb-2 font-semibold text-foreground">{guide.title}</h3>
-                        <p className="mb-4 text-sm text-muted-foreground">{guide.description}</p>
-                        <div className="flex items-center justify-between">
-                          <span className="text-xs text-muted-foreground">
-                            {guide.pages} pages • {guide.format}
-                          </span>
-                          <Button size="sm" variant="outline" className="gap-2">
-                            <Download className="h-4 w-4" />
-                            Download
+              {resourcesLoading ? (
+                <div className="grid gap-6 md:grid-cols-2">
+                  {Array.from({ length: 4 }).map((_, i) => (
+                    <Card key={i} className="border-0">
+                      <CardContent className="flex items-start gap-4 p-6">
+                        <Skeleton className="h-12 w-12 shrink-0 rounded-lg" />
+                        <div className="flex-1">
+                          <Skeleton className="mb-2 h-6 w-3/4" />
+                          <Skeleton className="mb-4 h-4 w-full" />
+                          <div className="flex items-center justify-between">
+                            <Skeleton className="h-4 w-24" />
+                            <Skeleton className="h-8 w-24" />
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              ) : (
+                <div className="grid gap-6 md:grid-cols-2">
+                  {guides.map((guide) => (
+                    <Card key={guide.title} className="card-elevated border-0">
+                      <CardContent className="flex items-start gap-4 p-6">
+                        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-gradient-brand">
+                          <BookOpen className="h-6 w-6 text-white" />
+                        </div>
+                        <div className="flex-1">
+                          <h3 className="mb-2 font-semibold text-foreground">{guide.title}</h3>
+                          <p className="mb-4 text-sm text-muted-foreground">{guide.description}</p>
+                          <Button size="sm" variant="outline" className="gap-2" asChild>
+                            <a href={guide.link} target="_blank" rel="noopener noreferrer">
+                              <ExternalLink className="h-4 w-4" />
+                              View Resource
+                            </a>
                           </Button>
                         </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              )}
+            </TabsContent>
+
+            {/* Tools Tab */}
+            <TabsContent value="tools">
+              {resourcesLoading ? (
+                <div className="grid gap-6 md:grid-cols-2">
+                  {Array.from({ length: 4 }).map((_, i) => (
+                    <Card key={i} className="border-0">
+                      <CardContent className="flex items-start gap-4 p-6">
+                        <Skeleton className="h-12 w-12 shrink-0 rounded-lg" />
+                        <div className="flex-1">
+                          <Skeleton className="mb-2 h-6 w-3/4" />
+                          <Skeleton className="mb-4 h-4 w-full" />
+                          <Skeleton className="h-8 w-24" />
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              ) : (
+                <div className="grid gap-6 md:grid-cols-2">
+                  {tools.map((tool) => (
+                    <Card key={tool.title} className="card-elevated border-0">
+                      <CardContent className="flex items-start gap-4 p-6">
+                        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-gradient-brand">
+                          <Wrench className="h-6 w-6 text-white" />
+                        </div>
+                        <div className="flex-1">
+                          <h3 className="mb-2 font-semibold text-foreground">{tool.title}</h3>
+                          <p className="mb-4 text-sm text-muted-foreground">{tool.description}</p>
+                          <Button size="sm" variant="outline" className="gap-2" asChild>
+                            <a href={tool.link} target="_blank" rel="noopener noreferrer">
+                              <ExternalLink className="h-4 w-4" />
+                              Open Tool
+                            </a>
+                          </Button>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              )}
+            </TabsContent>
+
+            {/* Articles Tab */}
+            <TabsContent value="articles">
+              {resourcesLoading ? (
+                <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                  {Array.from({ length: 6 }).map((_, i) => (
+                    <Card key={i} className="border-0">
+                      <CardContent className="p-6">
+                        <Skeleton className="mb-4 h-6 w-24" />
+                        <Skeleton className="mb-3 h-6 w-full" />
+                        <Skeleton className="mb-4 h-4 w-full" />
+                        <Skeleton className="h-8 w-full" />
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              ) : (
+                <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                  {articles.map((article) => (
+                    <Card key={article.title} className="card-elevated group cursor-pointer border-0 transition-transform hover:-translate-y-1" asChild>
+                      <a href={article.link} target="_blank" rel="noopener noreferrer">
+                        <CardContent className="p-6">
+                          <Badge className="mb-4 bg-primary/10 text-primary hover:bg-primary/20">
+                            {article.category}
+                          </Badge>
+                          <h3 className="mb-3 text-lg font-semibold text-foreground group-hover:text-primary">
+                            {article.title}
+                          </h3>
+                          <p className="mb-4 text-sm text-muted-foreground">{article.description}</p>
+                          <div className="flex items-center gap-2 text-sm text-primary">
+                            Read Article
+                            <ArrowRight className="h-4 w-4" />
+                          </div>
+                        </CardContent>
+                      </a>
+                    </Card>
+                  ))}
+                </div>
+              )}
+            </TabsContent>
+
+            {/* Videos Tab */}
+            <TabsContent value="videos">
+              {resourcesLoading ? (
+                <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                  {Array.from({ length: 6 }).map((_, i) => (
+                    <Card key={i} className="border-0">
+                      <CardContent className="p-6">
+                        <Skeleton className="mb-4 h-6 w-24" />
+                        <Skeleton className="mb-3 h-6 w-full" />
+                        <Skeleton className="mb-4 h-4 w-full" />
+                        <Skeleton className="h-8 w-full" />
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              ) : (
+                <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                  {videos.map((video) => (
+                    <Card key={video.title} className="card-elevated group cursor-pointer border-0 transition-transform hover:-translate-y-1" asChild>
+                      <a href={video.link} target="_blank" rel="noopener noreferrer">
+                        <CardContent className="p-6">
+                          <Badge className="mb-4 bg-primary/10 text-primary hover:bg-primary/20">
+                            {video.category}
+                          </Badge>
+                          <h3 className="mb-3 text-lg font-semibold text-foreground group-hover:text-primary">
+                            {video.title}
+                          </h3>
+                          <p className="mb-4 text-sm text-muted-foreground">{video.description}</p>
+                          <div className="flex items-center gap-2 text-sm text-primary">
+                            <Play className="h-4 w-4" />
+                            Watch Video
+                          </div>
+                        </CardContent>
+                      </a>
+                    </Card>
+                  ))}
+                </div>
+              )}
             </TabsContent>
 
             {/* FAQ Tab */}

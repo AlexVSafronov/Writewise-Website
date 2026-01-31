@@ -2,6 +2,7 @@ import { Layout } from "@/components/layout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { SEO, generateWebsiteSchema, generateOrganizationSchema } from "@/components/SEO";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   BookOpen,
   MessageSquare,
@@ -16,83 +17,31 @@ import {
   Brain,
   PenTool,
 } from "lucide-react";
-
-const features = [
-  {
-    icon: PenTool,
-    title: "Writing Practice",
-    description: "Improve your writing skills with AI-powered exercises tailored to your level from A2 to C1.",
-  },
-  {
-    icon: MessageSquare,
-    title: "Real Conversations",
-    description: "Practice authentic dialogues and scenarios you'll encounter in daily life and work.",
-  },
-  {
-    icon: Brain,
-    title: "Smart Feedback",
-    description: "Get instant, detailed feedback on grammar, vocabulary, and style to accelerate learning.",
-  },
-  {
-    icon: Target,
-    title: "CEFR Aligned",
-    description: "Progress through structured levels from A2 to C1 with clear milestones and goals.",
-  },
-  {
-    icon: Sparkles,
-    title: "AI Mentor",
-    description: "Your personal AI tutor adapts to your pace, strengths, and areas for improvement.",
-  },
-  {
-    icon: Award,
-    title: "Track Progress",
-    description: "Visualize your journey with detailed analytics and celebrate your achievements.",
-  },
-];
+import { useFeatures, useTestimonials } from "@/hooks/use-strapi";
+import { getIcon } from "@/lib/icons";
 
 const stats = [
   { value: "50K+", label: "Active Learners" },
   { value: "1M+", label: "Exercises Completed" },
-  { value: "4.9", label: "App Store Rating" },
-  { value: "15+", label: "Languages" },
-];
-
-const testimonials = [
-  {
-    name: "Sarah M.",
-    role: "Business Professional",
-    content: "WriteWise helped me go from B1 to B2 in just 3 months. The personalized feedback is incredibly helpful!",
-    rating: 5,
-  },
-  {
-    name: "Marco T.",
-    role: "University Student",
-    content: "Finally, an app that focuses on real writing skills. My essays have improved dramatically.",
-    rating: 5,
-  },
-  {
-    name: "Yuki K.",
-    role: "Software Engineer",
-    content: "The AI mentor feels like having a personal tutor available 24/7. Absolutely worth it.",
-    rating: 5,
-  },
+  { value: "4.9", label: "User Rating" },
+  { value: "6", label: "Languages available" },
 ];
 
 const steps = [
   {
     number: "01",
-    title: "Take the Assessment",
-    description: "Start with a quick placement test to determine your current CEFR level.",
+    title: "Set the Target",
+    description: "Define which CEFR level you would like to reach",
   },
   {
     number: "02",
     title: "Get Your Learning Path",
-    description: "Receive a personalized curriculum based on your goals and schedule.",
+    description: "Receive a personalized curriculum based on your goals and progress.",
   },
   {
     number: "03",
-    title: "Practice Daily",
-    description: "Complete engaging exercises with instant AI feedback and explanations.",
+    title: "Practice Regularly",
+    description: "Complete engaging practical exercises with instant AI feedback and explanations.",
   },
   {
     number: "04",
@@ -102,6 +51,16 @@ const steps = [
 ];
 
 const Index = () => {
+  const { data: featuresData, isLoading: featuresLoading } = useFeatures();
+  const { data: testimonialsData, isLoading: testimonialsLoading } = useTestimonials(true); // Get featured testimonials
+
+  const features = featuresData?.data.map(item => ({
+    ...item,
+    icon: getIcon(item.icon),
+  })) || [];
+
+  const testimonials = testimonialsData?.data || [];
+
   const structuredData = {
     ...generateWebsiteSchema('WriteWise', 'https://write-wise.com'),
     ...generateOrganizationSchema('WriteWise', 'https://write-wise.com', '/logo.png'),
@@ -121,15 +80,15 @@ const Index = () => {
           <div className="mx-auto max-w-4xl text-center">
             <div className="mb-6 inline-flex items-center gap-2 rounded-full bg-primary/10 px-4 py-2 text-sm font-medium text-primary">
               <Zap className="h-4 w-4" />
-              AI-Powered Language Learning
+              AI-Powered Real Learning Experience
             </div>
             <h1 className="mb-6 text-4xl font-bold tracking-tight text-foreground md:text-5xl lg:text-6xl">
-              Master Any Language with Your{" "}
+              Master Favorite Language with Your{" "}
               <span className="text-gradient-brand">AI Mentor</span>
             </h1>
             <p className="mx-auto mb-8 max-w-2xl text-lg text-muted-foreground md:text-xl">
-              WriteWise helps intermediate learners (A2-C1) improve their language skills through
-              personalized exercises, real-time feedback, and adaptive learning paths.
+              WriteWise helps intermediate learners (A2-C1) improve their active language skills through
+              personalized writing exercises, real-time feedback, and adaptive learning paths.
             </p>
             <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
               <Button size="lg" className="bg-gradient-brand px-8 hover:opacity-90" asChild>
@@ -147,11 +106,11 @@ const Index = () => {
             <div className="mt-8 flex items-center justify-center gap-8 text-sm text-muted-foreground">
               <div className="flex items-center gap-2">
                 <CheckCircle2 className="h-4 w-4 text-primary" />
-                No credit card required
+                1 Month Free Trial
               </div>
               <div className="flex items-center gap-2">
                 <CheckCircle2 className="h-4 w-4 text-primary" />
-                Free forever plan
+                Cancel any time
               </div>
             </div>
           </div>
@@ -190,17 +149,31 @@ const Index = () => {
             </p>
           </div>
           <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-            {features.map((feature) => (
-              <Card key={feature.title} className="card-elevated border-0 transition-transform hover:-translate-y-1">
-                <CardContent className="p-6">
-                  <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-gradient-brand">
-                    <feature.icon className="h-6 w-6 text-white" />
-                  </div>
-                  <h3 className="mb-2 text-xl font-semibold text-foreground">{feature.title}</h3>
-                  <p className="text-muted-foreground">{feature.description}</p>
-                </CardContent>
-              </Card>
-            ))}
+            {featuresLoading ? (
+              // Loading skeletons
+              Array.from({ length: 6 }).map((_, i) => (
+                <Card key={i} className="border-0">
+                  <CardContent className="p-6">
+                    <Skeleton className="mb-4 h-12 w-12 rounded-lg" />
+                    <Skeleton className="mb-2 h-6 w-3/4" />
+                    <Skeleton className="h-4 w-full" />
+                    <Skeleton className="mt-2 h-4 w-5/6" />
+                  </CardContent>
+                </Card>
+              ))
+            ) : (
+              features.map((feature) => (
+                <Card key={feature.title} className="card-elevated border-0 transition-transform hover:-translate-y-1">
+                  <CardContent className="p-6">
+                    <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-gradient-brand">
+                      <feature.icon className="h-6 w-6 text-white" />
+                    </div>
+                    <h3 className="mb-2 text-xl font-semibold text-foreground">{feature.title}</h3>
+                    <p className="text-muted-foreground">{feature.description}</p>
+                  </CardContent>
+                </Card>
+              ))
+            )}
           </div>
         </div>
       </section>
@@ -243,27 +216,52 @@ const Index = () => {
             </p>
           </div>
           <div className="grid gap-8 md:grid-cols-3">
-            {testimonials.map((testimonial) => (
-              <Card key={testimonial.name} className="card-elevated border-0">
-                <CardContent className="p-6">
-                  <div className="mb-4 flex gap-1">
-                    {[...Array(testimonial.rating)].map((_, i) => (
-                      <Star key={i} className="h-5 w-5 fill-primary text-primary" />
-                    ))}
-                  </div>
-                  <p className="mb-4 text-foreground">&ldquo;{testimonial.content}&rdquo;</p>
-                  <div className="flex items-center gap-3">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-brand text-sm font-medium text-white">
-                      {testimonial.name.charAt(0)}
+            {testimonialsLoading ? (
+              // Loading skeletons
+              Array.from({ length: 3 }).map((_, i) => (
+                <Card key={i} className="border-0">
+                  <CardContent className="p-6">
+                    <div className="mb-4 flex gap-1">
+                      {Array.from({ length: 5 }).map((_, j) => (
+                        <Skeleton key={j} className="h-5 w-5 rounded" />
+                      ))}
                     </div>
-                    <div>
-                      <div className="font-medium text-foreground">{testimonial.name}</div>
-                      <div className="text-sm text-muted-foreground">{testimonial.role}</div>
+                    <Skeleton className="mb-2 h-4 w-full" />
+                    <Skeleton className="mb-2 h-4 w-full" />
+                    <Skeleton className="mb-4 h-4 w-3/4" />
+                    <div className="flex items-center gap-3">
+                      <Skeleton className="h-10 w-10 rounded-full" />
+                      <div className="flex-1">
+                        <Skeleton className="mb-1 h-4 w-24" />
+                        <Skeleton className="h-3 w-32" />
+                      </div>
                     </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
+                  </CardContent>
+                </Card>
+              ))
+            ) : (
+              testimonials.map((testimonial) => (
+                <Card key={testimonial.name} className="card-elevated border-0">
+                  <CardContent className="p-6">
+                    <div className="mb-4 flex gap-1">
+                      {[...Array(testimonial.rating)].map((_, i) => (
+                        <Star key={i} className="h-5 w-5 fill-primary text-primary" />
+                      ))}
+                    </div>
+                    <p className="mb-4 text-foreground">&ldquo;{testimonial.content}&rdquo;</p>
+                    <div className="flex items-center gap-3">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-brand text-sm font-medium text-white">
+                        {testimonial.name.charAt(0)}
+                      </div>
+                      <div>
+                        <div className="font-medium text-foreground">{testimonial.name}</div>
+                        <div className="text-sm text-muted-foreground">{testimonial.role}</div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))
+            )}
           </div>
         </div>
       </section>
