@@ -32,14 +32,16 @@ const Pricing = () => {
     .map(item => {
     const plan = item;
 
-    // Determine CTA text based on plan code
-    let cta = "Get Started";
-    if (plan.code === "premium") {
-      cta = "Contact Sales";
-    } else if (plan.code === "basic") {
-      cta = "Start Pro Trial";
-    } else if (plan.code === "free" && plan.price === 0) {
-      cta = "Start Free";
+    // Get CTA text from metadata, with smart defaults
+    let cta = plan.metadata?.cta || "Get Started";
+
+    // If no CTA in metadata, provide sensible defaults based on price
+    if (!plan.metadata?.cta) {
+      if (plan.price === 0) {
+        cta = "Start Free";
+      } else {
+        cta = "Get Started";
+      }
     }
 
     // Get currency symbol
@@ -59,7 +61,7 @@ const Pricing = () => {
       description: plan.description,
       features: plan.features,
       cta: cta,
-      ctaLink: "https://app.write-wise.com",
+      ctaLink: plan.metadata?.ctaLink || "https://app.write-wise.com",
       popular: plan.highlighted || false,
       isContactSales: false,
     };

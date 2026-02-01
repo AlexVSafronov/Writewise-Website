@@ -75,7 +75,7 @@ export interface Resource extends StrapiEntity {
 
 export interface PricingPlan extends StrapiEntity {
   name: string;
-  code: 'free' | 'basic' | 'premium';
+  code: string;
   price: number;
   priceYearly?: number;
   currency: string;
@@ -84,6 +84,14 @@ export interface PricingPlan extends StrapiEntity {
   highlighted?: boolean;
   stripePriceId?: string;
   order: number;
+  metadata?: {
+    code?: string;
+    cta?: string;
+    ctaLink?: string;
+    highlighted?: string;
+    order?: string;
+    [key: string]: any;
+  };
 }
 
 export interface Page extends StrapiEntity {
