@@ -316,7 +316,7 @@ const Resources = () => {
             Join thousands of learners improving their language skills with WriteWise.
           </p>
           <Button size="lg" variant="secondary" asChild>
-            <a href="https://app.write-wise.com" target="_blank" rel="noopener noreferrer">
+            <a href="https://app.write-wise.com?mode=signup" target="_blank" rel="noopener noreferrer">
               Get Started Free
               <ArrowRight className="ml-2 h-5 w-5" />
             </a>

@@ -44,12 +44,12 @@ export const Header = () => {
         {/* Desktop CTA */}
         <div className="hidden md:flex md:items-center md:gap-3">
           <Button variant="ghost" asChild>
-            <a href="https://app.write-wise.com" target="_blank" rel="noopener noreferrer">
+            <a href="https://app.write-wise.com?mode=login" target="_blank" rel="noopener noreferrer">
               Sign In
             </a>
           </Button>
           <Button className="bg-gradient-brand hover:opacity-90" asChild>
-            <a href="https://app.write-wise.com" target="_blank" rel="noopener noreferrer">
+            <a href="https://app.write-wise.com?mode=signup" target="_blank" rel="noopener noreferrer">
               Get Started Free
             </a>
           </Button>
@@ -88,12 +88,12 @@ export const Header = () => {
               ))}
               <div className="mt-4 flex flex-col gap-3">
                 <Button variant="outline" asChild className="w-full">
-                  <a href="https://app.write-wise.com" target="_blank" rel="noopener noreferrer">
+                  <a href="https://app.write-wise.com?mode=login" target="_blank" rel="noopener noreferrer">
                     Sign In
                   </a>
                 </Button>
                 <Button className="w-full bg-gradient-brand hover:opacity-90" asChild>
-                  <a href="https://app.write-wise.com" target="_blank" rel="noopener noreferrer">
+                  <a href="https://app.write-wise.com?mode=signup" target="_blank" rel="noopener noreferrer">
                     Get Started Free
                   </a>
                 </Button>

@@ -61,7 +61,7 @@ const Pricing = () => {
       description: plan.description,
       features: plan.features,
       cta: cta,
-      ctaLink: plan.metadata?.ctaLink || "https://app.write-wise.com",
+      ctaLink: plan.metadata?.ctaLink || "https://app.write-wise.com?mode=signup",
       popular: plan.highlighted || false,
       isContactSales: false,
     };

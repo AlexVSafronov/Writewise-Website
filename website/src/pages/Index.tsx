@@ -21,8 +21,8 @@ import { useFeatures, useTestimonials } from "@/hooks/use-strapi";
 import { getIcon } from "@/lib/icons";
 
 const stats = [
-  { value: "50K+", label: "Active Learners" },
-  { value: "1M+", label: "Exercises Completed" },
+  { value: "1K+", label: "Active Learners" },
+  { value: "30K+", label: "Exercises Completed" },
   { value: "4.9", label: "User Rating" },
   { value: "6", label: "Languages available" },
 ];
@@ -92,7 +92,7 @@ const Index = () => {
             </p>
             <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
               <Button size="lg" className="bg-gradient-brand px-8 hover:opacity-90" asChild>
-                <a href="https://app.write-wise.com" target="_blank" rel="noopener noreferrer">
+                <a href="https://app.write-wise.com?mode=signup" target="_blank" rel="noopener noreferrer">
                   Start Learning Free
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </a>
@@ -277,7 +277,7 @@ const Index = () => {
               Join 50,000+ learners and start your journey to fluency today. No credit card required.
             </p>
             <Button size="lg" variant="secondary" className="px-8" asChild>
-              <a href="https://app.write-wise.com" target="_blank" rel="noopener noreferrer">
+              <a href="https://app.write-wise.com?mode=signup" target="_blank" rel="noopener noreferrer">
                 Get Started Free
                 <ArrowRight className="ml-2 h-5 w-5" />
               </a>
