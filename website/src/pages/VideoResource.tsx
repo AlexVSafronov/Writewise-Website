@@ -9,7 +9,6 @@ import { useResource, useResources } from "@/hooks/use-strapi";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeRaw from "rehype-raw";
-import rehypeSanitize from "rehype-sanitize";
 
 const VideoResource = () => {
   const { slug } = useParams<{ slug: string }>();

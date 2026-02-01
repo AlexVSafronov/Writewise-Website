@@ -2,7 +2,6 @@ import { Layout } from "@/components/layout";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeRaw from "rehype-raw";
-import rehypeSanitize from "rehype-sanitize";
 
 const testMarkdown = `
 # Heading 1
