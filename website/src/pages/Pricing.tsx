@@ -27,7 +27,7 @@ const Pricing = () => {
 
   const faqSchema = generateFAQSchema(faqs);
 
-  const plans = (pricingData?.data || [])
+  const stripePlans = (pricingData?.data || [])
     .sort((a, b) => a.order - b.order)
     .map(item => {
     const plan = item;
@@ -59,9 +59,32 @@ const Pricing = () => {
       description: plan.description,
       features: plan.features,
       cta: cta,
+      ctaLink: "https://app.write-wise.com",
       popular: plan.highlighted || false,
+      isContactSales: false,
     };
   });
+
+  // Static Business/Enterprise plan
+  const businessPlan = {
+    name: "Business",
+    price: "Custom",
+    period: "",
+    description: "Custom solutions for teams & organizations. Flexible plans designed around your company's specific learning goals.",
+    features: [
+      "Customized learning programs",
+      "Scalable team access",
+      "Team & individual progress reporting",
+      "Dedicated consultation & support",
+    ],
+    cta: "Contact Sales",
+    ctaLink: "mailto:sales@writewise.com",
+    popular: false,
+    isContactSales: true,
+  };
+
+  // Combine Stripe plans with Business plan
+  const plans = [...stripePlans, businessPlan];
 
   return (
     <Layout>
@@ -86,7 +109,7 @@ const Pricing = () => {
       {/* Pricing Cards */}
       <section className="py-20">
         <div className="container mx-auto px-4">
-          <div className="grid gap-8 md:grid-cols-3">
+          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
             {pricingLoading ? (
               // Loading skeletons
               Array.from({ length: 3 }).map((_, i) => (
@@ -145,12 +168,23 @@ const Pricing = () => {
                         </li>
                       ))}
                     </ul>
+                    {plan.isContactSales && (
+                      <div className="mb-4 rounded-lg bg-muted/50 p-3 text-center">
+                        <p className="text-sm text-muted-foreground">📩 Contact us for a tailored offer</p>
+                        <a
+                          href="mailto:sales@writewise.com"
+                          className="text-sm font-medium text-primary hover:underline"
+                        >
+                          sales@writewise.com
+                        </a>
+                      </div>
+                    )}
                     <Button
                       className={`w-full ${plan.popular ? "bg-gradient-brand hover:opacity-90" : ""}`}
                       variant={plan.popular ? "default" : "outline"}
                       asChild
                     >
-                      <a href="https://app.write-wise.com" target="_blank" rel="noopener noreferrer">
+                      <a href={plan.ctaLink} target={plan.isContactSales ? "_self" : "_blank"} rel="noopener noreferrer">
                         {plan.cta}
                         <ArrowRight className="ml-2 h-4 w-4" />
                       </a>
