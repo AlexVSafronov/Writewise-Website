@@ -108,8 +108,11 @@ class StripeService {
    */
   private extractFeatures(product: Stripe.Product): string[] {
     // First, try to use native Stripe Product Features
-    if (product.features && Array.isArray(product.features)) {
-      const featureNames = product.features
+    // Note: features property exists but may not be in all type definitions
+    const productWithFeatures = product as any;
+
+    if (productWithFeatures.features && Array.isArray(productWithFeatures.features)) {
+      const featureNames = productWithFeatures.features
         .map((feature: any) => {
           // Handle both expanded and non-expanded feature objects
           if (typeof feature === 'object' && feature.name) {
@@ -117,7 +120,7 @@ class StripeService {
           }
           return null;
         })
-        .filter((name): name is string => name !== null);
+        .filter((name: any): name is string => name !== null);
 
       if (featureNames.length > 0) {
         return featureNames;
