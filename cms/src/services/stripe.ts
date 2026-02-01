@@ -38,10 +38,10 @@ class StripeService {
     const stripe = this.ensureStripe();
 
     try {
-      // Fetch all active products with features expanded
+      // Fetch all active products
       const products = await stripe.products.list({
         active: true,
-        expand: ['data.default_price', 'data.features'],
+        expand: ['data.default_price'],
       });
 
       // Fetch all active prices
@@ -104,32 +104,15 @@ class StripeService {
   }
 
   /**
-   * Extract features from native Stripe features or metadata fallback
+   * Extract features from metadata
+   * Note: Native Stripe Product Features API doesn't support expansion in list operations,
+   * so we use metadata as the primary source.
    */
   private extractFeatures(product: Stripe.Product): string[] {
-    // First, try to use native Stripe Product Features
-    // Note: features property exists but may not be in all type definitions
-    const productWithFeatures = product as any;
-
-    if (productWithFeatures.features && Array.isArray(productWithFeatures.features)) {
-      const featureNames = productWithFeatures.features
-        .map((feature: any) => {
-          // Handle both expanded and non-expanded feature objects
-          if (typeof feature === 'object' && feature.name) {
-            return feature.name;
-          }
-          return null;
-        })
-        .filter((name: any): name is string => name !== null);
-
-      if (featureNames.length > 0) {
-        return featureNames;
-      }
-    }
-
-    // Fallback to metadata for backwards compatibility
+    // Get features from metadata
     if (product.metadata?.features) {
       try {
+        // Try to parse as JSON array
         return JSON.parse(product.metadata.features);
       } catch (e) {
         // If JSON parse fails, split by comma
@@ -137,7 +120,7 @@ class StripeService {
       }
     }
 
-    // Last resort: empty array
+    // Empty array if no features in metadata
     return [];
   }
 
@@ -149,7 +132,7 @@ class StripeService {
 
     try {
       const product = await stripe.products.retrieve(productId, {
-        expand: ['default_price', 'features'],
+        expand: ['default_price'],
       });
 
       const prices = await stripe.prices.list({
