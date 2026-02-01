@@ -197,7 +197,7 @@ const BlogPost = () => {
                 >
                   <ReactMarkdown
                     remarkPlugins={[remarkGfm]}
-                    rehypePlugins={[rehypeRaw, rehypeSanitize]}
+                    rehypePlugins={[rehypeRaw]}
                   >
                     {post.content || ''}
                   </ReactMarkdown>

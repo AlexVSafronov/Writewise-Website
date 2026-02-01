@@ -152,7 +152,7 @@ const VideoResource = () => {
                         <div className="prose max-w-none prose-p:text-muted-foreground">
                           <ReactMarkdown
                             remarkPlugins={[remarkGfm]}
-                            rehypePlugins={[rehypeRaw, rehypeSanitize]}
+                            rehypePlugins={[rehypeRaw]}
                           >
                             {video.fullDescription}
                           </ReactMarkdown>
