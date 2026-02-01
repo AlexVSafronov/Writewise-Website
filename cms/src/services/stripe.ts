@@ -4,33 +4,48 @@ import Stripe from 'stripe';
  * Stripe service for fetching products and prices
  */
 class StripeService {
-  private stripe: Stripe;
+  private stripe: Stripe | null = null;
 
   constructor() {
     const apiKey = process.env.STRIPE_SECRET_KEY;
 
     if (!apiKey) {
-      throw new Error('STRIPE_SECRET_KEY environment variable is not set');
+      console.warn('⚠️  STRIPE_SECRET_KEY environment variable is not set. Stripe integration will not work.');
+      return;
     }
 
-    this.stripe = new Stripe(apiKey, {
-      apiVersion: '2025-02-24.acacia',
-    });
+    try {
+      this.stripe = new Stripe(apiKey, {
+        apiVersion: '2025-02-24.acacia',
+      });
+      console.log('✅ Stripe service initialized successfully');
+    } catch (error) {
+      console.error('❌ Failed to initialize Stripe:', error);
+    }
+  }
+
+  private ensureStripe(): Stripe {
+    if (!this.stripe) {
+      throw new Error('Stripe is not configured. Please set STRIPE_SECRET_KEY environment variable.');
+    }
+    return this.stripe;
   }
 
   /**
    * Fetch all active products with their prices
    */
   async getProducts() {
+    const stripe = this.ensureStripe();
+
     try {
       // Fetch all active products
-      const products = await this.stripe.products.list({
+      const products = await stripe.products.list({
         active: true,
         expand: ['data.default_price'],
       });
 
       // Fetch all active prices
-      const prices = await this.stripe.prices.list({
+      const prices = await stripe.prices.list({
         active: true,
         expand: ['data.product'],
       });
@@ -110,12 +125,14 @@ class StripeService {
    * Get a specific product by ID
    */
   async getProduct(productId: string) {
+    const stripe = this.ensureStripe();
+
     try {
-      const product = await this.stripe.products.retrieve(productId, {
+      const product = await stripe.products.retrieve(productId, {
         expand: ['default_price'],
       });
 
-      const prices = await this.stripe.prices.list({
+      const prices = await stripe.prices.list({
         product: productId,
         active: true,
       });
