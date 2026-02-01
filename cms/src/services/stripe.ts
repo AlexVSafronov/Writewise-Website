@@ -38,10 +38,10 @@ class StripeService {
     const stripe = this.ensureStripe();
 
     try {
-      // Fetch all active products
+      // Fetch all active products with features expanded
       const products = await stripe.products.list({
         active: true,
-        expand: ['data.default_price'],
+        expand: ['data.default_price', 'data.features'],
       });
 
       // Fetch all active prices
@@ -104,10 +104,27 @@ class StripeService {
   }
 
   /**
-   * Extract features from product metadata or description
+   * Extract features from native Stripe features or metadata fallback
    */
   private extractFeatures(product: Stripe.Product): string[] {
-    // Try to get features from metadata first
+    // First, try to use native Stripe Product Features
+    if (product.features && Array.isArray(product.features)) {
+      const featureNames = product.features
+        .map((feature: any) => {
+          // Handle both expanded and non-expanded feature objects
+          if (typeof feature === 'object' && feature.name) {
+            return feature.name;
+          }
+          return null;
+        })
+        .filter((name): name is string => name !== null);
+
+      if (featureNames.length > 0) {
+        return featureNames;
+      }
+    }
+
+    // Fallback to metadata for backwards compatibility
     if (product.metadata?.features) {
       try {
         return JSON.parse(product.metadata.features);
@@ -117,7 +134,7 @@ class StripeService {
       }
     }
 
-    // Fallback to empty array
+    // Last resort: empty array
     return [];
   }
 
@@ -129,7 +146,7 @@ class StripeService {
 
     try {
       const product = await stripe.products.retrieve(productId, {
-        expand: ['default_price'],
+        expand: ['default_price', 'features'],
       });
 
       const prices = await stripe.prices.list({
