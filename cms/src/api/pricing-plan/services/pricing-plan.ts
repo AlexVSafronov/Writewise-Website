@@ -1,5 +1,4 @@
 import { factories } from '@strapi/strapi';
-import { stripeService } from '../../../services/stripe';
 
 export default factories.createCoreService('api::pricing-plan.pricing-plan', ({ strapi }) => ({
   /**
@@ -7,6 +6,9 @@ export default factories.createCoreService('api::pricing-plan.pricing-plan', ({ 
    */
   async fetchFromStripe() {
     try {
+      // Import Stripe service lazily to avoid initialization at startup
+      const { getStripeService } = await import('../../../services/stripe');
+      const stripeService = getStripeService();
       const products = await stripeService.getProducts();
       return products;
     } catch (error) {

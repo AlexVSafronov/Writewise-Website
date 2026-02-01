@@ -169,5 +169,18 @@ class StripeService {
   }
 }
 
-// Export singleton instance
-export const stripeService = new StripeService();
+// Lazy singleton instance
+let stripeServiceInstance: StripeService | null = null;
+
+export function getStripeService(): StripeService {
+  if (!stripeServiceInstance) {
+    stripeServiceInstance = new StripeService();
+  }
+  return stripeServiceInstance;
+}
+
+// Legacy export for backwards compatibility
+export const stripeService = {
+  getProducts: () => getStripeService().getProducts(),
+  getProduct: (productId: string) => getStripeService().getProduct(productId),
+};
