@@ -172,28 +172,7 @@ const BlogPost = () => {
               <div className="mx-auto grid max-w-5xl gap-8 lg:grid-cols-[1fr_280px]">
                 {/* Main Content */}
                 <article
-                  className="prose prose-lg max-w-none
-                    prose-headings:font-bold prose-headings:text-foreground prose-headings:tracking-tight
-                    prose-h1:text-4xl prose-h1:mt-8 prose-h1:mb-4
-                    prose-h2:text-3xl prose-h2:mt-8 prose-h2:mb-4
-                    prose-h3:text-2xl prose-h3:mt-6 prose-h3:mb-3
-                    prose-h4:text-xl prose-h4:mt-6 prose-h4:mb-3
-                    prose-p:text-muted-foreground prose-p:leading-relaxed prose-p:mb-4
-                    prose-a:text-primary prose-a:underline prose-a:font-medium hover:prose-a:text-primary/80
-                    prose-strong:text-foreground prose-strong:font-semibold
-                    prose-em:text-foreground prose-em:italic
-                    prose-ul:text-muted-foreground prose-ul:my-6 prose-ul:space-y-2
-                    prose-ol:text-muted-foreground prose-ol:my-6 prose-ol:space-y-2
-                    prose-li:text-muted-foreground prose-li:leading-relaxed
-                    prose-blockquote:border-l-4 prose-blockquote:border-primary prose-blockquote:pl-4 prose-blockquote:italic prose-blockquote:text-muted-foreground prose-blockquote:my-6
-                    prose-code:text-foreground prose-code:bg-muted prose-code:px-1 prose-code:py-0.5 prose-code:rounded prose-code:text-sm
-                    prose-pre:bg-muted prose-pre:text-foreground prose-pre:p-4 prose-pre:rounded-lg prose-pre:overflow-x-auto
-                    prose-img:rounded-lg prose-img:shadow-md prose-img:my-8 prose-img:w-full
-                    prose-figcaption:text-center prose-figcaption:text-sm prose-figcaption:text-muted-foreground prose-figcaption:mt-2
-                    prose-table:text-muted-foreground
-                    prose-thead:border-b prose-thead:border-border
-                    prose-th:text-foreground prose-th:font-semibold prose-th:p-3
-                    prose-td:p-3"
+                  className="prose prose-lg max-w-none prose-headings:text-foreground prose-p:text-muted-foreground prose-li:text-muted-foreground prose-strong:text-foreground"
                 >
                   <ReactMarkdown
                     remarkPlugins={[remarkGfm]}
