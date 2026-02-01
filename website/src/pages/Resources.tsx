@@ -30,6 +30,21 @@ const Resources = () => {
     Account: allFAQs.filter(f => f.category === 'Account'),
   };
 
+  // Check if FAQ has any content
+  const hasFAQs = allFAQs.length > 0;
+
+  // Define available tabs based on published content
+  const availableTabs = [
+    { value: 'guides', label: 'Guides', icon: FileText, count: guides.length, hasContent: guides.length > 0 },
+    { value: 'tools', label: 'Tools', icon: Wrench, count: tools.length, hasContent: tools.length > 0 },
+    { value: 'articles', label: 'Articles', icon: BookOpen, count: articles.length, hasContent: articles.length > 0 },
+    { value: 'videos', label: 'Videos', icon: Video, count: videos.length, hasContent: videos.length > 0 },
+    { value: 'faq', label: 'FAQ', icon: HelpCircle, count: allFAQs.length, hasContent: hasFAQs },
+  ].filter(tab => tab.hasContent);
+
+  // Get first available tab for default value
+  const defaultTab = availableTabs.length > 0 ? availableTabs[0].value : 'guides';
+
   return (
     <Layout>
       {/* Hero */}
@@ -49,29 +64,28 @@ const Resources = () => {
       {/* Tabs Content */}
       <section className="py-16">
         <div className="container mx-auto px-4">
-          <Tabs defaultValue="guides" className="w-full">
-            <TabsList className="mb-8 grid w-full max-w-2xl mx-auto grid-cols-5">
-              <TabsTrigger value="guides" className="flex items-center gap-2">
-                <FileText className="h-4 w-4" />
-                Guides
-              </TabsTrigger>
-              <TabsTrigger value="tools" className="flex items-center gap-2">
-                <Wrench className="h-4 w-4" />
-                Tools
-              </TabsTrigger>
-              <TabsTrigger value="articles" className="flex items-center gap-2">
-                <BookOpen className="h-4 w-4" />
-                Articles
-              </TabsTrigger>
-              <TabsTrigger value="videos" className="flex items-center gap-2">
-                <Video className="h-4 w-4" />
-                Videos
-              </TabsTrigger>
-              <TabsTrigger value="faq" className="flex items-center gap-2">
-                <HelpCircle className="h-4 w-4" />
-                FAQ
-              </TabsTrigger>
-            </TabsList>
+          {availableTabs.length === 0 ? (
+            <div className="mx-auto max-w-2xl text-center">
+              <p className="text-lg text-muted-foreground">
+                No resources available yet. Check back soon!
+              </p>
+            </div>
+          ) : (
+            <Tabs defaultValue={defaultTab} className="w-full">
+              <TabsList className={`mb-8 grid w-full max-w-2xl mx-auto ${
+                availableTabs.length === 1 ? 'grid-cols-1' :
+                availableTabs.length === 2 ? 'grid-cols-2' :
+                availableTabs.length === 3 ? 'grid-cols-3' :
+                availableTabs.length === 4 ? 'grid-cols-4' :
+                'grid-cols-5'
+              }`}>
+                {availableTabs.map(tab => (
+                  <TabsTrigger key={tab.value} value={tab.value} className="flex items-center gap-2">
+                    <tab.icon className="h-4 w-4" />
+                    {tab.label}
+                  </TabsTrigger>
+                ))}
+              </TabsList>
 
             {/* Guides Tab */}
             <TabsContent value="guides">
@@ -303,7 +317,8 @@ const Resources = () => {
                 )}
               </div>
             </TabsContent>
-          </Tabs>
+            </Tabs>
+          )}
         </div>
       </section>
 
