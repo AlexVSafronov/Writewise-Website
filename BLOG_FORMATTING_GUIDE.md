@@ -1,162 +1,350 @@
 # WriteWise Blog Formatting Guide
 
-This guide explains all the rich text formatting features available when creating blog posts in the Strapi CMS. The CMS uses **Markdown** format for content, which is automatically converted to styled HTML on the website.
+This guide explains all the Markdown formatting features available when creating blog posts in the Strapi CMS. The CMS uses **GitHub Flavored Markdown (GFM)**, which is automatically converted to styled HTML on the website.
 
-## Available Formatting Options
+## Quick Reference
+
+| Element | Syntax |
+|---------|--------|
+| Heading 1 | `# H1` |
+| Heading 2 | `## H2` |
+| Heading 3 | `### H3` |
+| Bold | `**bold**` or `__bold__` |
+| Italic | `*italic*` or `_italic_` |
+| Bold + Italic | `***text***` or `___text___` |
+| Link | `[text](url)` |
+| Image | `![alt text](url)` |
+| Inline Code | `` `code` `` |
+| Unordered List | `- item` or `* item` |
+| Ordered List | `1. item` |
+| Blockquote | `> quote` |
+| Strikethrough | `~~text~~` |
+| Task List | `- [ ] task` or `- [x] done` |
+
+## Detailed Formatting Guide
 
 ### Headers
-Use headers to organize your content hierarchically:
+
+Use headers to organize your content hierarchically. The number of `#` symbols determines the heading level:
 
 ```markdown
-# Heading 1 (H1) - Use for main title (automatic from post title)
-## Heading 2 (H2) - Use for main sections
-### Heading 3 (H3) - Use for subsections
-#### Heading 4 (H4) - Use for minor subsections
+# Heading 1 (H1)
+## Heading 2 (H2)
+### Heading 3 (H3)
+#### Heading 4 (H4)
+##### Heading 5 (H5)
+###### Heading 6 (H6)
 ```
 
 **When to use:**
-- H2 for major sections (e.g., "Why Online Tests Matter")
-- H3 for subsections (e.g., "Advantages of Digital Testing")
-- H4 for minor points
+- **H1 (`#`)** - Main post title (usually automatic from the title field)
+- **H2 (`##`)** - Major sections (e.g., "Why Online Tests Matter")
+- **H3 (`###`)** - Subsections (e.g., "Advantages of Digital Testing")
+- **H4 (`####`)** - Minor points or sub-subsections
+
+**Important:** Always put a space after the `#` symbols!
+
+✅ Good: `## My Section`
+❌ Bad: `##My Section`
 
 ### Text Styling
 
-**Bold Text** - Use for emphasis on important terms, product names, or key concepts
+#### Bold
+Use for emphasis on important terms, product names, or key concepts:
+
 ```markdown
-**Goethe Institute**
-__Important concept__
+**WriteWise** helps you learn faster
+__Important concept__ to remember
 ```
 
-*Italic Text* - Use for subtle emphasis, foreign words, or book/article titles
+Both `**text**` and `__text__` create bold text.
+
+#### Italic
+Use for subtle emphasis, foreign words, or book/article titles:
+
 ```markdown
-*zeitgeist*
-_The Art of Learning_
+*zeitgeist* is a German word
+The book _The Art of Learning_ is excellent
 ```
 
-***Bold + Italic*** - Use sparingly for maximum emphasis
+Both `*text*` and `_text_` create italic text.
+
+#### Bold + Italic
+Use sparingly for maximum emphasis:
+
 ```markdown
-***Critical point***
-___Maximum emphasis___
+***Critical point*** you must understand
+___Maximum emphasis___ on this topic
+```
+
+#### Strikethrough
+Use to show corrections or deprecated information:
+
+```markdown
+The test costs ~~€50~~ €40 (on sale!)
 ```
 
 ### Links
 
-Internal links (to other pages on your site):
+#### Internal Links
+Link to other pages on your site:
+
 ```markdown
-[Read more about grammar tips](/blog/another-post)
+Check out our [pricing plans](/pricing) for more details.
+Read our [previous article](/blog/german-grammar-tips).
 ```
 
-External links (to other websites):
+#### External Links
+Link to external websites:
+
 ```markdown
-[External Resource](https://example.com)
+Learn more from [Goethe Institute](https://www.goethe.de).
+The [CEFR framework](https://www.coe.int/en/web/common-european-framework-reference-languages) explains language levels.
 ```
 
 **Best practices:**
 - Use descriptive anchor text (not "click here")
-- Link to relevant resources to add value
-- Keep URLs clean and readable
+- Keep URLs clean and meaningful
+- Link to authoritative sources for credibility
 
 ### Lists
 
-**Bulleted Lists** - Use for unordered items:
+#### Unordered Lists (Bullets)
+Use for items without a specific order:
+
 ```markdown
 - First advantage: accessibility
 - Second advantage: instant feedback
 - Third advantage: adaptive difficulty
-
-or
-
-* First advantage: accessibility
-* Second advantage: instant feedback
-* Third advantage: adaptive difficulty
 ```
 
-**Numbered Lists** - Use for sequential steps or ranked items:
+You can also use `*` instead of `-`:
+
+```markdown
+* First item
+* Second item
+* Third item
+```
+
+#### Nested Unordered Lists
+Indent with 2 or 4 spaces:
+
+```markdown
+- Main item
+  - Sub item
+  - Another sub item
+- Another main item
+```
+
+#### Ordered Lists (Numbers)
+Use for sequential steps or ranked items:
+
 ```markdown
 1. Take the initial assessment
 2. Review your results
 3. Create a study plan
+4. Start your first task
+```
+
+#### Nested Ordered Lists
+Mix ordered and unordered as needed:
+
+```markdown
+1. First step
+   1. Sub-step A
+   2. Sub-step B
+2. Second step
+   - Note about this step
+   - Another note
+```
+
+#### Task Lists
+Use for checklists (great for tutorials):
+
+```markdown
+- [ ] Complete the placement test
+- [x] Review your CEFR level
+- [ ] Set your learning goals
+- [ ] Start your first writing task
 ```
 
 ### Images
 
-Upload images through the Strapi media library, then reference them in your content:
+Upload images through the Strapi media library first, then reference them:
 
 ```markdown
-![Deutsche Welle placement test results showing B1 level](/uploads/test-screenshot.jpg)
+![Student taking German placement test](/uploads/test-screenshot.jpg)
 ```
 
-Images automatically support:
-- **Alt text** - The text in square brackets is used for SEO and accessibility
-- **Lazy loading** - Images load as user scrolls
-- **Responsive sizing** - Auto-adjusts to screen size
+**Image Syntax:**
+- `!` - Indicates an image
+- `[alt text]` - Description for SEO and accessibility
+- `(url)` - Path to the image
 
-**Best practices for images:**
-1. Always add descriptive alt text (the text in square brackets)
+**Best practices:**
+1. **Always add descriptive alt text** (the text in square brackets)
+   - ✅ Good: `![CEFR levels chart showing A1 through C2]`
+   - ❌ Bad: `![image]` or `![screenshot]`
 2. Use high-quality images (1200x600px for featured, 800x600px for inline)
-3. Optimize file size (use JPG for photos, PNG for graphics)
-4. Upload through Strapi's media library first, then copy the URL
+3. Optimize file size (JPG for photos, PNG for graphics/charts)
+4. Upload through Strapi's media library, then copy the URL
 
-**Example:**
+**Example with good alt text:**
 ```markdown
-![Student taking online German placement test on laptop](/uploads/german-test-screenshot.jpg)
+![WriteWise dashboard showing progress chart and recent tasks](/uploads/dashboard-screenshot.jpg)
 ```
 
-### Blockquotes
+### Code
 
-Use for:
-- Important callouts
-- Quotes from experts
-- Spoiler alerts
-- Key takeaways
+#### Inline Code
+Use for short code snippets, commands, or technical terms:
 
 ```markdown
-> Spoiler Alert: Not all placement tests give consistent results!
-
-> Multi-line blockquotes
-> can span multiple lines
-> like this.
+Use the `CEFR scale` to assess your level.
+Run the `npm install` command to get started.
+The variable `currentLevel` stores your CEFR level.
 ```
 
-### Code Blocks
+#### Code Blocks
+Use for longer code samples or multi-line content:
 
-Inline code:
-```markdown
-Use the `CEFR scale` for assessment
-```
-
-Code blocks (for longer code):
 ````markdown
 ```javascript
 function assessLevel(score) {
-  return score > 80 ? 'B2' : 'B1';
+  if (score > 80) return 'B2';
+  if (score > 60) return 'B1';
+  return 'A2';
 }
 ```
 ````
 
+**Syntax highlighting:** Specify the language after the opening ``` for proper coloring:
+- `javascript` or `js`
+- `python` or `py`
+- `typescript` or `ts`
+- `html`
+- `css`
+- `bash` or `shell`
+
+**Example with syntax highlighting:**
+
+````markdown
+```python
+def calculate_cefr_level(score):
+    if score >= 80:
+        return "B2"
+    elif score >= 60:
+        return "B1"
+    else:
+        return "A2"
+```
+````
+
+### Blockquotes
+
+Use for:
+- Important callouts or warnings
+- Quotes from experts or users
+- Key takeaways
+- Special notes or tips
+
+```markdown
+> Spoiler Alert: Not all placement tests give consistent results!
+
+> **Pro Tip:** Take multiple tests from different providers to get an accurate average of your level.
+```
+
+**Multi-line blockquotes:**
+```markdown
+> WriteWise adapts to your learning style and pace.
+> It's like having a personal language tutor available 24/7,
+> providing instant feedback on your writing.
+```
+
+**Nested blockquotes:**
+```markdown
+> Main quote here
+>> Nested quote here
+```
+
 ### Tables
 
-Use tables for comparisons, pricing, or structured data:
+Use tables for comparisons, pricing, features, or structured data:
 
 ```markdown
 | Test Provider     | Cost | Duration | Level Range |
 |-------------------|------|----------|-------------|
 | Goethe Institute  | Free | 15 min   | A1-C2       |
 | Deutsche Welle    | Free | 30 min   | A1-C1       |
+| TestDaF           | €195 | 3 hours  | B2-C1       |
 ```
+
+**Column Alignment:**
+```markdown
+| Left Aligned | Center Aligned | Right Aligned |
+|:-------------|:--------------:|--------------:|
+| A1           | Beginner       | 100 words     |
+| B1           | Intermediate   | 500 words     |
+| C1           | Advanced       | 2000 words    |
+```
+
+- `:---` = Left aligned (default)
+- `:---:` = Center aligned
+- `---:` = Right aligned
 
 **Tips:**
 - Use pipes `|` to separate columns
-- Use dashes `---` to separate the header row
-- Content alignment is automatic
-- Keep column widths consistent for readability
+- Use dashes `---` in the second row to separate headers
+- Alignment is controlled by colons in the separator row
+- Cells can contain other markdown (bold, italic, links)
+
+**Table with formatting:**
+```markdown
+| Feature       | Free Plan    | Pro Plan          |
+|---------------|--------------|-------------------|
+| Daily Tasks   | **3 tasks**  | **Unlimited**     |
+| AI Feedback   | Basic        | *Advanced*        |
+| Price         | €0           | [€9.99/mo](/pricing) |
+```
+
+### Horizontal Rules
+
+Create visual section breaks:
+
+```markdown
+---
+```
+
+or
+
+```markdown
+***
+```
+
+or
+
+```markdown
+___
+```
+
+All three create a horizontal line across the page.
+
+### Escaping Characters
+
+If you need to display special Markdown characters literally, escape them with a backslash `\`:
+
+```markdown
+Use \*asterisks\* to show actual asterisks (not italic)
+Use \# to show a hash symbol (not a header)
+Use \- to show a hyphen (not a bullet)
+```
 
 ## SEO Best Practices
 
 ### Image SEO
 1. **Alt text** - Describe what's in the image
-   - Good: "Student taking online German placement test on laptop"
-   - Bad: "image1.jpg" or "test"
+   - Good: `![Student taking online German placement test on laptop]`
+   - Bad: `![image1]` or `![test]`
 
 2. **File names** - Use descriptive names before uploading
    - Good: `german-test-screenshot.jpg`
@@ -169,95 +357,116 @@ Use tables for comparisons, pricing, or structured data:
 
 ### Content Structure
 1. **One H1 per page** - Your post title (automatic)
-2. **Use H2/H3 hierarchy** - Don't skip levels (H2 → H4)
+2. **Use H2/H3 hierarchy** - Don't skip levels (## → ####)
 3. **Short paragraphs** - 2-4 sentences max for readability
 4. **Link to relevant content** - Internal and external links add value
 5. **Use descriptive link text** - Tell readers where the link goes
 
 ### Writing Tips
 1. **Front-load important info** - Key points in first paragraph
-2. **Use active voice** - "WriteWise provides feedback" not "Feedback is provided by WriteWise"
+2. **Use active voice** - "WriteWise provides feedback" not "Feedback is provided"
 3. **Break up text** - Use lists, images, blockquotes for visual variety
 4. **Add value** - Every paragraph should teach something or move the story forward
 
-## Strapi Rich Text Editor Tips
-
-### Toolbar Buttons
-The Strapi editor provides these formatting options:
-- **B** - Bold
-- *I* - Italic
-- Link icon - Insert/edit links
-- Image icon - Insert images
-- List icons - Bulleted/numbered lists
-- Quote icon - Blockquotes
-- Code icon - Inline code or code blocks
-- Heading dropdown - H2, H3, H4 options
-
-### Keyboard Shortcuts
-- `Ctrl/Cmd + B` - Bold
-- `Ctrl/Cmd + I` - Italic
-- `Ctrl/Cmd + K` - Insert link
-- `Ctrl/Cmd + Z` - Undo
-- `Ctrl/Cmd + Shift + Z` - Redo
-
-### Paste Content
-When pasting from Word or Google Docs:
-1. Use "Paste as Plain Text" option if available
-2. Or paste, then reformat using the toolbar
-3. Always preview before publishing
-
-## Example: Well-Formatted Blog Post
+## Complete Example: Well-Formatted Blog Post
 
 ```markdown
 ## Why Online Placement Tests Matter
 
-Choosing the right **CEFR level** for your language studies is crucial. Online placement tests provide a *convenient and accurate* way to assess your current abilities.
+Choosing the right **CEFR level** for your language studies is crucial for success. Online placement tests provide a *convenient and accurate* way to assess your current abilities without the pressure of in-person testing.
 
-![CEFR language proficiency levels chart showing A1 through C2](/uploads/cefr-levels.jpg)
+![CEFR language proficiency levels chart showing progression from A1 to C2](/uploads/cefr-levels-chart.jpg)
 
 ### Top Free Placement Tests
 
-Here are the most reliable free options:
+Here are the most reliable free options available in 2025:
 
-- **Goethe Institute** - Comprehensive test covering all skills
+- **Goethe Institute** - Comprehensive test covering all four skills
 - **Deutsche Welle** - Quick assessment with instant results
 - **GLS Berlin** - Focus on practical communication skills
+- **Online German Club** - Interactive format with adaptive difficulty
 
-> Spoiler Alert: Test results can vary between providers!
+> **Spoiler Alert:** Test results can vary between providers by one CEFR level!
 
-For more details, check out our guide on [how to test your German level](/blog/how-to-test-your-german-level).
+For more details, check out our comprehensive guide on [how to test your German level](/blog/how-to-test-your-german-level).
+
+### Comparison Table
+
+| Test Provider     | Cost | Duration | Level Range | Certificate |
+|-------------------|------|----------|-------------|-------------|
+| Goethe Institute  | Free | 15 min   | A1-C2       | ❌          |
+| Deutsche Welle    | Free | 30 min   | A1-C1       | ❌          |
+| TestDaF           | €195 | 3 hours  | B2-C1       | ✅          |
 
 ### Advantages of Digital Testing
 
-1. Instant feedback on your performance
-2. Adaptive difficulty based on your answers
-3. Detailed breakdown by skill area
+1. **Instant feedback** on your performance
+2. **Adaptive difficulty** based on your answers
+3. **Detailed breakdown** by skill area (reading, writing, listening)
+4. **Flexible scheduling** - take it anytime, anywhere
+5. **No test anxiety** - comfortable home environment
+
+#### Getting Started
+
+Ready to find your level? Follow these steps:
+
+- [ ] Choose a test provider from the list above
+- [ ] Set aside 30-60 minutes in a quiet space
+- [ ] Complete the test honestly (don't use dictionaries)
+- [ ] Review your results and note your strengths
+- [ ] Start learning at your assessed level
 
 Start with the [Deutsche Welle placement test](https://www.dw.com/de/deutsch-lernen/einstufungstest/s-32523) to get your baseline level.
+
+---
+
+*Last updated: February 2025*
 ```
 
 ## Common Mistakes to Avoid
 
 ❌ **Don't:**
-- Use multiple H1 headers (#)
+- Use multiple H1 headers (`#`)
 - Skip heading levels (## → ####)
 - Use "click here" as link text
 - Forget alt text on images
 - Create walls of text without breaks
 - Use all caps for emphasis
 - Overuse bold and italic formatting
-- Mix different list styles in the same list
+- Mix different list markers in the same list (`-` and `*`)
+- Forget the space after `#` in headers
+- Leave blank lines inside lists (breaks the list)
 
 ✅ **Do:**
 - Use proper Markdown hierarchy (# → ## → ### → ####)
 - Add descriptive alt text to all images
-- Break content into scannable sections
-- Use lists for clarity
+- Break content into scannable sections with headers
+- Use lists for clarity and easy scanning
 - Link to relevant resources with descriptive text
 - Optimize images before uploading
-- Preview before publishing
+- Preview your content before publishing
 - Use blank lines to separate paragraphs and sections
+- Keep your markdown clean and consistent
+
+## Testing Your Formatting
+
+Before publishing, check that:
+1. All headers are in the correct hierarchy
+2. All images have descriptive alt text
+3. All links work and point to the correct pages
+4. Lists are properly formatted with consistent markers
+5. Code blocks specify the language for syntax highlighting
+6. Tables are properly aligned
+7. There are no raw Markdown symbols showing (check for missing spaces after `#`)
 
 ## Need Help?
 
-If you need assistance with formatting or have questions about the CMS editor, contact the development team.
+If you encounter formatting issues or have questions about the CMS editor, contact the development team.
+
+---
+
+**Technical Details:**
+- Markdown flavor: GitHub Flavored Markdown (GFM)
+- Parser: react-markdown with remark-gfm
+- Renderer: Custom React components with Tailwind Typography
+- Spec: https://github.github.com/gfm/
