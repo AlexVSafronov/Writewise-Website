@@ -4,38 +4,13 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Play, FileText, Download, Clock, BookOpen, Video, HelpCircle, ArrowRight, ExternalLink, Wrench } from "lucide-react";
-import { useResources } from "@/hooks/use-strapi";
-
-const faqs = [
-  {
-    question: "How do I reset my password?",
-    answer: "Go to the login page and click 'Forgot Password'. Enter your email address and we'll send you a reset link.",
-  },
-  {
-    question: "Can I use WriteWise offline?",
-    answer: "Currently, WriteWise requires an internet connection for AI feedback. However, you can download exercises for offline practice.",
-  },
-  {
-    question: "How do I change my learning language?",
-    answer: "Go to Settings > Learning Preferences > Target Language. You can switch languages anytime without losing progress.",
-  },
-  {
-    question: "What's included in the free plan?",
-    answer: "The free plan includes 5 exercises per day, basic AI feedback, A2-B1 content, and community access.",
-  },
-  {
-    question: "How do I cancel my subscription?",
-    answer: "Go to Settings > Subscription > Manage Subscription. You can cancel anytime and retain access until the end of your billing period.",
-  },
-  {
-    question: "Can I get a refund?",
-    answer: "We offer a 14-day money-back guarantee for all paid plans. Contact support@write-wise.com for assistance.",
-  },
-];
+import { useResources, useFAQs } from "@/hooks/use-strapi";
 
 const Resources = () => {
   const { data: resourcesData, isLoading: resourcesLoading } = useResources();
+  const { data: faqData, isLoading: faqLoading } = useFAQs(); // Fetch all FAQs
 
   const allResources = resourcesData?.data || [];
 
@@ -44,6 +19,15 @@ const Resources = () => {
   const guides = allResources.filter(r => r.category === 'Guides');
   const tools = allResources.filter(r => r.category === 'Tools');
   const articles = allResources.filter(r => r.category === 'Articles');
+
+  // Organize FAQs by category
+  const allFAQs = faqData?.data || [];
+  const faqsByCategory = {
+    General: allFAQs.filter(f => f.category === 'General'),
+    Pricing: allFAQs.filter(f => f.category === 'Pricing'),
+    Technical: allFAQs.filter(f => f.category === 'Technical'),
+    Account: allFAQs.filter(f => f.category === 'Account'),
+  };
 
   return (
     <Layout>
@@ -258,30 +242,64 @@ const Resources = () => {
             {/* FAQ Tab */}
             <TabsContent value="faq">
               <div className="mx-auto max-w-3xl">
-                <div className="grid gap-4">
-                  {faqs.map((faq, index) => (
-                    <Card key={index} className="card-elevated border-0">
-                      <CardContent className="p-6">
-                        <h3 className="mb-2 flex items-start gap-3 font-semibold text-foreground">
-                          <HelpCircle className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
-                          {faq.question}
-                        </h3>
-                        <p className="ml-8 text-muted-foreground">{faq.answer}</p>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
-                <div className="mt-12 text-center">
-                  <p className="mb-4 text-muted-foreground">
-                    Can't find what you're looking for?
-                  </p>
-                  <Button variant="outline" asChild>
-                    <a href="mailto:support@write-wise.com">
-                      Contact Support
-                      <ExternalLink className="ml-2 h-4 w-4" />
-                    </a>
-                  </Button>
-                </div>
+                {faqLoading ? (
+                  <div className="space-y-8">
+                    {Array.from({ length: 3 }).map((_, i) => (
+                      <div key={i}>
+                        <Skeleton className="mb-4 h-8 w-48" />
+                        <div className="space-y-4">
+                          {Array.from({ length: 3 }).map((_, j) => (
+                            <div key={j} className="rounded-lg border p-4">
+                              <Skeleton className="mb-2 h-6 w-3/4" />
+                              <Skeleton className="h-4 w-full" />
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <>
+                    {Object.entries(faqsByCategory).map(([category, faqs]) => {
+                      if (faqs.length === 0) return null;
+
+                      return (
+                        <div key={category} className="mb-12 last:mb-0">
+                          <h3 className="mb-6 text-2xl font-bold text-foreground">
+                            {category} <span className="text-gradient-brand">Questions</span>
+                          </h3>
+                          <Accordion type="single" collapsible className="w-full">
+                            {faqs.map((faq, index) => (
+                              <AccordionItem key={faq.id} value={`${category}-${index}`}>
+                                <AccordionTrigger className="text-left text-foreground hover:text-primary">
+                                  <div className="flex items-start gap-3">
+                                    <HelpCircle className="mt-1 h-5 w-5 shrink-0 text-primary" />
+                                    <span>{faq.question}</span>
+                                  </div>
+                                </AccordionTrigger>
+                                <AccordionContent className="ml-8 text-muted-foreground">
+                                  {faq.answer}
+                                </AccordionContent>
+                              </AccordionItem>
+                            ))}
+                          </Accordion>
+                        </div>
+                      );
+                    })}
+
+                    <div className="mt-12 text-center">
+                      <p className="mb-4 text-muted-foreground">
+                        Can't find what you're looking for?
+                      </p>
+                      <Button variant="outline" asChild>
+                        <a href="mailto:support@write-wise.com">
+                          Contact Support
+                          <ExternalLink className="ml-2 h-4 w-4" />
+                        </a>
+                      </Button>
+                    </div>
+                  </>
+                )}
               </div>
             </TabsContent>
           </Tabs>
