@@ -116,7 +116,7 @@ const Pricing = () => {
               plans.map((plan) => (
                 <Card
                   key={plan.name}
-                  className={`relative transition-transform hover:-translate-y-1 ${
+                  className={`relative flex flex-col transition-transform hover:-translate-y-1 ${
                     plan.popular ? "border-primary shadow-lg shadow-primary/20" : "card-elevated border-0"
                   }`}
                 >
@@ -136,8 +136,8 @@ const Pricing = () => {
                     </div>
                     <p className="mt-2 text-sm text-muted-foreground">{plan.description}</p>
                   </CardHeader>
-                  <CardContent>
-                    <ul className="mb-6 space-y-3">
+                  <CardContent className="flex flex-1 flex-col">
+                    <ul className="mb-6 flex-1 space-y-3">
                       {plan.features.map((feature) => (
                         <li key={feature} className="flex items-start gap-3">
                           <Check className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
