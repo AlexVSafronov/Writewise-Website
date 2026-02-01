@@ -36,13 +36,6 @@ const BlogPost = () => {
 
   const post = postData?.data[0];
 
-  // Debug: Log post data to console
-  if (post) {
-    console.log('Blog Post Data:', post);
-    console.log('Content type:', typeof post.content);
-    console.log('Content preview:', post.content?.substring(0, 200));
-  }
-
   const imageUrl = post?.featuredImage?.data?.attributes?.url
     ? `${import.meta.env.VITE_STRAPI_URL || 'https://writewise-cms-m2xkjyh6ta-oe.a.run.app'}${post.featuredImage.data.attributes.url}`
     : 'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=1200&h=600&fit=crop';
@@ -151,34 +144,6 @@ const BlogPost = () => {
           {/* Article Content */}
           <section className="py-8">
             <div className="container mx-auto px-4">
-              {/* Debug Panel - Remove after testing */}
-              {import.meta.env.DEV && post.content && (
-                <div className="mx-auto mb-8 max-w-5xl rounded-lg bg-yellow-50 p-4 dark:bg-yellow-900/20">
-                  <details>
-                    <summary className="cursor-pointer font-semibold text-yellow-900 dark:text-yellow-100">
-                      🐛 Debug: Raw Markdown Content (DEV only)
-                    </summary>
-                    <div className="mt-4 space-y-4">
-                      <div>
-                        <div className="mb-2 text-sm font-semibold text-yellow-900 dark:text-yellow-100">
-                          Raw Content (with visible newlines):
-                        </div>
-                        <pre className="overflow-x-auto rounded bg-white p-4 text-xs dark:bg-gray-800">
-                          {post.content.substring(0, 800).replace(/\n/g, '⏎\n').replace(/ /g, '·')}
-                          {post.content.length > 800 && '\n\n...(truncated)'}
-                        </pre>
-                      </div>
-                      <div className="grid grid-cols-2 gap-4 text-sm text-yellow-800 dark:text-yellow-200">
-                        <div>Total length: {post.content.length} chars</div>
-                        <div>Line breaks: {(post.content.match(/\n/g) || []).length}</div>
-                        <div>Double breaks: {(post.content.match(/\n\n/g) || []).length}</div>
-                        <div>Paragraphs: {post.content.split(/\n\n+/).length}</div>
-                      </div>
-                    </div>
-                  </details>
-                </div>
-              )}
-
               <div className="mx-auto grid max-w-5xl gap-8 lg:grid-cols-[1fr_280px]">
                 {/* Main Content */}
                 <article className="prose max-w-none prose-headings:text-foreground prose-p:text-muted-foreground prose-li:text-muted-foreground prose-strong:text-foreground">
