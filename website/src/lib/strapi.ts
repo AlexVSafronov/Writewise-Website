@@ -52,8 +52,12 @@ class StrapiClient {
 
   // Resources
   async getResources(featured?: boolean): Promise<StrapiResponse<Resource[]>> {
-    const filters = featured ? '?filters[featured][$eq]=true' : '';
+    const filters = featured ? '?filters[featured][$eq]=true&populate=*' : '?populate=*';
     return this.fetch<StrapiResponse<Resource[]>>(`/resources${filters}`);
+  }
+
+  async getResource(slug: string): Promise<StrapiResponse<Resource[]>> {
+    return this.fetch<StrapiResponse<Resource[]>>(`/resources?filters[slug][$eq]=${slug}&populate=*`);
   }
 
   // Pricing Plans

@@ -9,6 +9,7 @@ import About from "./pages/About";
 import Blog from "./pages/Blog";
 import BlogPost from "./pages/BlogPost";
 import Resources from "./pages/Resources";
+import VideoResource from "./pages/VideoResource";
 import NotFound from "./pages/NotFound";
 
 // App pages
@@ -34,6 +35,7 @@ const App = () => (
           <Route path="/blog" element={<Blog />} />
           <Route path="/blog/:slug" element={<BlogPost />} />
           <Route path="/resources" element={<Resources />} />
+          <Route path="/resources/videos/:slug" element={<VideoResource />} />
           
           {/* App pages */}
           <Route path="/app" element={<AppLayout />}>

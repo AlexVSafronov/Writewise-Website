@@ -41,6 +41,14 @@ export function useResources(featured?: boolean) {
   });
 }
 
+export function useResource(slug: string) {
+  return useQuery({
+    queryKey: ['resource', slug],
+    queryFn: () => strapiClient.getResource(slug),
+    enabled: !!slug,
+  });
+}
+
 // Pricing Plans
 export function usePricingPlans() {
   return useQuery({

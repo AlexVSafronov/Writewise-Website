@@ -66,11 +66,31 @@ export interface Testimonial extends StrapiEntity {
 
 export interface Resource extends StrapiEntity {
   title: string;
+  slug: string;
   description: string;
   category: 'Guides' | 'Tools' | 'Articles' | 'Videos';
   link: string;
   icon?: string;
   featured?: boolean;
+  fullDescription?: string;
+  thumbnail?: {
+    data: {
+      attributes: {
+        url: string;
+        alternativeText?: string;
+      };
+    };
+  };
+  duration?: string;
+  videoUrl?: string;
+  views?: string;
+  likes?: string;
+  chapters?: { time: string; title: string }[];
+  pages?: number;
+  format?: string;
+  readTime?: string;
+  lastUpdated?: string;
+  tableOfContents?: { title: string; page: number }[];
 }
 
 export interface PricingPlan extends StrapiEntity {

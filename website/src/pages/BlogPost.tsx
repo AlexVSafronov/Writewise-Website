@@ -2,22 +2,24 @@ import { useParams, Link } from "react-router-dom";
 import { Layout } from "@/components/layout";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
 import { SEO } from "@/components/SEO";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ArrowLeft, Calendar, Clock, User } from "lucide-react";
-import { useBlogPost } from "@/hooks/use-strapi";
+import { ArrowLeft, Calendar, Clock, User, Share2, Bookmark, ThumbsUp } from "lucide-react";
+import { useBlogPost, useBlogPosts } from "@/hooks/use-strapi";
 import DOMPurify from "dompurify";
 
 const BlogPost = () => {
   const { slug } = useParams<{ slug: string }>();
   const { data: postData, isLoading, error } = useBlogPost(slug || '');
+  const { data: relatedPostsData } = useBlogPosts(); // Get all posts for related articles
 
   if (error) {
     return (
       <Layout>
-        <div className="container mx-auto px-4 py-20 text-center">
-          <h1 className="mb-4 text-4xl font-bold text-foreground">Post Not Found</h1>
-          <p className="mb-8 text-muted-foreground">The blog post you're looking for doesn't exist.</p>
+        <div className="container mx-auto px-4 py-16 text-center">
+          <h1 className="mb-4 text-2xl font-bold">Post Not Found</h1>
+          <p className="mb-8 text-muted-foreground">The article you're looking for doesn't exist.</p>
           <Button asChild>
             <Link to="/blog">
               <ArrowLeft className="mr-2 h-4 w-4" />
@@ -35,6 +37,16 @@ const BlogPost = () => {
     ? `${import.meta.env.VITE_STRAPI_URL || 'https://writewise-cms-m2xkjyh6ta-oe.a.run.app'}${post.featuredImage.data.attributes.url}`
     : 'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=1200&h=600&fit=crop';
 
+  // Get related posts (same category, limit to 2)
+  const relatedPosts = relatedPostsData?.data
+    .filter(p => p.slug !== slug && p.category === post?.category)
+    .slice(0, 2)
+    .map(p => ({
+      slug: p.slug,
+      title: p.title,
+      category: p.category,
+    })) || [];
+
   return (
     <Layout>
       {isLoading ? (
@@ -43,23 +55,28 @@ const BlogPost = () => {
             title="Loading... - WriteWise Blog"
             description="Loading blog post..."
           />
-          <div className="container mx-auto px-4 py-12">
-            <Skeleton className="mb-8 h-10 w-32" />
-            <article className="mx-auto max-w-4xl">
-              <Skeleton className="mb-8 aspect-video w-full" />
-              <Skeleton className="mb-4 h-12 w-3/4" />
-              <div className="mb-8 flex flex-wrap gap-4">
-                <Skeleton className="h-4 w-32" />
-                <Skeleton className="h-4 w-32" />
-                <Skeleton className="h-4 w-24" />
+          {/* Loading State */}
+          <section className="bg-gradient-brand-subtle py-8">
+            <div className="container mx-auto px-4">
+              <Skeleton className="mb-6 h-8 w-32" />
+              <div className="mx-auto max-w-3xl">
+                <Skeleton className="mb-4 h-6 w-24" />
+                <Skeleton className="mb-6 h-12 w-full" />
+                <div className="flex flex-wrap items-center gap-4">
+                  <Skeleton className="h-4 w-32" />
+                  <Skeleton className="h-4 w-32" />
+                  <Skeleton className="h-4 w-24" />
+                </div>
               </div>
-              <div className="space-y-4">
-                <Skeleton className="h-4 w-full" />
-                <Skeleton className="h-4 w-full" />
-                <Skeleton className="h-4 w-3/4" />
+            </div>
+          </section>
+          <section className="py-8">
+            <div className="container mx-auto px-4">
+              <div className="mx-auto max-w-4xl">
+                <Skeleton className="aspect-video w-full rounded-xl" />
               </div>
-            </article>
-          </div>
+            </div>
+          </section>
         </>
       ) : post ? (
         <>
@@ -70,79 +87,143 @@ const BlogPost = () => {
             ogType="article"
             ogImage={imageUrl}
           />
-          <div className="container mx-auto px-4 py-12">
-            <Button variant="ghost" className="mb-8" asChild>
-              <Link to="/blog">
-                <ArrowLeft className="mr-2 h-4 w-4" />
-                Back to Blog
-              </Link>
-            </Button>
 
-            <article className="mx-auto max-w-4xl">
-              {/* Featured Image */}
-              <div className="mb-8 overflow-hidden rounded-lg">
+          {/* Hero */}
+          <section className="bg-gradient-brand-subtle py-8">
+            <div className="container mx-auto px-4">
+              <Button variant="ghost" size="sm" asChild className="mb-6">
+                <Link to="/blog">
+                  <ArrowLeft className="mr-2 h-4 w-4" />
+                  Back to Blog
+                </Link>
+              </Button>
+
+              <div className="mx-auto max-w-3xl">
+                <Badge className="mb-4 bg-primary/10 text-primary">{post.category}</Badge>
+                <h1 className="mb-6 text-3xl font-bold text-foreground md:text-4xl lg:text-5xl">
+                  {post.title}
+                </h1>
+                <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
+                  <div className="flex items-center gap-2">
+                    <User className="h-4 w-4" />
+                    {post.author}
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Calendar className="h-4 w-4" />
+                    {new Date(post.publishedDate).toLocaleDateString('en-US', {
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric'
+                    })}
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Clock className="h-4 w-4" />
+                    {post.readTime}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* Featured Image */}
+          <section className="py-8">
+            <div className="container mx-auto px-4">
+              <div className="mx-auto max-w-4xl overflow-hidden rounded-xl">
                 <img
                   src={imageUrl}
                   alt={post.title}
-                  className="aspect-video w-full object-cover"
+                  className="h-auto w-full object-cover"
                 />
               </div>
+            </div>
+          </section>
 
-              {/* Category Badge */}
-              <Badge className="mb-4 bg-primary/10 text-primary hover:bg-primary/20">
-                {post.category}
-              </Badge>
+          {/* Article Content */}
+          <section className="py-8">
+            <div className="container mx-auto px-4">
+              <div className="mx-auto grid max-w-5xl gap-8 lg:grid-cols-[1fr_280px]">
+                {/* Main Content */}
+                <article
+                  className="prose prose-lg max-w-none prose-headings:text-foreground prose-p:text-muted-foreground prose-li:text-muted-foreground prose-strong:text-foreground"
+                  dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(post.content) }}
+                />
 
-              {/* Title */}
-              <h1 className="mb-6 text-4xl font-bold text-foreground md:text-5xl">
-                {post.title}
-              </h1>
+                {/* Sidebar */}
+                <aside className="space-y-6">
+                  {/* Share Actions */}
+                  <Card className="card-elevated border-0">
+                    <CardContent className="p-4">
+                      <h3 className="mb-4 font-semibold text-foreground">Share Article</h3>
+                      <div className="flex gap-2">
+                        <Button variant="outline" size="icon">
+                          <Share2 className="h-4 w-4" />
+                        </Button>
+                        <Button variant="outline" size="icon">
+                          <Bookmark className="h-4 w-4" />
+                        </Button>
+                        <Button variant="outline" size="icon">
+                          <ThumbsUp className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
 
-              {/* Metadata */}
-              <div className="mb-8 flex flex-wrap items-center gap-6 border-b pb-6 text-sm text-muted-foreground">
-                <div className="flex items-center gap-2">
-                  <User className="h-4 w-4" />
-                  <div>
-                    <span className="font-medium text-foreground">{post.author}</span>
-                    {post.authorRole && <span className="ml-1">· {post.authorRole}</span>}
-                  </div>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Calendar className="h-4 w-4" />
-                  {new Date(post.publishedDate).toLocaleDateString('en-US', {
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric'
-                  })}
-                </div>
-                <div className="flex items-center gap-2">
-                  <Clock className="h-4 w-4" />
-                  {post.readTime}
-                </div>
+                  {/* Author Card */}
+                  <Card className="card-elevated border-0">
+                    <CardContent className="p-4">
+                      <h3 className="mb-3 font-semibold text-foreground">About the Author</h3>
+                      <p className="mb-2 font-medium text-foreground">{post.author}</p>
+                      {post.authorRole && (
+                        <p className="text-sm text-muted-foreground">{post.authorRole}</p>
+                      )}
+                    </CardContent>
+                  </Card>
+
+                  {/* Related Posts */}
+                  {relatedPosts.length > 0 && (
+                    <Card className="card-elevated border-0">
+                      <CardContent className="p-4">
+                        <h3 className="mb-4 font-semibold text-foreground">Related Articles</h3>
+                        <div className="space-y-3">
+                          {relatedPosts.map((related) => (
+                            <Link
+                              key={related.slug}
+                              to={`/blog/${related.slug}`}
+                              className="block rounded-lg p-2 transition-colors hover:bg-muted"
+                            >
+                              <Badge className="mb-1 bg-primary/10 text-xs text-primary">
+                                {related.category}
+                              </Badge>
+                              <p className="text-sm font-medium text-foreground hover:text-primary">
+                                {related.title}
+                              </p>
+                            </Link>
+                          ))}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  )}
+                </aside>
               </div>
+            </div>
+          </section>
 
-              {/* Content */}
-              <div
-                className="prose prose-lg max-w-none prose-headings:text-foreground prose-p:text-muted-foreground prose-a:text-primary prose-strong:text-foreground prose-ul:text-muted-foreground prose-ol:text-muted-foreground prose-li:text-muted-foreground prose-blockquote:text-muted-foreground prose-code:text-foreground"
-                dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(post.content) }}
-              />
-            </article>
-
-            {/* CTA Section */}
-            <div className="mx-auto mt-16 max-w-4xl rounded-lg bg-gradient-brand p-8 text-center">
-              <h2 className="mb-4 text-2xl font-bold text-white">
-                Ready to Start Learning?
+          {/* CTA */}
+          <section className="bg-gradient-brand py-16">
+            <div className="container mx-auto px-4 text-center">
+              <h2 className="mb-4 text-2xl font-bold text-white md:text-3xl">
+                Ready to Improve Your Writing?
               </h2>
-              <p className="mb-6 text-white/80">
-                Put these insights into practice with WriteWise's AI-powered language learning platform.
+              <p className="mx-auto mb-8 max-w-xl text-white/80">
+                Join thousands of learners using WriteWise to master language skills.
               </p>
               <Button size="lg" variant="secondary" asChild>
                 <a href="https://app.write-wise.com?mode=signup" target="_blank" rel="noopener noreferrer">
-                  Get Started Free
+                  Start Learning Free
                 </a>
               </Button>
             </div>
-          </div>
+          </section>
         </>
       ) : null}
     </Layout>

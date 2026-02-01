@@ -7,6 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Play, FileText, Download, Clock, BookOpen, Video, HelpCircle, ArrowRight, ExternalLink, Wrench } from "lucide-react";
 import { useResources, useFAQs } from "@/hooks/use-strapi";
+import { Link } from "react-router-dom";
 
 const Resources = () => {
   const { data: resourcesData, isLoading: resourcesLoading } = useResources();
@@ -217,8 +218,8 @@ const Resources = () => {
               ) : (
                 <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                   {videos.map((video) => (
-                    <Card key={video.title} className="card-elevated group cursor-pointer border-0 transition-transform hover:-translate-y-1" asChild>
-                      <a href={video.link} target="_blank" rel="noopener noreferrer">
+                    <Link key={video.slug} to={`/resources/videos/${video.slug}`}>
+                      <Card className="card-elevated group cursor-pointer border-0 transition-transform hover:-translate-y-1">
                         <CardContent className="p-6">
                           <Badge className="mb-4 bg-primary/10 text-primary hover:bg-primary/20">
                             {video.category}
@@ -232,8 +233,8 @@ const Resources = () => {
                             Watch Video
                           </div>
                         </CardContent>
-                      </a>
-                    </Card>
+                      </Card>
+                    </Link>
                   ))}
                 </div>
               )}

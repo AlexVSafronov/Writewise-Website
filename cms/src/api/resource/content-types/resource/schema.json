@@ -17,6 +17,11 @@
       "required": true,
       "maxLength": 150
     },
+    "slug": {
+      "type": "uid",
+      "targetField": "title",
+      "required": true
+    },
     "description": {
       "type": "text",
       "required": true,
@@ -39,6 +44,52 @@
     "featured": {
       "type": "boolean",
       "default": false
+    },
+    "fullDescription": {
+      "type": "richtext"
+    },
+    "thumbnail": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": ["images"]
+    },
+    "duration": {
+      "type": "string",
+      "maxLength": 20
+    },
+    "videoUrl": {
+      "type": "string",
+      "maxLength": 500
+    },
+    "views": {
+      "type": "string",
+      "maxLength": 20
+    },
+    "likes": {
+      "type": "string",
+      "maxLength": 20
+    },
+    "chapters": {
+      "type": "json"
+    },
+    "pages": {
+      "type": "integer"
+    },
+    "format": {
+      "type": "string",
+      "maxLength": 20
+    },
+    "readTime": {
+      "type": "string",
+      "maxLength": 20
+    },
+    "lastUpdated": {
+      "type": "string",
+      "maxLength": 50
+    },
+    "tableOfContents": {
+      "type": "json"
     }
   }
 }
