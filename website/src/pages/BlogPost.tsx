@@ -181,7 +181,7 @@ const BlogPost = () => {
 
               <div className="mx-auto grid max-w-5xl gap-8 lg:grid-cols-[1fr_280px]">
                 {/* Main Content */}
-                <article className="prose prose-lg max-w-none prose-headings:text-foreground prose-p:text-muted-foreground prose-li:text-muted-foreground prose-strong:text-foreground">
+                <article className="prose max-w-none prose-headings:text-foreground prose-p:text-muted-foreground prose-li:text-muted-foreground prose-strong:text-foreground">
                   <ReactMarkdown
                     remarkPlugins={[remarkGfm, remarkBreaks]}
                     rehypePlugins={[rehypeRaw]}
