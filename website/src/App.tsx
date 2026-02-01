@@ -10,6 +10,7 @@ import Blog from "./pages/Blog";
 import BlogPost from "./pages/BlogPost";
 import Resources from "./pages/Resources";
 import VideoResource from "./pages/VideoResource";
+import MarkdownTest from "./pages/MarkdownTest";
 import NotFound from "./pages/NotFound";
 
 // App pages
@@ -36,6 +37,7 @@ const App = () => (
           <Route path="/blog/:slug" element={<BlogPost />} />
           <Route path="/resources" element={<Resources />} />
           <Route path="/resources/videos/:slug" element={<VideoResource />} />
+          <Route path="/markdown-test" element={<MarkdownTest />} />
           
           {/* App pages */}
           <Route path="/app" element={<AppLayout />}>
