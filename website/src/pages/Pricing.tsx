@@ -7,6 +7,15 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Check, Sparkles, ArrowRight } from "lucide-react";
 import { useStripePricing, useFAQs } from "@/hooks/use-strapi";
 
+// Currency symbol mapping
+const currencySymbols: Record<string, string> = {
+  USD: "$",
+  EUR: "€",
+  GBP: "£",
+  CAD: "CA$",
+  AUD: "A$",
+};
+
 const Pricing = () => {
   const { data: pricingData, isLoading: pricingLoading } = useStripePricing();
   const { data: faqData, isLoading: faqLoading } = useFAQs('Pricing');
@@ -18,7 +27,9 @@ const Pricing = () => {
 
   const faqSchema = generateFAQSchema(faqs);
 
-  const plans = pricingData?.data.map(item => {
+  const plans = (pricingData?.data || [])
+    .sort((a, b) => a.order - b.order)
+    .map(item => {
     const plan = item;
 
     // Determine CTA text based on plan code
@@ -27,14 +38,19 @@ const Pricing = () => {
       cta = "Contact Sales";
     } else if (plan.code === "basic") {
       cta = "Start Pro Trial";
+    } else if (plan.code === "free" && plan.price === 0) {
+      cta = "Start Free";
     }
+
+    // Get currency symbol
+    const currencySymbol = currencySymbols[plan.currency] || plan.currency;
 
     // Format price display
     const priceDisplay = plan.price === 0
-      ? `${plan.currency}0`
-      : `${plan.currency}${plan.price}`;
+      ? "Free"
+      : `${currencySymbol}${plan.price}`;
 
-    const period = plan.price === 0 ? "forever" : "/month";
+    const period = plan.price === 0 ? "" : "/month";
 
     return {
       name: plan.name,
@@ -45,7 +61,7 @@ const Pricing = () => {
       cta: cta,
       popular: plan.highlighted || false,
     };
-  }) || [];
+  });
 
   return (
     <Layout>
