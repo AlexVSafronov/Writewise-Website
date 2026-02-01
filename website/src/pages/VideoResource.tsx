@@ -8,6 +8,7 @@ import { ArrowLeft, Clock, Play, ThumbsUp, MessageSquare, Share2, ChevronRight }
 import { useResource, useResources } from "@/hooks/use-strapi";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import remarkBreaks from "remark-breaks";
 import rehypeRaw from "rehype-raw";
 
 const VideoResource = () => {
@@ -150,7 +151,7 @@ const VideoResource = () => {
                         <h2 className="mb-3 font-semibold text-foreground">About this video</h2>
                         <div className="prose max-w-none prose-p:text-muted-foreground">
                           <ReactMarkdown
-                            remarkPlugins={[remarkGfm]}
+                            remarkPlugins={[remarkGfm, remarkBreaks]}
                             rehypePlugins={[rehypeRaw]}
                           >
                             {video.fullDescription}

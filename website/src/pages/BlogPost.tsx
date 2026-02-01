@@ -9,6 +9,7 @@ import { ArrowLeft, Calendar, Clock, User, Share2, Bookmark, ThumbsUp } from "lu
 import { useBlogPost, useBlogPosts } from "@/hooks/use-strapi";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import remarkBreaks from "remark-breaks";
 import rehypeRaw from "rehype-raw";
 
 const BlogPost = () => {
@@ -157,12 +158,22 @@ const BlogPost = () => {
                     <summary className="cursor-pointer font-semibold text-yellow-900 dark:text-yellow-100">
                       🐛 Debug: Raw Markdown Content (DEV only)
                     </summary>
-                    <pre className="mt-4 overflow-x-auto rounded bg-white p-4 text-xs dark:bg-gray-800">
-                      {post.content.substring(0, 500)}
-                      {post.content.length > 500 && '...\n\n(truncated)'}
-                    </pre>
-                    <div className="mt-2 text-sm text-yellow-800 dark:text-yellow-200">
-                      Content length: {post.content.length} characters
+                    <div className="mt-4 space-y-4">
+                      <div>
+                        <div className="mb-2 text-sm font-semibold text-yellow-900 dark:text-yellow-100">
+                          Raw Content (with visible newlines):
+                        </div>
+                        <pre className="overflow-x-auto rounded bg-white p-4 text-xs dark:bg-gray-800">
+                          {post.content.substring(0, 800).replace(/\n/g, '⏎\n').replace(/ /g, '·')}
+                          {post.content.length > 800 && '\n\n...(truncated)'}
+                        </pre>
+                      </div>
+                      <div className="grid grid-cols-2 gap-4 text-sm text-yellow-800 dark:text-yellow-200">
+                        <div>Total length: {post.content.length} chars</div>
+                        <div>Line breaks: {(post.content.match(/\n/g) || []).length}</div>
+                        <div>Double breaks: {(post.content.match(/\n\n/g) || []).length}</div>
+                        <div>Paragraphs: {post.content.split(/\n\n+/).length}</div>
+                      </div>
                     </div>
                   </details>
                 </div>
@@ -174,7 +185,7 @@ const BlogPost = () => {
                   className="prose prose-lg max-w-none prose-headings:text-foreground prose-p:text-muted-foreground prose-li:text-muted-foreground prose-strong:text-foreground"
                 >
                   <ReactMarkdown
-                    remarkPlugins={[remarkGfm]}
+                    remarkPlugins={[remarkGfm, remarkBreaks]}
                     rehypePlugins={[rehypeRaw]}
                   >
                     {post.content || ''}
