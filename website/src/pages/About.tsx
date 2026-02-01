@@ -50,11 +50,9 @@ const team = [
 ];
 
 const milestones = [
-  { year: "2021", event: "WriteWise founded with a mission to democratize language learning" },
-  { year: "2022", event: "Launched beta with 1,000 early adopters" },
-  { year: "2023", event: "Reached 25,000 active learners, introduced AI mentor feature" },
-  { year: "2024", event: "Expanded to 15+ languages, 50,000+ learners worldwide" },
-  { year: "2025", event: "Launched business writing modules and team features" },
+  { year: "2024", event: "WriteWise founded with a mission to democratize language learning" },
+  { year: "2025", event: "Launched beta with 1,000 early adopters" },
+  { year: "2026", event: "Scaling up" }
 ];
 
 const About = () => {
@@ -94,13 +92,12 @@ const About = () => {
                     help learners develop real communication skills.
                   </p>
                   <p>
-                    Our founders—a linguistics professor and an AI researcher—came together
-                    with a shared vision: create an AI mentor that could provide the kind of
+                    Our founders came together with a shared vision: create an AI mentor that could provide the kind of
                     personalized feedback that was previously only available through expensive
                     private tutoring.
                   </p>
                   <p>
-                    Today, WriteWise helps over 50,000 learners worldwide improve their
+                    Today, WriteWise helps learners worldwide improve their
                     writing, speaking, and overall communication skills in their target
                     language. We're just getting started.
                   </p>
@@ -146,7 +143,7 @@ const About = () => {
         </div>
       </section>
 
-      {/* Team */}
+      {/* Team
       <section className="py-20">
         <div className="container mx-auto px-4">
           <h2 className="mb-12 text-center text-3xl font-bold text-foreground md:text-4xl">
@@ -167,7 +164,7 @@ const About = () => {
             ))}
           </div>
         </div>
-      </section>
+      </section>*/}
 
       {/* Contact */}
       <section id="contact" className="bg-gradient-brand py-20">
@@ -181,15 +178,15 @@ const About = () => {
           <div className="mb-8 flex flex-col items-center justify-center gap-6 sm:flex-row">
             <div className="flex items-center gap-2 text-white">
               <Mail className="h-5 w-5" />
-              hello@write-wise.com
+              support@write-wise.com
             </div>
             <div className="flex items-center gap-2 text-white">
               <MapPin className="h-5 w-5" />
-              San Francisco, CA
+              Berlin, Deutschland
             </div>
           </div>
           <Button size="lg" variant="secondary" asChild>
-            <a href="mailto:hello@write-wise.com">
+            <a href="mailto:support@write-wise.com">
               Contact Us
               <ArrowRight className="ml-2 h-5 w-5" />
             </a>

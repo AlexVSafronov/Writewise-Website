@@ -7,7 +7,10 @@ import { SEO } from "@/components/SEO";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ArrowLeft, Calendar, Clock, User, Share2, Bookmark, ThumbsUp } from "lucide-react";
 import { useBlogPost, useBlogPosts } from "@/hooks/use-strapi";
-import DOMPurify from "dompurify";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+import rehypeRaw from "rehype-raw";
+import rehypeSanitize from "rehype-sanitize";
 
 const BlogPost = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -166,13 +169,14 @@ const BlogPost = () => {
                     prose-thead:border-b prose-thead:border-border
                     prose-th:text-foreground prose-th:font-semibold prose-th:p-3
                     prose-td:p-3"
-                  dangerouslySetInnerHTML={{
-                    __html: DOMPurify.sanitize(post.content, {
-                      ADD_ATTR: ['target', 'rel', 'loading', 'alt', 'title', 'width', 'height'],
-                      ADD_TAGS: ['figure', 'figcaption']
-                    })
-                  }}
-                />
+                >
+                  <ReactMarkdown
+                    remarkPlugins={[remarkGfm]}
+                    rehypePlugins={[rehypeRaw, rehypeSanitize]}
+                  >
+                    {post.content}
+                  </ReactMarkdown>
+                </article>
 
                 {/* Sidebar */}
                 <aside className="space-y-6">

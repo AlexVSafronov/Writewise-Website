@@ -1,13 +1,13 @@
 # WriteWise Blog Formatting Guide
 
-This guide explains all the rich text formatting features available when creating blog posts in the Strapi CMS.
+This guide explains all the rich text formatting features available when creating blog posts in the Strapi CMS. The CMS uses **Markdown** format for content, which is automatically converted to styled HTML on the website.
 
 ## Available Formatting Options
 
 ### Headers
 Use headers to organize your content hierarchically:
 
-```
+```markdown
 # Heading 1 (H1) - Use for main title (automatic from post title)
 ## Heading 2 (H2) - Use for main sections
 ### Heading 3 (H3) - Use for subsections
@@ -22,79 +22,84 @@ Use headers to organize your content hierarchically:
 ### Text Styling
 
 **Bold Text** - Use for emphasis on important terms, product names, or key concepts
-```html
-<strong>Goethe Institute</strong>
-<b>Important concept</b>
+```markdown
+**Goethe Institute**
+__Important concept__
 ```
 
 *Italic Text* - Use for subtle emphasis, foreign words, or book/article titles
-```html
-<em>zeitgeist</em>
-<i>The Art of Learning</i>
+```markdown
+*zeitgeist*
+_The Art of Learning_
 ```
 
 ***Bold + Italic*** - Use sparingly for maximum emphasis
-```html
-<strong><em>Critical point</em></strong>
+```markdown
+***Critical point***
+___Maximum emphasis___
 ```
 
 ### Links
 
 Internal links (to other pages on your site):
-```html
-<a href="/blog/another-post">Read more about grammar tips</a>
+```markdown
+[Read more about grammar tips](/blog/another-post)
 ```
 
 External links (to other websites):
-```html
-<a href="https://example.com" target="_blank" rel="noopener noreferrer">External Resource</a>
+```markdown
+[External Resource](https://example.com)
 ```
 
 **Best practices:**
 - Use descriptive anchor text (not "click here")
-- External links should open in new tabs
 - Link to relevant resources to add value
+- Keep URLs clean and readable
 
 ### Lists
 
 **Bulleted Lists** - Use for unordered items:
-```html
-<ul>
-  <li>First advantage: accessibility</li>
-  <li>Second advantage: instant feedback</li>
-  <li>Third advantage: adaptive difficulty</li>
-</ul>
+```markdown
+- First advantage: accessibility
+- Second advantage: instant feedback
+- Third advantage: adaptive difficulty
+
+or
+
+* First advantage: accessibility
+* Second advantage: instant feedback
+* Third advantage: adaptive difficulty
 ```
 
 **Numbered Lists** - Use for sequential steps or ranked items:
-```html
-<ol>
-  <li>Take the initial assessment</li>
-  <li>Review your results</li>
-  <li>Create a study plan</li>
-</ol>
+```markdown
+1. Take the initial assessment
+2. Review your results
+3. Create a study plan
 ```
 
 ### Images
 
+Upload images through the Strapi media library, then reference them in your content:
+
+```markdown
+![Deutsche Welle placement test results showing B1 level](/uploads/test-screenshot.jpg)
+```
+
 Images automatically support:
-- **Alt text** - Important for SEO and accessibility
-- **Captions** - Use `<figcaption>` for image descriptions
+- **Alt text** - The text in square brackets is used for SEO and accessibility
 - **Lazy loading** - Images load as user scrolls
 - **Responsive sizing** - Auto-adjusts to screen size
 
 **Best practices for images:**
-1. Always add descriptive alt text
+1. Always add descriptive alt text (the text in square brackets)
 2. Use high-quality images (1200x600px for featured, 800x600px for inline)
 3. Optimize file size (use JPG for photos, PNG for graphics)
-4. Add captions when context is needed
+4. Upload through Strapi's media library first, then copy the URL
 
-Example with figure and caption:
-```html
-<figure>
-  <img src="/uploads/test-screenshot.jpg" alt="Deutsche Welle placement test results showing B1 level">
-  <figcaption>Screenshot of DW test results</figcaption>
-</figure>
+**Example:**
+```markdown
+![Student taking online German placement test on laptop](/uploads/german-test-screenshot.jpg)
 ```
 
 ### Blockquotes
@@ -105,58 +110,46 @@ Use for:
 - Spoiler alerts
 - Key takeaways
 
-```html
-<blockquote>
-  <p>Spoiler Alert: Not all placement tests give consistent results!</p>
-</blockquote>
+```markdown
+> Spoiler Alert: Not all placement tests give consistent results!
+
+> Multi-line blockquotes
+> can span multiple lines
+> like this.
 ```
 
 ### Code Blocks
 
 Inline code:
-```html
-Use the <code>CEFR scale</code> for assessment
+```markdown
+Use the `CEFR scale` for assessment
 ```
 
 Code blocks (for longer code):
-```html
-<pre><code>
+````markdown
+```javascript
 function assessLevel(score) {
   return score > 80 ? 'B2' : 'B1';
 }
-</code></pre>
 ```
+````
 
 ### Tables
 
 Use tables for comparisons, pricing, or structured data:
 
-```html
-<table>
-  <thead>
-    <tr>
-      <th>Test Provider</th>
-      <th>Cost</th>
-      <th>Duration</th>
-      <th>Level Range</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>Goethe Institute</td>
-      <td>Free</td>
-      <td>15 min</td>
-      <td>A1-C2</td>
-    </tr>
-    <tr>
-      <td>Deutsche Welle</td>
-      <td>Free</td>
-      <td>30 min</td>
-      <td>A1-C1</td>
-    </tr>
-  </tbody>
-</table>
+```markdown
+| Test Provider     | Cost | Duration | Level Range |
+|-------------------|------|----------|-------------|
+| Goethe Institute  | Free | 15 min   | A1-C2       |
+| Deutsche Welle    | Free | 30 min   | A1-C1       |
 ```
+
+**Tips:**
+- Use pipes `|` to separate columns
+- Use dashes `---` to separate the header row
+- Content alignment is automatic
+- Keep column widths consistent for readability
 
 ## SEO Best Practices
 
@@ -215,62 +208,55 @@ When pasting from Word or Google Docs:
 
 ## Example: Well-Formatted Blog Post
 
-```html
-<h2>Why Online Placement Tests Matter</h2>
+```markdown
+## Why Online Placement Tests Matter
 
-<p>Choosing the right <strong>CEFR level</strong> for your language studies is crucial. Online placement tests provide a <em>convenient and accurate</em> way to assess your current abilities.</p>
+Choosing the right **CEFR level** for your language studies is crucial. Online placement tests provide a *convenient and accurate* way to assess your current abilities.
 
-<figure>
-  <img src="/uploads/cefr-levels.jpg" alt="CEFR language proficiency levels chart showing A1 through C2" loading="lazy">
-  <figcaption>The CEFR framework includes six proficiency levels</figcaption>
-</figure>
+![CEFR language proficiency levels chart showing A1 through C2](/uploads/cefr-levels.jpg)
 
-<h3>Top Free Placement Tests</h3>
+### Top Free Placement Tests
 
-<p>Here are the most reliable free options:</p>
+Here are the most reliable free options:
 
-<ul>
-  <li><strong>Goethe Institute</strong> - Comprehensive test covering all skills</li>
-  <li><strong>Deutsche Welle</strong> - Quick assessment with instant results</li>
-  <li><strong>GLS Berlin</strong> - Focus on practical communication skills</li>
-</ul>
+- **Goethe Institute** - Comprehensive test covering all skills
+- **Deutsche Welle** - Quick assessment with instant results
+- **GLS Berlin** - Focus on practical communication skills
 
-<blockquote>
-  <p>Spoiler Alert: Test results can vary between providers!</p>
-</blockquote>
+> Spoiler Alert: Test results can vary between providers!
 
-<p>For more details, check out our guide on <a href="/blog/how-to-test-your-german-level">how to test your German level</a>.</p>
+For more details, check out our guide on [how to test your German level](/blog/how-to-test-your-german-level).
 
-<h3>Advantages of Digital Testing</h3>
+### Advantages of Digital Testing
 
-<ol>
-  <li>Instant feedback on your performance</li>
-  <li>Adaptive difficulty based on your answers</li>
-  <li>Detailed breakdown by skill area</li>
-</ol>
+1. Instant feedback on your performance
+2. Adaptive difficulty based on your answers
+3. Detailed breakdown by skill area
 
-<p>Start with the <a href="https://www.dw.com/de/deutsch-lernen/einstufungstest/s-32523" target="_blank" rel="noopener noreferrer">Deutsche Welle placement test</a> to get your baseline level.</p>
+Start with the [Deutsche Welle placement test](https://www.dw.com/de/deutsch-lernen/einstufungstest/s-32523) to get your baseline level.
 ```
 
 ## Common Mistakes to Avoid
 
 ❌ **Don't:**
-- Use multiple H1 headers
-- Skip heading levels (H2 → H4)
+- Use multiple H1 headers (#)
+- Skip heading levels (## → ####)
 - Use "click here" as link text
 - Forget alt text on images
 - Create walls of text without breaks
 - Use all caps for emphasis
 - Overuse bold and italic formatting
+- Mix different list styles in the same list
 
 ✅ **Do:**
-- Use semantic HTML structure
+- Use proper Markdown hierarchy (# → ## → ### → ####)
 - Add descriptive alt text to all images
 - Break content into scannable sections
 - Use lists for clarity
-- Link to relevant resources
+- Link to relevant resources with descriptive text
 - Optimize images before uploading
 - Preview before publishing
+- Use blank lines to separate paragraphs and sections
 
 ## Need Help?
 

@@ -6,6 +6,10 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ArrowLeft, Clock, Play, ThumbsUp, MessageSquare, Share2, ChevronRight } from "lucide-react";
 import { useResource, useResources } from "@/hooks/use-strapi";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+import rehypeRaw from "rehype-raw";
+import rehypeSanitize from "rehype-sanitize";
 
 const VideoResource = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -145,10 +149,14 @@ const VideoResource = () => {
                     <Card className="card-elevated border-0">
                       <CardContent className="p-6">
                         <h2 className="mb-3 font-semibold text-foreground">About this video</h2>
-                        <div
-                          className="prose max-w-none prose-p:text-muted-foreground"
-                          dangerouslySetInnerHTML={{ __html: video.fullDescription }}
-                        />
+                        <div className="prose max-w-none prose-p:text-muted-foreground">
+                          <ReactMarkdown
+                            remarkPlugins={[remarkGfm]}
+                            rehypePlugins={[rehypeRaw, rehypeSanitize]}
+                          >
+                            {video.fullDescription}
+                          </ReactMarkdown>
+                        </div>
                       </CardContent>
                     </Card>
                   )}

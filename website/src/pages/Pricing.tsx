@@ -232,7 +232,7 @@ const Pricing = () => {
             Our team is here to help you find the perfect plan for your learning journey.
           </p>
           <Button variant="outline" size="lg" asChild>
-            <a href="mailto:hello@write-wise.com">Contact Support</a>
+            <a href="mailto:support@write-wise.com">Contact Support</a>
           </Button>
         </div>
       </section>

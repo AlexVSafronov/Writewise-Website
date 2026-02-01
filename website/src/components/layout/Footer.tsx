@@ -40,7 +40,7 @@ export const Footer = () => {
               <span className="text-xl font-bold text-gradient-brand">WriteWise</span>
             </Link>
             <p className="mt-4 max-w-xs text-sm text-muted-foreground">
-              Your AI-powered language learning mentor. Master writing, speaking, and communication with personalized feedback.
+              Your AI-powered language learning mentor. Master your active language and communication through writing with personalized feedback.
             </p>
             <div className="mt-6 flex gap-4">
               {socialLinks.map((social) => (
