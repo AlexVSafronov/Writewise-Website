@@ -168,17 +168,6 @@ const Pricing = () => {
                         </li>
                       ))}
                     </ul>
-                    {plan.isContactSales && (
-                      <div className="mb-4 rounded-lg bg-muted/50 p-3 text-center">
-                        <p className="text-sm text-muted-foreground">📩 Contact us for a tailored offer</p>
-                        <a
-                          href="mailto:sales@writewise.com"
-                          className="text-sm font-medium text-primary hover:underline"
-                        >
-                          sales@writewise.com
-                        </a>
-                      </div>
-                    )}
                     <Button
                       className={`w-full ${plan.popular ? "bg-gradient-brand hover:opacity-90" : ""}`}
                       variant={plan.popular ? "default" : "outline"}
