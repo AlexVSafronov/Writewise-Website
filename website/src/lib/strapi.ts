@@ -61,6 +61,11 @@ class StrapiClient {
     return this.fetch<StrapiResponse<PricingPlan[]>>('/pricing-plans?sort=order:asc');
   }
 
+  // Pricing Plans from Stripe
+  async getStripePricing(): Promise<StrapiResponse<PricingPlan[]>> {
+    return this.fetch<StrapiResponse<PricingPlan[]>>('/pricing-plans/stripe');
+  }
+
   // Pages
   async getPage(slug: string): Promise<StrapiResponse<Page[]>> {
     return this.fetch<StrapiResponse<Page[]>>(`/pages?filters[slug][$eq]=${slug}`);

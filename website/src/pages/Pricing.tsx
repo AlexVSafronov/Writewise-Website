@@ -5,10 +5,10 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { SEO, generateFAQSchema } from "@/components/SEO";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Check, Sparkles, ArrowRight } from "lucide-react";
-import { usePricingPlans, useFAQs } from "@/hooks/use-strapi";
+import { useStripePricing, useFAQs } from "@/hooks/use-strapi";
 
 const Pricing = () => {
-  const { data: pricingData, isLoading: pricingLoading } = usePricingPlans();
+  const { data: pricingData, isLoading: pricingLoading } = useStripePricing();
   const { data: faqData, isLoading: faqLoading } = useFAQs('Pricing');
 
   const faqs = faqData?.data.map(item => ({

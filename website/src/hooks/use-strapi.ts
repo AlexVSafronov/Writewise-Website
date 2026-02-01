@@ -49,6 +49,14 @@ export function usePricingPlans() {
   });
 }
 
+// Pricing Plans from Stripe
+export function useStripePricing() {
+  return useQuery({
+    queryKey: ['stripe-pricing'],
+    queryFn: () => strapiClient.getStripePricing(),
+  });
+}
+
 // Pages
 export function usePage(slug: string) {
   return useQuery({
