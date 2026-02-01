@@ -14,9 +14,10 @@ const customRoutes = [
   },
 ];
 
+// @ts-ignore - Custom routes extension
 export default {
   routes: [
     ...customRoutes,
-    ...defaultRouter.routes,
+    ...(typeof defaultRouter.routes === 'function' ? defaultRouter.routes() : defaultRouter.routes),
   ],
 };
