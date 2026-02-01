@@ -120,9 +120,7 @@ const MarkdownTest = () => {
               </p>
             </div>
 
-            <article
-              className="prose prose-lg max-w-none prose-headings:text-foreground prose-p:text-muted-foreground prose-li:text-muted-foreground prose-strong:text-foreground"
-            >
+            <article className="prose prose-lg max-w-none">
               <ReactMarkdown
                 remarkPlugins={[remarkGfm, remarkBreaks]}
                 rehypePlugins={[rehypeRaw]}
