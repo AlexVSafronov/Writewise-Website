@@ -9,6 +9,35 @@ import { Play, FileText, Download, Clock, BookOpen, Video, HelpCircle, ArrowRigh
 import { useResources, useFAQs } from "@/hooks/use-strapi";
 import { Link } from "react-router-dom";
 
+// Helper function to extract YouTube video ID from various URL formats
+const getYouTubeVideoId = (url: string): string | null => {
+  if (!url) return null;
+
+  // Handle youtu.be short URLs
+  const shortUrlMatch = url.match(/youtu\.be\/([^?]+)/);
+  if (shortUrlMatch) return shortUrlMatch[1];
+
+  // Handle youtube.com/watch?v= URLs
+  const longUrlMatch = url.match(/[?&]v=([^&]+)/);
+  if (longUrlMatch) return longUrlMatch[1];
+
+  // Handle youtube.com/embed/ URLs
+  const embedMatch = url.match(/\/embed\/([^?]+)/);
+  if (embedMatch) return embedMatch[1];
+
+  return null;
+};
+
+// Helper function to get YouTube thumbnail URL
+const getYouTubeThumbnail = (videoUrl: string | undefined): string => {
+  if (!videoUrl) return 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=400&h=225&fit=crop';
+
+  const videoId = getYouTubeVideoId(videoUrl);
+  if (!videoId) return 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=400&h=225&fit=crop';
+
+  return `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
+};
+
 const Resources = () => {
   const { data: resourcesData, isLoading: resourcesLoading } = useResources();
   const { data: faqData, isLoading: faqLoading } = useFAQs(); // Fetch all FAQs
@@ -219,37 +248,58 @@ const Resources = () => {
               {resourcesLoading ? (
                 <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                   {Array.from({ length: 6 }).map((_, i) => (
-                    <Card key={i} className="border-0">
-                      <CardContent className="p-6">
-                        <Skeleton className="mb-4 h-6 w-24" />
-                        <Skeleton className="mb-3 h-6 w-full" />
-                        <Skeleton className="mb-4 h-4 w-full" />
-                        <Skeleton className="h-8 w-full" />
+                    <Card key={i} className="border-0 overflow-hidden">
+                      <Skeleton className="aspect-video w-full" />
+                      <CardContent className="p-4">
+                        <Skeleton className="mb-2 h-5 w-20" />
+                        <Skeleton className="mb-2 h-5 w-full" />
+                        <Skeleton className="h-4 w-full" />
                       </CardContent>
                     </Card>
                   ))}
                 </div>
               ) : (
                 <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                  {videos.map((video) => (
-                    <Link key={video.slug} to={`/resources/videos/${video.slug}`}>
-                      <Card className="card-elevated group cursor-pointer border-0 transition-transform hover:-translate-y-1">
-                        <CardContent className="p-6">
-                          <Badge className="mb-4 bg-primary/10 text-primary hover:bg-primary/20">
-                            {video.category}
-                          </Badge>
-                          <h3 className="mb-3 text-lg font-semibold text-foreground group-hover:text-primary">
-                            {video.title}
-                          </h3>
-                          <p className="mb-4 text-sm text-muted-foreground">{video.description}</p>
-                          <div className="flex items-center gap-2 text-sm text-primary">
-                            <Play className="h-4 w-4" />
-                            Watch Video
+                  {videos.map((video) => {
+                    const thumbnailUrl = video.thumbnail?.data?.attributes?.url
+                      ? `${import.meta.env.VITE_STRAPI_URL || 'https://writewise-cms-m2xkjyh6ta-oe.a.run.app'}${video.thumbnail.data.attributes.url}`
+                      : getYouTubeThumbnail(video.videoUrl);
+
+                    return (
+                      <Link key={video.slug} to={`/resources/videos/${video.slug}`}>
+                        <Card className="card-elevated group cursor-pointer border-0 transition-transform hover:-translate-y-1 overflow-hidden">
+                          {/* Video Thumbnail */}
+                          <div className="relative aspect-video w-full overflow-hidden bg-black">
+                            <img
+                              src={thumbnailUrl}
+                              alt={video.title}
+                              className="h-full w-full object-cover transition-transform group-hover:scale-105"
+                            />
+                            <div className="absolute inset-0 flex items-center justify-center bg-black/30 transition-opacity group-hover:bg-black/40">
+                              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white shadow-xl transition-transform group-hover:scale-110">
+                                <Play className="h-5 w-5 text-primary ml-0.5" />
+                              </div>
+                            </div>
+                            {video.duration && (
+                              <div className="absolute bottom-2 right-2 rounded bg-black/80 px-2 py-1 text-xs font-medium text-white">
+                                {video.duration}
+                              </div>
+                            )}
                           </div>
-                        </CardContent>
-                      </Card>
-                    </Link>
-                  ))}
+
+                          <CardContent className="p-4">
+                            <Badge className="mb-2 bg-primary/10 text-xs text-primary hover:bg-primary/20">
+                              {video.category}
+                            </Badge>
+                            <h3 className="mb-2 text-base font-semibold text-foreground group-hover:text-primary line-clamp-2">
+                              {video.title}
+                            </h3>
+                            <p className="text-sm text-muted-foreground line-clamp-2">{video.description}</p>
+                          </CardContent>
+                        </Card>
+                      </Link>
+                    );
+                  })}
                 </div>
               )}
             </TabsContent>
