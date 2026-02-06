@@ -1,0 +1,98 @@
+name: Deploy Website to Cloud Run
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'website/**'
+      - '.github/workflows/deploy-website.yml'
+  workflow_dispatch:
+
+env:
+  GCP_PROJECT_ID: writewise-468912
+  GCP_REGION: europe-west10
+  SERVICE_NAME: writewise-website
+
+jobs:
+  deploy:
+    name: Deploy Website to Production
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Authenticate to Google Cloud
+        run: |
+          # Remove any whitespace and decode base64
+          echo "${{ secrets.GCP_SA_KEY_BASE64 }}" | tr -d '[:space:]' | base64 -d > $HOME/gcp-key.json
+          gcloud auth activate-service-account --key-file=$HOME/gcp-key.json
+          gcloud config set project ${{ env.GCP_PROJECT_ID }}
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Build and push Docker image
+        run: |
+          # Configure Docker to use gcloud as credential helper
+          gcloud auth configure-docker ${{ env.GCP_REGION }}-docker.pkg.dev
+
+          # Build Docker image from website/ directory
+          cd website
+          docker build -t ${{ env.GCP_REGION }}-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/writewise/${{ env.SERVICE_NAME }}:${{ github.sha }} \
+                       -t ${{ env.GCP_REGION }}-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/writewise/${{ env.SERVICE_NAME }}:latest .
+
+          # Push Docker image
+          docker push ${{ env.GCP_REGION }}-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/writewise/${{ env.SERVICE_NAME }}:${{ github.sha }}
+          docker push ${{ env.GCP_REGION }}-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/writewise/${{ env.SERVICE_NAME }}:latest
+
+      - name: Deploy to Cloud Run
+        id: deploy
+        run: |
+          gcloud run deploy ${{ env.SERVICE_NAME }} \
+            --image ${{ env.GCP_REGION }}-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/writewise/${{ env.SERVICE_NAME }}:${{ github.sha }} \
+            --platform managed \
+            --region ${{ env.GCP_REGION }} \
+            --project ${{ env.GCP_PROJECT_ID }} \
+            --allow-unauthenticated \
+            --min-instances 0 \
+            --max-instances 5 \
+            --cpu 1 \
+            --memory 512Mi \
+            --timeout 300 \
+            --port 8080 \
+            --set-env-vars "VITE_STRAPI_URL=https://writewise-cms-m2xkjyh6ta-oe.a.run.app,VITE_APP_URL=https://write-wise.com,VITE_API_URL=https://app.write-wise.com,VITE_STRIPE_PUBLIC_KEY=${{ secrets.STRIPE_PUBLISHABLE_KEY }}"
+
+          SERVICE_URL=$(gcloud run services describe ${{ env.SERVICE_NAME }} \
+            --region ${{ env.GCP_REGION }} \
+            --project ${{ env.GCP_PROJECT_ID }} \
+            --format 'value(status.url)')
+
+          echo "url=$SERVICE_URL" >> $GITHUB_OUTPUT
+          echo "Deployed to: $SERVICE_URL"
+
+      - name: Test deployment
+        run: |
+          sleep 10
+          curl -f ${{ steps.deploy.outputs.url }}/health || echo "Health check failed"
+          echo "✅ Website deployment successful!"
+
+      - name: Create deployment summary
+        run: |
+          echo "## 🚀 Website Deployment Successful!" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **Service URL:** ${{ steps.deploy.outputs.url }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Git SHA:** ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Deployed by:** ${{ github.actor }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 💰 Cost Optimization:" >> $GITHUB_STEP_SUMMARY
+          echo "Website scales to 0 when not in use (min-instances: 0)" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 🔗 Next Steps:" >> $GITHUB_STEP_SUMMARY
+          echo "1. Update DNS to point write-wise.com to Cloud Run URL" >> $GITHUB_STEP_SUMMARY
+          echo "2. Configure custom domain in Cloud Run" >> $GITHUB_STEP_SUMMARY
+          echo "3. Test all pages and functionality" >> $GITHUB_STEP_SUMMARY
