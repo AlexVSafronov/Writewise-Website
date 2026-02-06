@@ -1,8 +1,6 @@
-import { factories } from '@strapi/strapi';
-
 const Mailjet = require('node-mailjet');
 
-export default factories.createCoreService('api::contact.contact', ({ strapi }) => ({
+export default {
   async sendContactEmail({ name, email, subject, message }) {
     const mailjetApiKey = process.env.MAILJET_API_KEY;
     const mailjetSecretKey = process.env.MAILJET_SECRET_KEY;
@@ -74,4 +72,4 @@ Reply to: ${email}
       throw error;
     }
   },
-}));
+};

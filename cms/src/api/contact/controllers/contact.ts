@@ -1,6 +1,4 @@
-import { factories } from '@strapi/strapi';
-
-export default factories.createCoreController('api::contact.contact', ({ strapi }) => ({
+export default {
   async sendMessage(ctx) {
     try {
       const { name, email, subject, message } = ctx.request.body;
@@ -27,4 +25,4 @@ export default factories.createCoreController('api::contact.contact', ({ strapi 
       return ctx.internalServerError('Failed to send message');
     }
   },
-}));
+};
