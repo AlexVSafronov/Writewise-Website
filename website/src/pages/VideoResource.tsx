@@ -10,11 +10,32 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import remarkBreaks from "remark-breaks";
 import rehypeRaw from "rehype-raw";
+import { useState } from "react";
+
+// Helper function to extract YouTube video ID from various URL formats
+const getYouTubeVideoId = (url: string): string | null => {
+  if (!url) return null;
+
+  // Handle youtu.be short URLs
+  const shortUrlMatch = url.match(/youtu\.be\/([^?]+)/);
+  if (shortUrlMatch) return shortUrlMatch[1];
+
+  // Handle youtube.com/watch?v= URLs
+  const longUrlMatch = url.match(/[?&]v=([^&]+)/);
+  if (longUrlMatch) return longUrlMatch[1];
+
+  // Handle youtube.com/embed/ URLs
+  const embedMatch = url.match(/\/embed\/([^?]+)/);
+  if (embedMatch) return embedMatch[1];
+
+  return null;
+};
 
 const VideoResource = () => {
   const { slug } = useParams<{ slug: string }>();
   const { data: resourceData, isLoading, error } = useResource(slug || '');
   const { data: allResourcesData } = useResources(); // For related videos
+  const [isPlaying, setIsPlaying] = useState(false);
 
   if (error) {
     return (
@@ -38,6 +59,9 @@ const VideoResource = () => {
   const thumbnailUrl = video?.thumbnail?.data?.attributes?.url
     ? `${import.meta.env.VITE_STRAPI_URL || 'https://writewise-cms-m2xkjyh6ta-oe.a.run.app'}${video.thumbnail.data.attributes.url}`
     : 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=800&h=450&fit=crop';
+
+  // Extract YouTube video ID from videoUrl
+  const youtubeVideoId = video?.videoUrl ? getYouTubeVideoId(video.videoUrl) : null;
 
   // Get related videos (same category, limit to 3)
   const relatedVideos = allResourcesData?.data
@@ -91,17 +115,34 @@ const VideoResource = () => {
           {/* Video Player Area */}
           <section className="bg-black">
             <div className="container mx-auto">
-              <div className="aspect-video w-full max-w-5xl mx-auto relative group cursor-pointer">
-                <img
-                  src={thumbnailUrl}
-                  alt={video.title}
-                  className="h-full w-full object-cover"
-                />
-                <div className="absolute inset-0 flex items-center justify-center bg-black/40 transition-opacity group-hover:bg-black/50">
-                  <div className="flex h-20 w-20 items-center justify-center rounded-full bg-white shadow-2xl transition-transform group-hover:scale-110">
-                    <Play className="h-8 w-8 text-primary ml-1" />
+              <div className="aspect-video w-full max-w-5xl mx-auto relative">
+                {isPlaying && youtubeVideoId ? (
+                  // YouTube iframe player
+                  <iframe
+                    className="h-full w-full"
+                    src={`https://www.youtube.com/embed/${youtubeVideoId}?autoplay=1`}
+                    title={video.title}
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                  />
+                ) : (
+                  // Thumbnail with play button
+                  <div
+                    className="group cursor-pointer"
+                    onClick={() => youtubeVideoId && setIsPlaying(true)}
+                  >
+                    <img
+                      src={thumbnailUrl}
+                      alt={video.title}
+                      className="h-full w-full object-cover"
+                    />
+                    <div className="absolute inset-0 flex items-center justify-center bg-black/40 transition-opacity group-hover:bg-black/50">
+                      <div className="flex h-20 w-20 items-center justify-center rounded-full bg-white shadow-2xl transition-transform group-hover:scale-110">
+                        <Play className="h-8 w-8 text-primary ml-1" />
+                      </div>
+                    </div>
                   </div>
-                </div>
+                )}
               </div>
             </div>
           </section>
