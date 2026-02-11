@@ -6,13 +6,7 @@ export default [
     name: 'strapi::cors',
     config: {
       enabled: true,
-      origin: [
-        'http://localhost:8081',
-        'http://localhost:5173',
-        'https://write-wise.com',
-        'https://writewise-website-918249600328.europe-west10.run.app',
-        'https://*.vercel.app'
-      ],
+      origin: ['*'], // Allow all origins for now
       methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'HEAD', 'OPTIONS'],
       headers: ['Content-Type', 'Authorization', 'Origin', 'Accept'],
       keepHeaderOnError: true,
