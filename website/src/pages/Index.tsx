@@ -274,7 +274,7 @@ const Index = () => {
               Ready to Transform Your Language Skills?
             </h2>
             <p className="mb-8 text-lg text-white/80">
-              Join 50,000+ learners and start your journey to fluency today. No credit card required.
+              Join other learners worldwide and start your journey to fluency today. No credit card required.
             </p>
             <Button size="lg" variant="secondary" className="px-8" asChild>
               <a href="https://app.write-wise.com?mode=signup" target="_blank" rel="noopener noreferrer">
