@@ -1,9 +1,10 @@
 /**
- * Rate limiting middleware to protect admin routes from brute force attacks
+ * Rate limiting middleware to protect admin login from brute force attacks
  *
  * Configuration:
- * - Admin routes: Max 10 requests per minute per IP
- * - General API: Max 100 requests per minute per IP
+ * - Login endpoint: Max 5 attempts per minute per IP
+ * - Other admin routes: Max 200 requests per minute (allows normal admin panel usage)
+ * - Public API: Max 100 requests per minute per IP
  */
 
 import rateLimit from 'koa-ratelimit';
@@ -14,9 +15,9 @@ const db = new Map();
 
 export default (config, { strapi }) => {
   return async (ctx, next) => {
-    // Apply strict rate limiting to admin routes
-    if (ctx.url.startsWith('/admin') || ctx.url.startsWith('/api/admin')) {
-      const adminRateLimit = rateLimit({
+    // Strict rate limiting for login endpoint only
+    if (ctx.url === '/admin/login' && ctx.method === 'POST') {
+      const loginRateLimit = rateLimit({
         driver: 'memory',
         db: db,
         duration: 60000, // 1 minute
@@ -27,7 +28,7 @@ export default (config, { strapi }) => {
           reset: 'Rate-Limit-Reset',
           total: 'Rate-Limit-Total',
         },
-        max: 10, // Max 10 requests per minute
+        max: 5, // Max 5 login attempts per minute
         disableHeader: false,
         whitelist: (ctx) => {
           // Optional: whitelist certain IPs (e.g., your office IP)
@@ -40,10 +41,30 @@ export default (config, { strapi }) => {
         },
       });
 
+      return loginRateLimit(ctx, next);
+    }
+
+    // More lenient rate limiting for admin panel usage (loads many files/APIs)
+    if (ctx.url.startsWith('/admin') || ctx.url.startsWith('/api/admin')) {
+      const adminRateLimit = rateLimit({
+        driver: 'memory',
+        db: db,
+        duration: 60000, // 1 minute
+        errorMessage: 'Too many requests. Please wait a moment.',
+        id: (ctx) => ctx.ip,
+        headers: {
+          remaining: 'Rate-Limit-Remaining',
+          reset: 'Rate-Limit-Reset',
+          total: 'Rate-Limit-Total',
+        },
+        max: 200, // Max 200 requests per minute (admin panel loads many resources)
+        disableHeader: false,
+      });
+
       return adminRateLimit(ctx, next);
     }
 
-    // Apply more lenient rate limiting to API routes
+    // Rate limiting for public API routes
     if (ctx.url.startsWith('/api')) {
       const apiRateLimit = rateLimit({
         driver: 'memory',
@@ -56,7 +77,7 @@ export default (config, { strapi }) => {
           reset: 'Rate-Limit-Reset',
           total: 'Rate-Limit-Total',
         },
-        max: 100, // Max 100 requests per minute for API
+        max: 100, // Max 100 requests per minute for public API
         disableHeader: false,
       });
 
