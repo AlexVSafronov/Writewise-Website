@@ -111,11 +111,11 @@ const Pricing = () => {
       {/* Pricing Cards */}
       <section className="py-20">
         <div className="container mx-auto px-4">
-          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
+          <div className="flex flex-wrap justify-center gap-8">
             {pricingLoading ? (
               // Loading skeletons
               Array.from({ length: 3 }).map((_, i) => (
-                <Card key={i} className="border-0">
+                <Card key={i} className="w-full max-w-sm border-0">
                   <CardHeader className="pb-4">
                     <Skeleton className="h-6 w-24" />
                     <div className="mt-2 flex items-baseline gap-2">
@@ -141,7 +141,7 @@ const Pricing = () => {
               plans.map((plan) => (
                 <Card
                   key={plan.name}
-                  className={`relative flex flex-col transition-transform hover:-translate-y-1 ${
+                  className={`relative flex w-full max-w-sm flex-col transition-transform hover:-translate-y-1 ${
                     plan.popular ? "border-primary shadow-lg shadow-primary/20" : "card-elevated border-0"
                   }`}
                 >
