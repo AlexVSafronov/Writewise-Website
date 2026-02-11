@@ -41,10 +41,15 @@ jobs:
           # Configure Docker to use gcloud as credential helper
           gcloud auth configure-docker ${{ env.GCP_REGION }}-docker.pkg.dev
 
-          # Build Docker image from website/ directory
+          # Build Docker image from website/ directory with build args
           cd website
-          docker build -t ${{ env.GCP_REGION }}-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/writewise/${{ env.SERVICE_NAME }}:${{ github.sha }} \
-                       -t ${{ env.GCP_REGION }}-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/writewise/${{ env.SERVICE_NAME }}:latest .
+          docker build \
+            --build-arg VITE_STRAPI_URL=https://writewise-cms-m2xkjyh6ta-oe.a.run.app \
+            --build-arg VITE_APP_URL=https://write-wise.com \
+            --build-arg VITE_API_URL=https://app.write-wise.com \
+            --build-arg VITE_STRIPE_PUBLIC_KEY=${{ secrets.STRIPE_PUBLISHABLE_KEY }} \
+            -t ${{ env.GCP_REGION }}-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/writewise/${{ env.SERVICE_NAME }}:${{ github.sha }} \
+            -t ${{ env.GCP_REGION }}-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/writewise/${{ env.SERVICE_NAME }}:latest .
 
           # Push Docker image
           docker push ${{ env.GCP_REGION }}-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/writewise/${{ env.SERVICE_NAME }}:${{ github.sha }}
@@ -64,8 +69,7 @@ jobs:
             --cpu 1 \
             --memory 512Mi \
             --timeout 300 \
-            --port 8080 \
-            --set-env-vars "VITE_STRAPI_URL=https://writewise-cms-m2xkjyh6ta-oe.a.run.app,VITE_APP_URL=https://write-wise.com,VITE_API_URL=https://app.write-wise.com,VITE_STRIPE_PUBLIC_KEY=${{ secrets.STRIPE_PUBLISHABLE_KEY }}"
+            --port 8080
 
           SERVICE_URL=$(gcloud run services describe ${{ env.SERVICE_NAME }} \
             --region ${{ env.GCP_REGION }} \
