@@ -63,8 +63,8 @@ jobs:
             --memory 512Mi \
             --timeout 300 \
             --port 1337 \
-            --set-env-vars "NODE_ENV=production,DATABASE_CLIENT=postgres,DATABASE_NAME=writewise,DATABASE_USERNAME=writewise,DATABASE_SCHEMA=cms,DATABASE_HOST=/cloudsql/${{ env.CLOUD_SQL_INSTANCE }},DATABASE_PORT=5432,HOST=0.0.0.0,APP_KEYS=${{ secrets.STRAPI_APP_KEYS }},API_TOKEN_SALT=${{ secrets.STRAPI_API_TOKEN_SALT }},ADMIN_JWT_SECRET=${{ secrets.STRAPI_ADMIN_JWT_SECRET }},TRANSFER_TOKEN_SALT=${{ secrets.STRAPI_TRANSFER_TOKEN_SALT }},JWT_SECRET=${{ secrets.STRAPI_JWT_SECRET }},STRIPE_SECRET_KEY=${{ secrets.STRIPE_SECRET_KEY }},MAILJET_API_KEY=${{ secrets.MAILJET_API_KEY }},MAILJET_SECRET_KEY=${{ secrets.MAILJET_SECRET_KEY }},SUPPORT_EMAIL=support@write-wise.com" \
-            --set-secrets "DATABASE_PASSWORD=db-password:latest" \
+            --set-env-vars "NODE_ENV=production,DATABASE_CLIENT=postgres,DATABASE_NAME=writewise,DATABASE_USERNAME=writewise,DATABASE_SCHEMA=cms,DATABASE_HOST=/cloudsql/${{ env.CLOUD_SQL_INSTANCE }},DATABASE_PORT=5432,HOST=0.0.0.0,APP_KEYS=${{ secrets.STRAPI_APP_KEYS }},API_TOKEN_SALT=${{ secrets.STRAPI_API_TOKEN_SALT }},ADMIN_JWT_SECRET=${{ secrets.STRAPI_ADMIN_JWT_SECRET }},TRANSFER_TOKEN_SALT=${{ secrets.STRAPI_TRANSFER_TOKEN_SALT }},JWT_SECRET=${{ secrets.STRAPI_JWT_SECRET }},STRIPE_SECRET_KEY=${{ secrets.STRIPE_SECRET_KEY }},MAILJET_API_KEY=${{ secrets.MAILJET_API_KEY }},MAILJET_SECRET_KEY=${{ secrets.MAILJET_SECRET_KEY }},SUPPORT_EMAIL=support@write-wise.com,GCS_BUCKET_NAME=writewise-cms-media" \
+            --set-secrets "DATABASE_PASSWORD=db-password:latest,GCS_SERVICE_ACCOUNT=strapi-gcs-service-account:latest" \
             --add-cloudsql-instances ${{ env.CLOUD_SQL_INSTANCE }}
 
           SERVICE_URL=$(gcloud run services describe ${{ env.SERVICE_NAME }} \
