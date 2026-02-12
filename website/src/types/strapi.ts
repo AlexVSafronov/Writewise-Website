@@ -30,13 +30,13 @@ export interface BlogPost extends StrapiEntity {
   readTime: string;
   category: 'Tips' | 'AI' | 'Success Stories' | 'Research';
   featuredImage?: {
-    data: {
-      attributes: {
-        url: string;
-        alternativeText?: string;
-      };
-    };
-  };
+    id: number;
+    url: string;
+    alternativeText?: string;
+    name?: string;
+    width?: number;
+    height?: number;
+  } | null;
   seoDescription?: string;
   featured?: boolean;
 }

@@ -15,8 +15,8 @@ const Blog = () => {
 
   const allPosts = blogData?.data.map(item => {
     const post = item;
-    const imageUrl = post.featuredImage?.data?.attributes?.url
-      ? `${import.meta.env.VITE_STRAPI_URL || 'https://writewise-cms-m2xkjyh6ta-oe.a.run.app'}${post.featuredImage.data.attributes.url}`
+    const imageUrl = post.featuredImage?.url
+      ? `${import.meta.env.VITE_STRAPI_URL || 'https://writewise-cms-m2xkjyh6ta-oe.a.run.app'}${post.featuredImage.url}`
       : 'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&h=400&fit=crop';
 
     return {
