@@ -36,9 +36,14 @@ const BlogPost = () => {
 
   const post = postData?.data[0];
 
-  const imageUrl = post?.featuredImage?.url
-    ? `${import.meta.env.VITE_STRAPI_URL || 'https://writewise-cms-m2xkjyh6ta-oe.a.run.app'}${post.featuredImage.url}`
-    : 'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=1200&h=600&fit=crop';
+  // TODO: Enable CMS images after setting up Google Cloud Storage for Strapi uploads
+  // For now, always use default image as Cloud Run is stateless and loses uploads
+  const imageUrl = 'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=1200&h=600&fit=crop';
+
+  // Future implementation after GCS setup:
+  // const imageUrl = post?.featuredImage?.url
+  //   ? `${import.meta.env.VITE_STRAPI_URL || 'https://writewise-cms-m2xkjyh6ta-oe.a.run.app'}${post.featuredImage.url}`
+  //   : 'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=1200&h=600&fit=crop';
 
   // Get related posts (same category, limit to 2)
   const relatedPosts = relatedPostsData?.data
