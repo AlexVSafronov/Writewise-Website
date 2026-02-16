@@ -15,13 +15,8 @@ const Blog = () => {
 
   const allPosts = blogData?.data.map(item => {
     const post = item;
-    // TODO: Enable CMS images after setting up Google Cloud Storage for Strapi uploads
-    const imageUrl = 'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&h=400&fit=crop';
-
-    // Future implementation after GCS setup:
-    // const imageUrl = post.featuredImage?.url
-    //   ? `${import.meta.env.VITE_STRAPI_URL || 'https://writewise-cms-m2xkjyh6ta-oe.a.run.app'}${post.featuredImage.url}`
-    //   : 'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&h=400&fit=crop';
+    const imageUrl = post.featuredImage?.url
+      || 'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&h=400&fit=crop';
 
     return {
       title: post.title,
