@@ -17,6 +17,7 @@ export default {
       general: 'General Inquiry',
       support: 'Technical Support',
       feedback: 'Feedback & Suggestions',
+      'freelancer-apply': 'Freelance Tutor Beta Application',
     };
 
     const subjectLabel = subjectLabels[subject] || subject;

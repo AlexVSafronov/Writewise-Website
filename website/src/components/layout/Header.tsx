@@ -6,6 +6,7 @@ import { Menu, X, BookOpen } from "lucide-react";
 const navLinks = [
   { name: "Features", href: "/#features" },
   { name: "Pricing", href: "/pricing" },
+  { name: "For Tutors", href: "/for-freelancers" },
   { name: "About", href: "/about" },
   { name: "Blog", href: "/blog" },
   { name: "Resources", href: "/resources" },

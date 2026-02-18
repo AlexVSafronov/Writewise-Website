@@ -12,6 +12,7 @@ import Resources from "./pages/Resources";
 import VideoResource from "./pages/VideoResource";
 import Page from "./pages/Page";
 import Contact from "./pages/Contact";
+import Freelancers from "./pages/Freelancers";
 import MarkdownTest from "./pages/MarkdownTest";
 import NotFound from "./pages/NotFound";
 
@@ -42,6 +43,7 @@ const App = () => (
           <Route path="/privacy" element={<Page />} />
           <Route path="/terms" element={<Page />} />
           <Route path="/contact" element={<Contact />} />
+          <Route path="/for-freelancers" element={<Freelancers />} />
           <Route path="/markdown-test" element={<MarkdownTest />} />
           
           {/* App pages */}
