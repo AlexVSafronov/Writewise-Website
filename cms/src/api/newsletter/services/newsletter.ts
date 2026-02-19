@@ -14,35 +14,17 @@ export default {
 
     const mailjet = Mailjet.apiConnect(mailjetApiKey, mailjetSecretKey);
 
-    // Check if contact already exists on the list
-    try {
-      const existing = await mailjet
-        .get('contact', { version: 'v3' })
-        .id(encodeURIComponent(email))
-        .request();
+    // POST /v3/REST/contactslist/{id}/managecontact
+    // Creates the contact if new, adds to list, respects previous unsubscribes (addnoforce)
+    const result = await mailjet
+      .post('contactslist', { version: 'v3' })
+      .id(MAILJET_LIST_ID)
+      .action('managecontact')
+      .request({
+        Email: email,
+        Action: 'addnoforce',
+      });
 
-      if (existing.body?.Data?.length > 0) {
-        // Contact exists — check if already on this list
-        const contactId = existing.body.Data[0].ID;
-        const listMembership = await mailjet
-          .get('listrecipient', { version: 'v3' })
-          .request({ ContactID: contactId, ListID: MAILJET_LIST_ID, Unsub: false });
-
-        if (listMembership.body?.Count > 0) {
-          throw new Error('ALREADY_SUBSCRIBED');
-        }
-      }
-    } catch (error) {
-      if (error.message === 'ALREADY_SUBSCRIBED') throw error;
-      // 404 means contact doesn't exist yet — that's fine, continue
-    }
-
-    // Add contact to the newsletter list (creates contact if new)
-    await mailjet.post('contact', { version: 'v3' }).id(MAILJET_LIST_ID).action('managecontact').request({
-      Email: email,
-      Action: 'addnoforce', // add but don't re-subscribe if previously unsubscribed
-    });
-
-    console.log(`Newsletter subscription added: ${email}`);
+    console.log(`Newsletter subscription added: ${email}`, result.body);
   },
 };
