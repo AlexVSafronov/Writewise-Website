@@ -8,10 +8,15 @@ import { ArrowRight, Calendar, Clock, User } from "lucide-react";
 import { useBlogPosts } from "@/hooks/use-strapi";
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { toast } from "sonner";
+
+const STRAPI_URL = import.meta.env.VITE_STRAPI_URL || 'https://writewise-cms-m2xkjyh6ta-oe.a.run.app';
 
 const Blog = () => {
   const { data: blogData, isLoading: blogLoading } = useBlogPosts();
   const [selectedCategory, setSelectedCategory] = useState("All");
+  const [newsletterEmail, setNewsletterEmail] = useState("");
+  const [newsletterLoading, setNewsletterLoading] = useState(false);
 
   const allPosts = blogData?.data.map(item => {
     const post = item;
@@ -45,6 +50,34 @@ const Blog = () => {
 
   // Extract unique categories from posts
   const categories = ["All", ...Array.from(new Set(allPosts.map(post => post.category)))];
+
+  const handleNewsletterSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newsletterEmail) return;
+
+    setNewsletterLoading(true);
+    try {
+      const response = await fetch(`${STRAPI_URL}/api/newsletter/subscribe`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: newsletterEmail }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data?.error?.message || 'Failed to subscribe');
+      }
+
+      toast.success(data.message || "You're subscribed! Welcome to the WriteWise newsletter.");
+      setNewsletterEmail("");
+    } catch (error) {
+      console.error('Newsletter error:', error);
+      toast.error("Something went wrong. Please try again.");
+    } finally {
+      setNewsletterLoading(false);
+    }
+  };
 
   return (
     <Layout>
@@ -225,16 +258,27 @@ const Blog = () => {
           <p className="mx-auto mb-8 max-w-xl text-muted-foreground">
             Get weekly tips, insights, and resources delivered straight to your inbox.
           </p>
-          <div className="mx-auto flex max-w-md flex-col gap-3 sm:flex-row">
+          <form
+            onSubmit={handleNewsletterSubmit}
+            className="mx-auto flex max-w-md flex-col gap-3 sm:flex-row"
+          >
             <input
               type="email"
               placeholder="Enter your email"
-              className="flex-1 rounded-lg border border-input bg-background px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+              value={newsletterEmail}
+              onChange={(e) => setNewsletterEmail(e.target.value)}
+              required
+              disabled={newsletterLoading}
+              className="flex-1 rounded-lg border border-input bg-background px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary disabled:opacity-50"
             />
-            <Button className="bg-gradient-brand px-8 hover:opacity-90">
-              Subscribe
+            <Button
+              type="submit"
+              disabled={newsletterLoading}
+              className="bg-gradient-brand px-8 hover:opacity-90 disabled:opacity-50"
+            >
+              {newsletterLoading ? "Subscribing..." : "Subscribe"}
             </Button>
-          </div>
+          </form>
         </div>
       </section>
     </Layout>
