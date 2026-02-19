@@ -21,9 +21,9 @@ const footerLinks = {
 
 const socialLinks = [
   { name: "Twitter", icon: Twitter, href: "https://twitter.com" },
-  { name: "LinkedIn", icon: Linkedin, href: "https://linkedin.com" },
-  { name: "YouTube", icon: Youtube, href: "https://youtube.com" },
-  { name: "Email", icon: Mail, href: "mailto:hello@write-wise.com" },
+  { name: "LinkedIn", icon: Linkedin, href: "https://www.linkedin.com/company/write-wise-language-improvement/" },
+  { name: "YouTube", icon: Youtube, href: "https://www.youtube.com/@write-wise" },
+  { name: "Email", icon: Mail, href: "mailto:support@write-wise.com" },
 ];
 
 export const Footer = () => {
