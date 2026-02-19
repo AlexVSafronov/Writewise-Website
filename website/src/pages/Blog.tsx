@@ -183,16 +183,16 @@ const Blog = () => {
               ))
             ) : (
               filteredPosts.map((post) => (
-                <Link key={post.slug} to={`/blog/${post.slug}`}>
-                  <Card className="card-elevated group cursor-pointer border-0 transition-transform hover:-translate-y-1">
-                    <CardContent className="p-6">
-                      <Badge className="mb-4 bg-primary/10 text-primary hover:bg-primary/20">
+                <Link key={post.slug} to={`/blog/${post.slug}`} className="flex">
+                  <Card className="card-elevated group flex flex-col cursor-pointer border-0 transition-transform hover:-translate-y-1 w-full">
+                    <CardContent className="flex flex-col flex-1 p-6">
+                      <Badge className="mb-4 w-fit bg-primary/10 text-primary hover:bg-primary/20">
                         {post.category}
                       </Badge>
                       <h3 className="mb-3 text-xl font-semibold text-foreground group-hover:text-primary">
                         {post.title}
                       </h3>
-                      <p className="mb-4 text-sm text-muted-foreground">{post.excerpt}</p>
+                      <p className="mb-4 flex-1 text-sm text-muted-foreground">{post.excerpt}</p>
                       <div className="flex flex-wrap items-center gap-4 text-xs text-muted-foreground">
                         <div className="flex items-center gap-1">
                           <User className="h-3 w-3" />
