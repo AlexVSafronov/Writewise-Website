@@ -168,12 +168,50 @@ async function main() {
         // Give React Query an extra moment to settle CMS fetches
         await new Promise((r) => setTimeout(r, 500));
 
-        const html = await page.evaluate(
+        // Capture the populated React Query cache from the page.
+        // main.tsx exposes the QueryClient as window.__reactQueryClient so we
+        // can read all settled queries and their data here in Node.js context.
+        const cacheEntries = await page.evaluate(() => {
+          const client = window.__reactQueryClient;
+          if (!client) return null;
+          try {
+            return client.getQueryCache().getAll()
+              .filter(q => q.state.status === 'success')
+              .map(q => ({
+                queryKey: q.queryKey,
+                queryHash: q.queryHash,
+                state: {
+                  data: q.state.data,
+                  status: q.state.status,
+                  dataUpdatedAt: q.state.dataUpdatedAt,
+                },
+              }));
+          } catch (_) {
+            return null;
+          }
+        });
+
+        // Build a dehydrated-state-compatible object that TanStack Query's
+        // hydrate() function understands, then inject it as a <script> tag.
+        let html = await page.evaluate(
           () => '<!DOCTYPE html>\n' + document.documentElement.outerHTML,
         );
 
+        if (cacheEntries && cacheEntries.length > 0) {
+          const dehydratedState = { queries: cacheEntries, mutations: [] };
+          try {
+            const stateJson = JSON.stringify(dehydratedState);
+            html = html.replace(
+              '</body>',
+              `<script>window.__REACT_QUERY_STATE__=${stateJson};</script></body>`,
+            );
+          } catch (_) {
+            // JSON serialization failed (e.g. circular refs) — skip injection
+          }
+        }
+
         writeHtml(route, html);
-        console.log(`  ✅ ${route}`);
+        console.log(`  ✅ ${route} (${cacheEntries ? cacheEntries.length : 0} queries cached)`);
         succeeded++;
       } catch (err) {
         console.warn(`  ❌ ${route}: ${err.message}`);
