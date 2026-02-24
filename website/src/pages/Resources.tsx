@@ -62,14 +62,16 @@ const Resources = () => {
   // Check if FAQ has any content
   const hasFAQs = allFAQs.length > 0;
 
-  // Define available tabs based on published content
-  const availableTabs = [
+  // While loading, keep all tabs visible so the layout doesn't collapse to
+  // "no content" during hydration. Filter to content-only tabs once data is ready.
+  const allTabs = [
     { value: 'guides', label: 'Guides', icon: FileText, count: guides.length, hasContent: guides.length > 0 },
     { value: 'tools', label: 'Tools', icon: Wrench, count: tools.length, hasContent: tools.length > 0 },
     { value: 'articles', label: 'Articles', icon: BookOpen, count: articles.length, hasContent: articles.length > 0 },
     { value: 'videos', label: 'Videos', icon: Video, count: videos.length, hasContent: videos.length > 0 },
     { value: 'faq', label: 'FAQ', icon: HelpCircle, count: allFAQs.length, hasContent: hasFAQs },
-  ].filter(tab => tab.hasContent);
+  ];
+  const availableTabs = (resourcesLoading || faqLoading) ? allTabs : allTabs.filter(tab => tab.hasContent);
 
   // Get first available tab for default value
   const defaultTab = availableTabs.length > 0 ? availableTabs[0].value : 'guides';
