@@ -1,6 +1,7 @@
 import { Layout } from "@/components/layout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { SEO } from "@/components/SEO";
 import { Heart, Globe, Lightbulb, Users, Target, Award, ArrowRight, Mail, MapPin } from "lucide-react";
 
 const values = [
@@ -58,6 +59,11 @@ const milestones = [
 const About = () => {
   return (
     <Layout>
+      <SEO
+        title="About WriteWise - Our Mission & Story"
+        description="Learn about WriteWise's mission to make language learning personal. Discover how our AI-powered platform helps intermediate learners (A2–C1) develop real communication skills."
+        keywords="WriteWise mission, AI language learning company, language learning app, about WriteWise"
+      />
       {/* Hero */}
       <section className="bg-gradient-brand-subtle py-20">
         <div className="container mx-auto px-4">

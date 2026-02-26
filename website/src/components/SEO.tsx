@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 
 interface SEOProps {
   title: string;
@@ -19,6 +20,9 @@ export const SEO = ({
   canonicalUrl,
   structuredData,
 }: SEOProps) => {
+  const location = useLocation();
+  const resolvedCanonical = canonicalUrl ?? `https://write-wise.com${location.pathname}`;
+
   useEffect(() => {
     // Update document title
     document.title = title;
@@ -51,16 +55,14 @@ export const SEO = ({
     setMetaTag('twitter:description', description);
     setMetaTag('twitter:image', ogImage);
 
-    // Canonical URL
-    if (canonicalUrl) {
-      let link = document.querySelector('link[rel="canonical"]') as HTMLLinkElement;
-      if (!link) {
-        link = document.createElement('link');
-        link.setAttribute('rel', 'canonical');
-        document.head.appendChild(link);
-      }
-      link.setAttribute('href', canonicalUrl);
+    // Canonical URL — always set, defaults to current route
+    let link = document.querySelector('link[rel="canonical"]') as HTMLLinkElement;
+    if (!link) {
+      link = document.createElement('link');
+      link.setAttribute('rel', 'canonical');
+      document.head.appendChild(link);
     }
+    link.setAttribute('href', resolvedCanonical);
 
     // Structured Data (JSON-LD)
     if (structuredData) {
@@ -72,7 +74,7 @@ export const SEO = ({
       }
       script.textContent = JSON.stringify(structuredData);
     }
-  }, [title, description, keywords, ogImage, ogType, canonicalUrl, structuredData]);
+  }, [title, description, keywords, ogImage, ogType, resolvedCanonical, structuredData]);
 
   return null;
 };

@@ -3,6 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
+import { SEO } from "@/components/SEO";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Play, FileText, Download, Clock, BookOpen, Video, HelpCircle, ArrowRight, ExternalLink, Wrench } from "lucide-react";
@@ -78,6 +79,11 @@ const Resources = () => {
 
   return (
     <Layout>
+      <SEO
+        title="Learning Resources - WriteWise"
+        description="Video tutorials, guides, tools, and FAQs to help you get the most out of WriteWise. Everything you need to accelerate your language learning journey."
+        keywords="language learning resources, WriteWise tutorials, language learning guides, writing practice tips, WriteWise FAQ"
+      />
       {/* Hero */}
       <section className="bg-gradient-brand-subtle py-16">
         <div className="container mx-auto px-4">
@@ -275,6 +281,7 @@ const Resources = () => {
                             <img
                               src={thumbnailUrl}
                               alt={video.title}
+                              loading="lazy"
                               className="h-full w-full object-cover transition-transform group-hover:scale-105"
                             />
                             <div className="absolute inset-0 flex items-center justify-center bg-black/30 transition-opacity group-hover:bg-black/40">
