@@ -2,10 +2,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import {
   Clock,
-  BookOpen,
   Brain,
-  Pencil,
-  Globe,
   CheckCircle,
   Lightbulb,
   ArrowRight,
@@ -50,7 +47,7 @@ export function IntroStep() {
       {/* Minimal header */}
       <header className="py-4 px-6 border-b border-border/40 bg-white/80 backdrop-blur">
         <div className="max-w-2xl mx-auto flex items-center justify-between">
-          <span className="font-bold text-xl bg-gradient-brand bg-clip-text text-transparent">
+          <span className="font-bold text-xl text-gradient-brand">
             WriteWise
           </span>
           <div className="flex items-center gap-2">
@@ -90,7 +87,7 @@ export function IntroStep() {
           <div className="text-center">
             <h1 className="text-3xl font-bold mb-3">
               Your{' '}
-              <span className="bg-gradient-brand bg-clip-text text-transparent">
+              <span className="text-gradient-brand">
                 {state.language}
               </span>{' '}
               Placement Test
@@ -130,16 +127,10 @@ export function IntroStep() {
                   </p>
                 </div>
               </div>
-              <div className="grid grid-cols-2 gap-3 ml-14">
-                {[
-                  { icon: BookOpen, label: 'Vocabulary', color: 'text-purple-500' },
-                  { icon: Brain, label: 'Grammar', color: 'text-blue-500' },
-                  { icon: Globe, label: 'Reading', color: 'text-green-500' },
-                  { icon: Pencil, label: 'Writing', color: 'text-amber-500' },
-                ].map(({ icon: Icon, label, color }) => (
-                  <div key={label} className="flex items-center gap-2 text-sm font-medium">
-                    <Icon className={`w-4 h-4 ${color}`} />
-                    {label}
+              <div className="grid grid-cols-2 gap-2 ml-14">
+                {['Vocabulary', 'Grammar', 'Reading', 'Writing'].map((label) => (
+                  <div key={label} className="text-sm font-medium text-foreground">
+                    · {label}
                   </div>
                 ))}
               </div>
@@ -155,15 +146,14 @@ export function IntroStep() {
                   <h3 className="font-semibold mb-1">Tips for Best Results</h3>
                 </div>
               </div>
-              <ul className="ml-14 space-y-2">
+              <ul className="ml-14 space-y-2 list-disc pl-4">
                 {[
                   'Find a quiet place with no distractions.',
                   'Answer from your current knowledge — don\'t use a dictionary.',
                   'If a question is too hard, it\'s OK — skip to the next one.',
                   'For writing tasks, aim for clear and natural language.',
                 ].map((tip) => (
-                  <li key={tip} className="flex items-start gap-2 text-sm text-muted-foreground">
-                    <CheckCircle className="w-4 h-4 text-green-500 mt-0.5 shrink-0" />
+                  <li key={tip} className="text-sm text-muted-foreground">
                     {tip}
                   </li>
                 ))}
