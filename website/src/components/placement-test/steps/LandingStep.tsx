@@ -77,7 +77,6 @@ const landingSchema = z.object({
   firstName: z.string().trim().min(1, 'First name is required').max(50),
   lastName: z.string().trim().min(1, 'Last name is required').max(50),
   email: z.string().trim().email('Please enter a valid email').max(255),
-  phone: z.string().trim().optional(),
   language: z.string().min(1, 'Please select a language to test'),
   consent: z.boolean().refine((v) => v === true, {
     message: 'You must consent to continue',
@@ -101,7 +100,6 @@ export function LandingStep() {
       firstName: '',
       lastName: '',
       email: '',
-      phone: '',
       language: '',
       consent: false,
     },
@@ -116,7 +114,6 @@ export function LandingStep() {
         firstName: data.firstName,
         lastName: data.lastName,
         email: data.email,
-        phone: data.phone || undefined,
         language: data.language,
         consent: true,
       });
@@ -129,7 +126,6 @@ export function LandingStep() {
               firstName: data.firstName,
               lastName: data.lastName,
               email: data.email,
-              phone: data.phone || undefined,
             },
             language: data.language,
             nativeLanguage: state.nativeLanguage,
@@ -319,22 +315,6 @@ export function LandingStep() {
                       <p className="text-xs text-muted-foreground">
                         Your detailed report will be sent here.
                       </p>
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="phone"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>
-                        Phone <span className="text-muted-foreground font-normal">(optional)</span>
-                      </FormLabel>
-                      <FormControl>
-                        <Input type="tel" placeholder="+49 123 456789" {...field} />
-                      </FormControl>
-                      <FormMessage />
                     </FormItem>
                   )}
                 />
