@@ -12,7 +12,6 @@ async function subscribeToList(
   firstName: string,
   lastName: string,
   listId: number,
-  properties?: Record<string, string>
 ) {
   // Ensure contact exists with name
   try {
@@ -24,7 +23,7 @@ async function subscribeToList(
     // Contact may already exist — that's fine
   }
 
-  // Add to list
+  // Add to list (no custom Properties — they must be pre-defined in Mailjet to avoid 400)
   await mailjet
     .post('contactslist', { version: 'v3' })
     .id(listId)
@@ -33,7 +32,6 @@ async function subscribeToList(
       Email: email,
       Name: `${firstName} ${lastName}`.trim(),
       Action: 'addnoforce',
-      Properties: properties || {},
     });
 }
 
@@ -64,19 +62,14 @@ export default {
     }
 
     const mailjet = Mailjet.apiConnect(mailjetApiKey, mailjetSecretKey);
-    const properties: Record<string, string> = {
-      language,
-      source: 'placement_test',
-      ...(phone ? { phone } : {}),
-    };
 
     // Always subscribe to newsletter list
-    await subscribeToList(mailjet, email, firstName, lastName, MAILJET_NEWSLETTER_LIST_ID, properties);
+    await subscribeToList(mailjet, email, firstName, lastName, MAILJET_NEWSLETTER_LIST_ID);
 
     // Optionally subscribe to placement test list if configured
     const placementListId = parseInt(process.env.MAILJET_PLACEMENT_TEST_LIST_ID || '0', 10);
     if (placementListId > 0) {
-      await subscribeToList(mailjet, email, firstName, lastName, placementListId, properties);
+      await subscribeToList(mailjet, email, firstName, lastName, placementListId);
       console.log(`Lead subscribed to placement test list ${placementListId}: ${email}`);
     }
 
