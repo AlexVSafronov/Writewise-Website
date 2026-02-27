@@ -168,11 +168,11 @@ export function IntroStep() {
                 </div>
                 <div>
                   <h3 className="font-semibold mb-1">What You'll Get</h3>
-                  <ul className="space-y-1.5 text-sm text-muted-foreground">
-                    <li>✅ Your CEFR level (A1–C2) displayed immediately</li>
-                    <li>✅ Skill breakdown across vocabulary, grammar, reading & writing</li>
-                    <li>✅ Detailed analysis with question-by-question feedback — emailed to you</li>
-                    <li>✅ Personalised recommendations to improve with WriteWise</li>
+                  <ul className="space-y-1.5 text-sm text-muted-foreground list-disc pl-4">
+                    <li>Your CEFR level (A1–C2) displayed immediately</li>
+                    <li>Skill breakdown across vocabulary, grammar, reading &amp; writing</li>
+                    <li>Detailed analysis with question-by-question feedback — emailed to you</li>
+                    <li>Personalised recommendations to improve with WriteWise</li>
                   </ul>
                 </div>
               </div>

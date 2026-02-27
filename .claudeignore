@@ -1,0 +1,29 @@
+# Dependencies
+**/node_modules/
+
+# Build output
+**/dist/
+**/build/
+**/.strapi/
+
+# Git internals
+**/.git/
+
+# Session/temp docs (orphaned, not for Claude context)
+SESSION_SUMMARY.md
+DEPLOYMENT_COMPLETE.md
+PRICING_FIX.md
+CONTACT_FORM_SETUP.md
+CONTACT_FORM_CLOUD_SETUP.md
+
+# Worktree copies (avoid double-reading via worktree paths)
+.claude/worktrees/
+
+# IDE / OS noise
+.idea/
+**/.DS_Store
+
+# Logs and lock files
+**/*.log
+**/npm-debug.log*
+**/package-lock.json
