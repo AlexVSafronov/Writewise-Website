@@ -3,7 +3,6 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-
 // Marketing pages — loaded on demand
 const Index = lazy(() => import("./pages/Index"));
 const Pricing = lazy(() => import("./pages/Pricing"));
@@ -15,6 +14,7 @@ const VideoResource = lazy(() => import("./pages/VideoResource"));
 const Page = lazy(() => import("./pages/Page"));
 const Contact = lazy(() => import("./pages/Contact"));
 const Freelancers = lazy(() => import("./pages/Freelancers"));
+const PlacementTest = lazy(() => import("./pages/PlacementTest"));
 const MarkdownTest = lazy(() => import("./pages/MarkdownTest"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
@@ -44,6 +44,7 @@ const App = () => (
           <Route path="/terms" element={<Page />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/for-freelancers" element={<Freelancers />} />
+          <Route path="/placement-test" element={<PlacementTest />} />
           <Route path="/markdown-test" element={<MarkdownTest />} />
 
           {/* App pages */}
