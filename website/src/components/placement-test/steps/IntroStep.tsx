@@ -56,14 +56,14 @@ export function IntroStep() {
                 <div
                   className={`flex items-center gap-1.5 text-xs font-medium ${
                     i === 0
-                      ? 'text-purple-600'
+                      ? 'text-primary'
                       : 'text-muted-foreground'
                   }`}
                 >
                   <span
                     className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold ${
                       i === 0
-                        ? 'bg-purple-600 text-white'
+                        ? 'bg-gradient-brand text-white'
                         : 'bg-muted text-muted-foreground'
                     }`}
                   >
