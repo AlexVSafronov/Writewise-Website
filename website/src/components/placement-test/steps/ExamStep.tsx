@@ -91,7 +91,7 @@ export function ExamStep() {
   const progressPercent = Math.round((completedTasks / totalTasks) * 100);
 
   function handleChange(taskId: string, value: string) {
-    dispatch({ type: 'SET_ANSWER', payload: { taskId, value } });
+    dispatch({ type: 'SET_ANSWER', payload: { taskId, answer: value } });
   }
 
   function handleNext() {
@@ -177,7 +177,7 @@ export function ExamStep() {
       {/* Header */}
       <header className="py-4 px-6 border-b border-border bg-white shadow-sm sticky top-0 z-10">
         <div className="max-w-3xl mx-auto flex items-center justify-between">
-          <span className="font-bold text-lg bg-gradient-brand bg-clip-text text-transparent">
+          <span className="font-bold text-lg text-gradient-brand">
             WriteWise
           </span>
           <div className="flex items-center gap-2">
@@ -185,13 +185,13 @@ export function ExamStep() {
               <div key={label} className="flex items-center gap-2">
                 <div
                   className={`flex items-center gap-1.5 text-xs font-medium ${
-                    i === 1 ? 'text-purple-600' : 'text-muted-foreground'
+                    i === 1 ? 'text-primary' : 'text-muted-foreground'
                   }`}
                 >
                   <span
                     className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold ${
                       i === 1
-                        ? 'bg-purple-600 text-white'
+                        ? 'bg-gradient-brand text-white'
                         : i === 0
                         ? 'bg-green-500 text-white'
                         : 'bg-muted text-muted-foreground'
@@ -311,7 +311,7 @@ export function ExamStep() {
                 onClick={() => setCurrentTaskIndex(i)}
                 className={`w-2.5 h-2.5 rounded-full transition-all ${
                   i === currentTaskIndex
-                    ? 'bg-purple-600 scale-125'
+                    ? 'bg-gradient-brand scale-125'
                     : state.answers[currentSection.tasks[i].id]
                     ? 'bg-green-400'
                     : 'bg-gray-200'
