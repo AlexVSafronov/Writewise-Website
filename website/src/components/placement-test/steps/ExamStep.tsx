@@ -1,23 +1,39 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Progress } from '@/components/ui/progress';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, ArrowRight, Send, Loader2, ChevronRight } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Progress } from '@/components/ui/progress';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Label } from '@/components/ui/label';
+import {
+  ArrowLeft,
+  ArrowRight,
+  Send,
+  Loader2,
+  Clock,
+  PenTool,
+} from 'lucide-react';
 import { toast } from 'sonner';
+import { cn } from '@/lib/utils';
 import { usePlacementTest } from '../PlacementTestContext';
 import { evaluatePlacementTest } from '@/lib/placement-test-api';
-import { MultipleChoiceRenderer } from '../task-renderers/MultipleChoiceRenderer';
-import { FillInBlankRenderer } from '../task-renderers/FillInBlankRenderer';
-import { TextResponseRenderer } from '../task-renderers/TextResponseRenderer';
-import { SentenceOrderingRenderer } from '../task-renderers/SentenceOrderingRenderer';
-import { ErrorCorrectionRenderer } from '../task-renderers/ErrorCorrectionRenderer';
-import { ReadingComprehensionRenderer } from '../task-renderers/ReadingComprehensionRenderer';
-import { MatchingRenderer } from '../task-renderers/MatchingRenderer';
 import type { PlacementTask } from '@/lib/placement-test-api';
 
-const STEP_INDICATOR = ['Intro', 'Test', 'Results'];
+// ─── Constants ───────────────────────────────────────────────────
 
-const CEFR_BADGE_COLORS: Record<string, string> = {
+const TYPE_LABELS: Record<string, string> = {
+  multiple_choice: 'Multiple Choice',
+  fill_in_blank: 'Fill in the Gap',
+  text_response: 'Writing',
+  sentence_ordering: 'Reorder Words',
+  error_correction: 'Error Correction',
+  reading_comprehension: 'Reading',
+  matching: 'Matching',
+};
+
+const CEFR_COLORS: Record<string, string> = {
   A1: 'bg-slate-100 text-slate-700',
   A2: 'bg-blue-100 text-blue-700',
   B1: 'bg-green-100 text-green-700',
@@ -26,7 +42,9 @@ const CEFR_BADGE_COLORS: Record<string, string> = {
   C2: 'bg-amber-100 text-amber-700',
 };
 
-function TaskRenderer({
+// ─── Inline task renderer ────────────────────────────────────────
+
+function TaskInput({
   task,
   answers,
   onChange,
@@ -35,90 +53,275 @@ function TaskRenderer({
   answers: Record<string, string>;
   onChange: (taskId: string, value: string) => void;
 }) {
-  switch (task.type) {
-    case 'multiple_choice':
-      return (
-        <MultipleChoiceRenderer task={task} answer={answers[task.id] ?? ''} onChange={onChange} />
-      );
-    case 'fill_in_blank':
-      return (
-        <FillInBlankRenderer task={task} answer={answers[task.id] ?? ''} onChange={onChange} />
-      );
-    case 'text_response':
-      return (
-        <TextResponseRenderer task={task} answer={answers[task.id] ?? ''} onChange={onChange} />
-      );
-    case 'sentence_ordering':
-      return (
-        <SentenceOrderingRenderer task={task} answer={answers[task.id] ?? ''} onChange={onChange} />
-      );
-    case 'error_correction':
-      return (
-        <ErrorCorrectionRenderer task={task} answer={answers[task.id] ?? ''} onChange={onChange} />
-      );
-    case 'reading_comprehension':
-      return (
-        <ReadingComprehensionRenderer task={task} answers={answers} onChange={onChange} />
-      );
-    case 'matching':
-      return (
-        <MatchingRenderer task={task} answer={answers[task.id] ?? ''} onChange={onChange} />
-      );
-    default:
-      return (
-        <p className="text-sm text-muted-foreground">Unsupported task type: {task.type}</p>
-      );
+  const val = answers[task.id] ?? '';
+
+  if (task.type === 'multiple_choice') {
+    return (
+      <div className="space-y-2">
+        <p className="text-sm font-medium text-foreground">{task.question}</p>
+        <RadioGroup value={val} onValueChange={(v) => onChange(task.id, v)}>
+          {task.options?.map((opt) => (
+            <div key={opt} className="flex items-center space-x-2">
+              <RadioGroupItem value={opt} id={`${task.id}-${opt}`} />
+              <Label
+                htmlFor={`${task.id}-${opt}`}
+                className="text-sm cursor-pointer text-foreground"
+              >
+                {opt}
+              </Label>
+            </div>
+          ))}
+        </RadioGroup>
+      </div>
+    );
   }
+
+  if (task.type === 'fill_in_blank') {
+    const parts = (task.template ?? '').split('___');
+    return (
+      <div className="flex flex-wrap items-center gap-1.5 text-sm leading-relaxed">
+        {parts.map((part, i) => (
+          <span key={i} className="contents">
+            <span className="text-foreground">{part}</span>
+            {i < parts.length - 1 && (
+              <Input
+                className="inline-flex w-44 h-8 text-sm"
+                placeholder="…"
+                value={val}
+                onChange={(e) => onChange(task.id, e.target.value)}
+              />
+            )}
+          </span>
+        ))}
+        {parts.length === 1 && task.blanks && task.blanks > 0 && (
+          // fallback: template had no ___ markers
+          <Input
+            className="w-full h-9 text-sm mt-2"
+            placeholder="Type your answer…"
+            value={val}
+            onChange={(e) => onChange(task.id, e.target.value)}
+          />
+        )}
+      </div>
+    );
+  }
+
+  if (task.type === 'text_response') {
+    const wordCount = val.split(/\s+/).filter(Boolean).length;
+    const minWords = task.minWords ?? 40;
+    return (
+      <div className="space-y-2">
+        <p className="text-sm font-medium text-foreground">{task.prompt}</p>
+        <p className="text-xs text-muted-foreground">Minimum {minWords} words</p>
+        <Textarea
+          placeholder="Write your response…"
+          value={val}
+          onChange={(e) => onChange(task.id, e.target.value)}
+          className="min-h-[100px]"
+        />
+        <p
+          className={cn(
+            'text-xs text-right',
+            wordCount >= minWords ? 'text-green-600 font-medium' : 'text-muted-foreground'
+          )}
+        >
+          {wordCount} / {minWords} words
+        </p>
+      </div>
+    );
+  }
+
+  if (task.type === 'sentence_ordering') {
+    return (
+      <div className="space-y-3">
+        <p className="text-sm text-foreground font-medium">
+          Arrange these words into a correct sentence:
+        </p>
+        <div className="flex flex-wrap gap-1.5">
+          {task.shuffledParts?.map((w) => (
+            <Badge key={w} variant="secondary" className="text-sm py-1 px-2.5">
+              {w}
+            </Badge>
+          ))}
+        </div>
+        <Input
+          placeholder="Type the sentence in the correct order…"
+          value={val}
+          onChange={(e) => onChange(task.id, e.target.value)}
+        />
+      </div>
+    );
+  }
+
+  if (task.type === 'error_correction') {
+    return (
+      <div className="space-y-3">
+        <p className="text-sm text-foreground font-medium">
+          Find and correct the error in this sentence:
+        </p>
+        <div className="rounded-md bg-muted/50 px-3 py-2 text-sm text-foreground italic">
+          {task.sentence}
+        </div>
+        <Input
+          placeholder="Write the corrected sentence…"
+          value={val}
+          onChange={(e) => onChange(task.id, e.target.value)}
+        />
+      </div>
+    );
+  }
+
+  if (task.type === 'reading_comprehension') {
+    return (
+      <div className="space-y-4">
+        <div className="rounded-md bg-accent/5 border border-accent/20 px-4 py-3 text-sm text-foreground leading-relaxed">
+          {task.passage}
+        </div>
+        {task.subQuestions?.map((sq, i) => (
+          <div key={sq.id} className="pl-4 border-l-2 border-border space-y-2">
+            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+              Question {i + 1}
+            </p>
+            <TaskInput task={sq} answers={answers} onChange={onChange} />
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  if (task.type === 'matching') {
+    const pairs = val
+      ? val.split(',').reduce(
+          (acc, pair) => {
+            const [left, right] = pair.split('→');
+            if (left?.trim()) acc[left.trim()] = right?.trim() ?? '';
+            return acc;
+          },
+          {} as Record<string, string>
+        )
+      : {};
+
+    function updatePair(left: string, right: string) {
+      const newPairs = { ...pairs, [left]: right };
+      onChange(
+        task.id,
+        Object.entries(newPairs)
+          .map(([l, r]) => `${l}→${r}`)
+          .join(',')
+      );
+    }
+
+    return (
+      <div className="space-y-3">
+        <p className="text-sm text-foreground font-medium">
+          Match each item on the left with the correct answer on the right:
+        </p>
+        {task.leftItems?.map((left) => (
+          <div key={left} className="flex items-center gap-3 text-sm">
+            <span className="w-40 font-medium text-foreground shrink-0 truncate">{left}</span>
+            <span className="text-muted-foreground">→</span>
+            <select
+              className="flex-1 h-9 rounded-md border border-input bg-background px-3 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+              value={pairs[left] ?? ''}
+              onChange={(e) => updatePair(left, e.target.value)}
+            >
+              <option value="">Choose…</option>
+              {task.rightItems?.map((right) => (
+                <option key={right} value={right}>
+                  {right}
+                </option>
+              ))}
+            </select>
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  return null;
 }
+
+// ─── Question Card ───────────────────────────────────────────────
+
+function QuestionCard({
+  task,
+  index,
+  answers,
+  onChange,
+}: {
+  task: PlacementTask;
+  index: number;
+  answers: Record<string, string>;
+  onChange: (taskId: string, value: string) => void;
+}) {
+  const hasAnswer =
+    task.type === 'reading_comprehension'
+      ? task.subQuestions?.some((sq) => answers[sq.id]?.trim())
+      : !!answers[task.id]?.trim();
+
+  return (
+    <Card
+      className={cn(
+        'border shadow-sm transition-colors',
+        hasAnswer ? 'border-primary/30' : 'border-border'
+      )}
+    >
+      <CardHeader className="pb-3">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <span className="flex h-6 w-6 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
+              {index}
+            </span>
+            <Badge variant="outline" className="text-[10px]">
+              {TYPE_LABELS[task.type] ?? task.type}
+            </Badge>
+          </div>
+          <Badge
+            variant="secondary"
+            className={cn('text-[10px]', CEFR_COLORS[task.targetCEFR])}
+          >
+            {task.targetCEFR}
+          </Badge>
+        </div>
+        <p className="text-xs text-muted-foreground mt-1">{task.instruction}</p>
+      </CardHeader>
+      <CardContent>
+        <TaskInput task={task} answers={answers} onChange={onChange} />
+      </CardContent>
+    </Card>
+  );
+}
+
+// ─── Main ExamStep ───────────────────────────────────────────────
 
 export function ExamStep() {
   const { state, dispatch } = usePlacementTest();
   const [currentSectionIndex, setCurrentSectionIndex] = useState(0);
-  const [currentTaskIndex, setCurrentTaskIndex] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const test = state.test;
   if (!test) return null;
 
   const sections = test.sections;
-  const currentSection = sections[currentSectionIndex];
-  const currentTask = currentSection?.tasks[currentTaskIndex];
+  const activeSection = sections[currentSectionIndex];
 
+  // Count answered tasks (reading_comprehension counts if any sub-question answered)
+  const answeredCount = sections.flatMap((s) => s.tasks).filter((task) => {
+    if (task.type === 'reading_comprehension') {
+      return task.subQuestions?.some((sq) => state.answers[sq.id]?.trim());
+    }
+    return !!state.answers[task.id]?.trim();
+  }).length;
   const totalTasks = sections.reduce((sum, s) => sum + s.tasks.length, 0);
-  const completedTasks = sections
+
+  // Running task index offset for display numbering
+  const sectionOffset = sections
     .slice(0, currentSectionIndex)
-    .reduce((sum, s) => sum + s.tasks.length, 0) + currentTaskIndex;
-  const progressPercent = Math.round((completedTasks / totalTasks) * 100);
+    .reduce((sum, s) => sum + s.tasks.length, 0);
 
   function handleChange(taskId: string, value: string) {
     dispatch({ type: 'SET_ANSWER', payload: { taskId, answer: value } });
   }
-
-  function handleNext() {
-    if (currentTaskIndex < currentSection.tasks.length - 1) {
-      setCurrentTaskIndex((i) => i + 1);
-    } else if (currentSectionIndex < sections.length - 1) {
-      // Move to next section
-      setCurrentSectionIndex((i) => i + 1);
-      setCurrentTaskIndex(0);
-    }
-  }
-
-  function handlePrev() {
-    if (currentTaskIndex > 0) {
-      setCurrentTaskIndex((i) => i - 1);
-    } else if (currentSectionIndex > 0) {
-      const prevSection = sections[currentSectionIndex - 1];
-      setCurrentSectionIndex((i) => i - 1);
-      setCurrentTaskIndex(prevSection.tasks.length - 1);
-    }
-  }
-
-  const isFirstTask = currentSectionIndex === 0 && currentTaskIndex === 0;
-  const isLastTask =
-    currentSectionIndex === sections.length - 1 &&
-    currentTaskIndex === currentSection.tasks.length - 1;
-  const isLastTaskInSection = currentTaskIndex === currentSection.tasks.length - 1;
 
   async function handleSubmit() {
     if (!state.sessionId || !state.language || !state.nativeLanguage || !state.test) {
@@ -151,11 +354,11 @@ export function ExamStep() {
     }
   }
 
-  // Show loading overlay during evaluation
+  // Evaluation loading overlay
   if (isSubmitting || state.isEvaluating) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-blue-50 flex flex-col items-center justify-center gap-6">
-        <div className="w-16 h-16 bg-gradient-brand rounded-2xl flex items-center justify-center animate-pulse">
+      <div className="min-h-screen bg-background flex flex-col items-center justify-center gap-6 px-4">
+        <div className="w-16 h-16 bg-gradient-brand rounded-2xl flex items-center justify-center">
           <Loader2 className="w-8 h-8 text-white animate-spin" />
         </div>
         <div className="text-center">
@@ -173,153 +376,102 @@ export function ExamStep() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
-      {/* Header */}
-      <header className="py-4 px-6 border-b border-border bg-white shadow-sm sticky top-0 z-10">
-        <div className="max-w-3xl mx-auto flex items-center justify-between">
-          <span className="font-bold text-lg text-gradient-brand">
-            WriteWise
-          </span>
-          <div className="flex items-center gap-2">
-            {STEP_INDICATOR.map((label, i) => (
-              <div key={label} className="flex items-center gap-2">
-                <div
-                  className={`flex items-center gap-1.5 text-xs font-medium ${
-                    i === 1 ? 'text-primary' : 'text-muted-foreground'
-                  }`}
-                >
-                  <span
-                    className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold ${
-                      i === 1
-                        ? 'bg-gradient-brand text-white'
-                        : i === 0
-                        ? 'bg-green-500 text-white'
-                        : 'bg-muted text-muted-foreground'
-                    }`}
-                  >
-                    {i === 0 ? '✓' : i + 1}
-                  </span>
-                  <span className="hidden sm:inline">{label}</span>
-                </div>
-                {i < STEP_INDICATOR.length - 1 && (
-                  <div className="w-6 h-px bg-border hidden sm:block" />
-                )}
-              </div>
-            ))}
+    <div className="min-h-screen bg-background">
+      {/* Sticky header */}
+      <header className="sticky top-0 z-10 border-b bg-card/95 backdrop-blur">
+        <div className="container mx-auto flex items-center justify-between px-4 py-3">
+          <div className="flex items-center gap-3">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => {
+                if (currentSectionIndex > 0) setCurrentSectionIndex((i) => i - 1);
+                else dispatch({ type: 'SET_STEP', payload: 'intro' });
+              }}
+            >
+              <ArrowLeft className="h-5 w-5" />
+            </Button>
+            <div>
+              <h2 className="text-sm font-semibold text-foreground">
+                {test.language} Placement Test
+              </h2>
+              <p className="text-xs text-muted-foreground">{activeSection.title}</p>
+            </div>
           </div>
+          <div className="flex items-center gap-4">
+            <div className="text-right">
+              <p className="text-xs text-muted-foreground">
+                {answeredCount}/{totalTasks} answered
+              </p>
+              <Progress
+                value={(answeredCount / totalTasks) * 100}
+                className="h-1.5 w-32"
+              />
+            </div>
+            <Badge variant="outline" className="gap-1 hidden sm:flex">
+              <Clock className="h-3 w-3" />
+              ~20 min
+            </Badge>
+          </div>
+        </div>
+
+        {/* Section tabs */}
+        <div className="container mx-auto flex gap-1 px-4 pb-2">
+          {sections.map((s, i) => (
+            <button
+              key={i}
+              onClick={() => setCurrentSectionIndex(i)}
+              className={cn(
+                'flex-1 rounded-md py-1.5 text-xs font-medium transition-colors',
+                i === currentSectionIndex
+                  ? 'bg-primary text-primary-foreground'
+                  : 'bg-muted text-muted-foreground hover:bg-muted/80'
+              )}
+            >
+              <span className="hidden sm:inline">{s.title}</span>
+              <span className="sm:hidden">{i + 1}</span>
+            </button>
+          ))}
         </div>
       </header>
 
-      {/* Progress bar */}
-      <div className="bg-white border-b border-border px-6 py-2">
-        <div className="max-w-3xl mx-auto">
-          <div className="flex items-center justify-between text-xs text-muted-foreground mb-1.5">
-            <span>
-              Section {currentSectionIndex + 1} of {sections.length}:{' '}
-              <strong>{currentSection.title}</strong> ({currentSection.targetLevels})
-            </span>
-            <span>
-              Task {currentTaskIndex + 1}/{currentSection.tasks.length} · {progressPercent}% complete
-            </span>
-          </div>
-          <Progress value={progressPercent} className="h-1.5" />
-        </div>
-      </div>
+      {/* Questions */}
+      <main className="container mx-auto max-w-3xl px-4 py-6 space-y-5">
+        {activeSection.tasks.map((task, qIdx) => (
+          <QuestionCard
+            key={task.id}
+            task={task}
+            index={sectionOffset + qIdx + 1}
+            answers={state.answers}
+            onChange={handleChange}
+          />
+        ))}
 
-      {/* Main content */}
-      <main className="flex-1 py-8 px-4">
-        <div className="max-w-3xl mx-auto">
-          {currentTask && (
-            <div className="bg-white rounded-2xl border border-border shadow-sm p-6 lg:p-8 space-y-6">
-              {/* Task header */}
-              <div className="flex items-start gap-3">
-                <span className="w-8 h-8 rounded-full bg-gradient-brand text-white text-sm font-bold flex items-center justify-center shrink-0 mt-0.5">
-                  {completedTasks + 1}
-                </span>
-                <div className="flex-1">
-                  <div className="flex items-center gap-2 mb-1.5 flex-wrap">
-                    <Badge
-                      variant="outline"
-                      className={`text-xs font-semibold ${
-                        CEFR_BADGE_COLORS[currentTask.targetCEFR] ?? 'bg-gray-100 text-gray-700'
-                      }`}
-                    >
-                      {currentTask.targetCEFR}
-                    </Badge>
-                    <span className="text-xs text-muted-foreground capitalize">
-                      {currentTask.type.replace(/_/g, ' ')}
-                    </span>
-                  </div>
-                  <p className="text-sm text-muted-foreground leading-relaxed">
-                    {currentTask.instruction}
-                  </p>
-                </div>
-              </div>
+        {/* Navigation */}
+        <div className="flex justify-between pt-4 pb-8">
+          <Button
+            variant="outline"
+            onClick={() => setCurrentSectionIndex((i) => Math.max(0, i - 1))}
+            disabled={currentSectionIndex === 0}
+          >
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Previous Section
+          </Button>
 
-              {/* Task renderer */}
-              <div className="pl-11">
-                <TaskRenderer
-                  task={currentTask}
-                  answers={state.answers}
-                  onChange={handleChange}
-                />
-              </div>
-            </div>
-          )}
-
-          {/* Navigation */}
-          <div className="flex items-center justify-between mt-6">
-            <Button
-              variant="outline"
-              onClick={handlePrev}
-              disabled={isFirstTask}
-              className="gap-2"
-            >
-              <ArrowLeft className="w-4 h-4" />
-              Previous
+          {currentSectionIndex < sections.length - 1 ? (
+            <Button onClick={() => setCurrentSectionIndex((i) => i + 1)}>
+              Next Section
+              <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
-
-            <div className="flex gap-2">
-              {isLastTask ? (
-                <Button
-                  onClick={handleSubmit}
-                  className="bg-gradient-brand hover:opacity-90 text-white gap-2"
-                >
-                  <Send className="w-4 h-4" />
-                  Submit Test
-                </Button>
-              ) : isLastTaskInSection && !isLastTask ? (
-                <Button onClick={handleNext} className="bg-gradient-brand hover:opacity-90 text-white gap-2">
-                  Next Section
-                  <ChevronRight className="w-4 h-4" />
-                </Button>
-              ) : (
-                <Button onClick={handleNext} className="gap-2">
-                  Next
-                  <ArrowRight className="w-4 h-4" />
-                </Button>
-              )}
-            </div>
-          </div>
-
-          {/* Section overview dots */}
-          <div className="flex justify-center gap-1.5 mt-6">
-            {currentSection.tasks.map((_, i) => (
-              <button
-                key={i}
-                type="button"
-                onClick={() => setCurrentTaskIndex(i)}
-                className={`w-2.5 h-2.5 rounded-full transition-all ${
-                  i === currentTaskIndex
-                    ? 'bg-gradient-brand scale-125'
-                    : state.answers[currentSection.tasks[i].id]
-                    ? 'bg-green-400'
-                    : 'bg-gray-200'
-                }`}
-                title={`Task ${i + 1}`}
-              />
-            ))}
-          </div>
+          ) : (
+            <Button
+              className="bg-gradient-brand text-white"
+              onClick={handleSubmit}
+            >
+              <Send className="mr-2 h-4 w-4" />
+              Submit for Evaluation
+            </Button>
+          )}
         </div>
       </main>
     </div>

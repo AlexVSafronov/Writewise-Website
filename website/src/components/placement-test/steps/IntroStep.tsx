@@ -1,18 +1,21 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 import {
   Clock,
   Brain,
-  CheckCircle,
-  Lightbulb,
+  Target,
+  BookOpen,
+  Shield,
+  CheckCircle2,
   ArrowRight,
   Loader2,
+  PenTool,
 } from 'lucide-react';
 import { usePlacementTest } from '../PlacementTestContext';
 import { generatePlacementTest } from '@/lib/placement-test-api';
 import { toast } from 'sonner';
-
-const STEP_INDICATOR = ['Intro', 'Test', 'Results'];
 
 export function IntroStep() {
   const { state, dispatch } = usePlacementTest();
@@ -43,171 +46,165 @@ export function IntroStep() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-blue-50 flex flex-col">
-      {/* Minimal header */}
-      <header className="py-4 px-6 border-b border-border/40 bg-white/80 backdrop-blur">
-        <div className="max-w-2xl mx-auto flex items-center justify-between">
-          <span className="font-bold text-xl text-gradient-brand">
-            WriteWise
-          </span>
+    <div className="min-h-screen bg-background">
+      {/* Header */}
+      <header className="border-b bg-card">
+        <div className="container mx-auto flex items-center justify-between px-4 py-4">
           <div className="flex items-center gap-2">
-            {STEP_INDICATOR.map((label, i) => (
-              <div key={label} className="flex items-center gap-2">
-                <div
-                  className={`flex items-center gap-1.5 text-xs font-medium ${
-                    i === 0
-                      ? 'text-primary'
-                      : 'text-muted-foreground'
-                  }`}
-                >
-                  <span
-                    className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold ${
-                      i === 0
-                        ? 'bg-gradient-brand text-white'
-                        : 'bg-muted text-muted-foreground'
-                    }`}
-                  >
-                    {i + 1}
-                  </span>
-                  <span className="hidden sm:inline">{label}</span>
-                </div>
-                {i < STEP_INDICATOR.length - 1 && (
-                  <div className="w-8 h-px bg-border hidden sm:block" />
-                )}
-              </div>
-            ))}
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-brand">
+              <PenTool className="h-4 w-4 text-white" />
+            </div>
+            <span className="text-lg font-bold text-foreground">WriteWise</span>
           </div>
+          <Badge variant="outline" className="text-xs">
+            Free Assessment
+          </Badge>
         </div>
       </header>
 
-      {/* Content */}
-      <main className="flex-1 flex items-center justify-center py-12 px-4">
-        <div className="max-w-2xl w-full space-y-6">
-          {/* Title card */}
-          <div className="text-center">
-            <h1 className="text-3xl font-bold mb-3">
-              Your{' '}
-              <span className="text-gradient-brand">
-                {state.language}
-              </span>{' '}
-              Placement Test
-            </h1>
-            <p className="text-muted-foreground text-lg">
-              Hi {state.userInfo?.firstName}! Here's what to expect before you begin.
-            </p>
-          </div>
+      <main className="container mx-auto max-w-3xl px-4 py-12">
+        {/* Title */}
+        <div className="text-center mb-10">
+          <Badge className="mb-4 bg-primary/10 text-primary border-0 px-4 py-1.5 text-sm">
+            <Target className="mr-1.5 h-3.5 w-3.5" />
+            {state.language} Placement Test
+          </Badge>
+          <h1 className="text-3xl sm:text-4xl font-bold text-foreground mb-4">
+            Discover Your{' '}
+            <span className="text-gradient-brand">{state.language} Level</span>
+          </h1>
+          <p className="text-lg text-muted-foreground max-w-xl mx-auto">
+            Hi {state.userInfo?.firstName}! Take our AI-powered placement test to find your
+            exact CEFR level across all language skills.
+          </p>
+        </div>
 
-          {/* Overview card */}
-          <div className="bg-white rounded-2xl border border-border shadow-sm p-6 space-y-5">
-            {/* Time & format */}
-            <div className="flex items-start gap-4 pb-5 border-b border-border">
-              <div className="w-10 h-10 bg-purple-100 rounded-xl flex items-center justify-center shrink-0">
-                <Clock className="w-5 h-5 text-purple-600" />
-              </div>
-              <div>
-                <h3 className="font-semibold mb-1">Time &amp; Format</h3>
-                <p className="text-sm text-muted-foreground">
-                  The test takes approximately <strong>15–20 minutes</strong> and consists of
-                  three progressive sections: Foundations (A1–A2), Intermediate (B1–B2), and
-                  Advanced (C1–C2). Each section uses a variety of task types.
-                </p>
-              </div>
-            </div>
+        {/* At a glance */}
+        <div className="grid gap-4 sm:grid-cols-3 mb-10">
+          {[
+            {
+              icon: Clock,
+              title: '~20 Minutes',
+              desc: 'Complete at your own pace — no time limit per question',
+            },
+            {
+              icon: Brain,
+              title: '20 Questions',
+              desc: 'Covering grammar, vocabulary, writing, and comprehension',
+            },
+            {
+              icon: Target,
+              title: 'CEFR Assessment',
+              desc: 'Get your exact level from A1 to C2 with detailed analysis',
+            },
+          ].map(({ icon: Icon, title, desc }) => (
+            <Card key={title} className="border-0 shadow-sm text-center">
+              <CardContent className="pt-6 pb-4">
+                <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10">
+                  <Icon className="h-6 w-6 text-primary" />
+                </div>
+                <h3 className="font-semibold text-foreground mb-1">{title}</h3>
+                <p className="text-xs text-muted-foreground">{desc}</p>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
 
-            {/* Skills tested */}
-            <div className="pb-5 border-b border-border">
-              <div className="flex items-start gap-4 mb-4">
-                <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center shrink-0">
-                  <Brain className="w-5 h-5 text-blue-600" />
+        {/* How It Works */}
+        <Card className="border-0 shadow-sm mb-6">
+          <CardHeader>
+            <CardTitle className="text-lg flex items-center gap-2">
+              <BookOpen className="h-5 w-5 text-primary" />
+              How It Works
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {[
+              {
+                step: '1',
+                title: 'Answer diverse question types',
+                desc: 'Multiple choice, fill-in-the-gap, sentence reordering, error correction, matching, and short writing tasks.',
+              },
+              {
+                step: '2',
+                title: 'Questions progress across CEFR levels',
+                desc: 'The test covers A1 through C2 — foundations, intermediate, and advanced — gradually increasing in difficulty.',
+              },
+              {
+                step: '3',
+                title: 'Get instant results',
+                desc: 'Receive your CEFR level with a skill breakdown across vocabulary, grammar, reading, and writing.',
+              },
+              {
+                step: '4',
+                title: 'Receive a detailed report',
+                desc: 'A comprehensive analysis is emailed to you with personalised learning recommendations.',
+              },
+            ].map((item) => (
+              <div key={item.step} className="flex gap-4">
+                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary text-sm font-bold text-primary-foreground">
+                  {item.step}
                 </div>
                 <div>
-                  <h3 className="font-semibold mb-1">Skills Assessed</h3>
-                  <p className="text-sm text-muted-foreground">
-                    The test evaluates four core language skills:
-                  </p>
+                  <h4 className="text-sm font-semibold text-foreground">{item.title}</h4>
+                  <p className="text-sm text-muted-foreground">{item.desc}</p>
                 </div>
               </div>
-              <div className="grid grid-cols-2 gap-2 ml-14">
-                {['Vocabulary', 'Grammar', 'Reading', 'Writing'].map((label) => (
-                  <div key={label} className="text-sm font-medium text-foreground">
-                    · {label}
-                  </div>
-                ))}
-              </div>
-            </div>
+            ))}
+          </CardContent>
+        </Card>
 
-            {/* Tips for best results */}
-            <div className="pb-5 border-b border-border">
-              <div className="flex items-start gap-4 mb-3">
-                <div className="w-10 h-10 bg-green-100 rounded-xl flex items-center justify-center shrink-0">
-                  <Lightbulb className="w-5 h-5 text-green-600" />
-                </div>
-                <div>
-                  <h3 className="font-semibold mb-1">Tips for Best Results</h3>
-                </div>
-              </div>
-              <ul className="ml-14 space-y-2 list-disc pl-4">
-                {[
-                  'Find a quiet place with no distractions.',
-                  'Answer from your current knowledge — don\'t use a dictionary.',
-                  'If a question is too hard, it\'s OK — skip to the next one.',
-                  'For writing tasks, aim for clear and natural language.',
-                ].map((tip) => (
-                  <li key={tip} className="text-sm text-muted-foreground">
-                    {tip}
-                  </li>
-                ))}
-              </ul>
-            </div>
+        {/* Before You Start */}
+        <Card className="border-0 shadow-sm bg-muted/50 mb-10">
+          <CardContent className="pt-6">
+            <h3 className="font-semibold text-foreground mb-3 flex items-center gap-2">
+              <Shield className="h-4 w-4 text-primary" />
+              Before You Start
+            </h3>
+            <ul className="space-y-2 text-sm text-muted-foreground">
+              {[
+                'Find a quiet place without distractions',
+                'Answer from your current knowledge — no dictionaries or translators',
+                "If a question is too hard, skip it — that's useful information too",
+                'For writing tasks, aim for clear and natural language',
+              ].map((tip) => (
+                <li key={tip} className="flex items-start gap-2">
+                  <CheckCircle2 className="h-4 w-4 text-primary shrink-0 mt-0.5" />
+                  {tip}
+                </li>
+              ))}
+            </ul>
+          </CardContent>
+        </Card>
 
-            {/* What you get */}
-            <div>
-              <div className="flex items-start gap-4">
-                <div className="w-10 h-10 bg-amber-100 rounded-xl flex items-center justify-center shrink-0">
-                  <CheckCircle className="w-5 h-5 text-amber-600" />
-                </div>
-                <div>
-                  <h3 className="font-semibold mb-1">What You'll Get</h3>
-                  <ul className="space-y-1.5 text-sm text-muted-foreground list-disc pl-4">
-                    <li>Your CEFR level (A1–C2) displayed immediately</li>
-                    <li>Skill breakdown across vocabulary, grammar, reading &amp; writing</li>
-                    <li>Detailed analysis with question-by-question feedback — emailed to you</li>
-                    <li>Personalised recommendations to improve with WriteWise</li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* CTA */}
-          <div className="text-center space-y-3">
-            <Button
-              onClick={handleStart}
-              disabled={isStarting || state.isGenerating}
-              className="bg-gradient-brand hover:opacity-90 text-white px-10 py-3 text-base font-semibold h-auto w-full sm:w-auto"
-            >
-              {isStarting || state.isGenerating ? (
-                <>
-                  <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                  Preparing your test…
-                </>
-              ) : (
-                <>
-                  Begin Test
-                  <ArrowRight className="ml-2 w-5 h-5" />
-                </>
-              )}
-            </Button>
-            {(isStarting || state.isGenerating) && (
-              <p className="text-sm text-muted-foreground animate-pulse">
-                Our AI is generating a personalised test for you — this takes about 15 seconds.
-              </p>
+        {/* CTA */}
+        <div className="text-center">
+          <Button
+            size="lg"
+            className="bg-gradient-brand text-white px-10 text-base"
+            onClick={handleStart}
+            disabled={isStarting || state.isGenerating}
+          >
+            {isStarting || state.isGenerating ? (
+              <>
+                <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                Preparing your test…
+              </>
+            ) : (
+              <>
+                Begin Placement Test
+                <ArrowRight className="ml-2 h-5 w-5" />
+              </>
             )}
-            <p className="text-xs text-muted-foreground">
-              Instructions will be in{' '}
-              <strong>{state.nativeLanguage}</strong>.
+          </Button>
+          {(isStarting || state.isGenerating) && (
+            <p className="text-sm text-muted-foreground mt-3 animate-pulse">
+              Our AI is generating a personalised {state.language} test — this takes about 30 seconds.
             </p>
-          </div>
+          )}
+          <p className="text-xs text-muted-foreground mt-3">
+            Instructions will be in <strong>{state.nativeLanguage}</strong>
+          </p>
         </div>
       </main>
     </div>
