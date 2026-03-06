@@ -22,8 +22,8 @@ export function IntroStep() {
   const [isStarting, setIsStarting] = useState(false);
 
   async function handleStart() {
-    if (!state.sessionId || !state.language || !state.nativeLanguage) {
-      toast.error('Session information missing. Please start again.');
+    if (!state.language || !state.nativeLanguage) {
+      toast.error('Language information missing. Please start again.');
       dispatch({ type: 'RESET' });
       return;
     }
@@ -33,7 +33,6 @@ export function IntroStep() {
 
     try {
       const test = await generatePlacementTest({
-        sessionId: state.sessionId,
         language: state.language,
         nativeLanguage: state.nativeLanguage,
       });
@@ -199,7 +198,7 @@ export function IntroStep() {
           </Button>
           {(isStarting || state.isGenerating) && (
             <p className="text-sm text-muted-foreground mt-3 animate-pulse">
-              Our AI is generating a personalised {state.language} test — this takes about 30 seconds.
+              Our AI is generating a personalised {state.language} test — this may take 1–2 minutes. Please don't close this tab.
             </p>
           )}
           <p className="text-xs text-muted-foreground mt-3">

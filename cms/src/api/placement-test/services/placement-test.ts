@@ -78,15 +78,14 @@ export default {
 
   /**
    * Proxies the test generation request to the WriteWise app service.
+   * Tests are pre-generated and stored in DB; this returns one from the pool.
    */
   async generateTest({
     language,
     nativeLanguage,
-    sessionId,
   }: {
     language: string;
     nativeLanguage: string;
-    sessionId: string;
   }): Promise<any> {
     const appUrl = process.env.WRITEWISE_APP_URL;
     if (!appUrl) {
@@ -96,7 +95,7 @@ export default {
     const response = await fetch(`${appUrl}/api/public/placement-test/generate`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ language, nativeLanguage, sessionId }),
+      body: JSON.stringify({ language, nativeLanguage }),
     });
 
     if (!response.ok) {
@@ -109,18 +108,17 @@ export default {
 
   /**
    * Proxies the evaluation request to the WriteWise app service.
+   * Uses testId (from the generated PlacementTest.id) instead of the full test object.
    */
   async evaluateTest({
-    sessionId,
+    testId,
     language,
     nativeLanguage,
-    test,
     answers,
   }: {
-    sessionId: string;
+    testId: string;
     language: string;
     nativeLanguage: string;
-    test: any;
     answers: Record<string, string>;
   }): Promise<any> {
     const appUrl = process.env.WRITEWISE_APP_URL;
@@ -131,7 +129,7 @@ export default {
     const response = await fetch(`${appUrl}/api/public/placement-test/evaluate`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ sessionId, language, nativeLanguage, test, answers }),
+      body: JSON.stringify({ testId, language, nativeLanguage, answers }),
     });
 
     if (!response.ok) {

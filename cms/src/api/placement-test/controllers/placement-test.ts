@@ -52,16 +52,15 @@ export default {
    */
   async generate(ctx) {
     try {
-      const { sessionId, language, nativeLanguage } = ctx.request.body;
+      const { language, nativeLanguage } = ctx.request.body;
 
-      if (!sessionId || !language || !nativeLanguage) {
-        return ctx.badRequest('Missing required fields: sessionId, language, nativeLanguage');
+      if (!language || !nativeLanguage) {
+        return ctx.badRequest('Missing required fields: language, nativeLanguage');
       }
 
       const test = await strapi.service('api::placement-test.placement-test').generateTest({
         language,
         nativeLanguage,
-        sessionId,
       });
 
       return ctx.send(test);
@@ -79,17 +78,16 @@ export default {
    */
   async evaluate(ctx) {
     try {
-      const { sessionId, language, nativeLanguage, test, answers, email, firstName } = ctx.request.body;
+      const { testId, language, nativeLanguage, answers, email, firstName } = ctx.request.body;
 
-      if (!sessionId || !language || !nativeLanguage || !test || !answers) {
-        return ctx.badRequest('Missing required fields: sessionId, language, nativeLanguage, test, answers');
+      if (!testId || !language || !nativeLanguage || !answers) {
+        return ctx.badRequest('Missing required fields: testId, language, nativeLanguage, answers');
       }
 
       const results = await strapi.service('api::placement-test.placement-test').evaluateTest({
-        sessionId,
+        testId,
         language,
         nativeLanguage,
-        test,
         answers,
       });
 

@@ -324,8 +324,8 @@ export function ExamStep() {
   }
 
   async function handleSubmit() {
-    if (!state.sessionId || !state.language || !state.nativeLanguage || !state.test) {
-      toast.error('Session data missing. Please start again.');
+    if (!state.language || !state.nativeLanguage || !state.test) {
+      toast.error('Test data missing. Please start again.');
       return;
     }
     if (!state.userInfo?.email) {
@@ -338,10 +338,9 @@ export function ExamStep() {
 
     try {
       const results = await evaluatePlacementTest({
-        sessionId: state.sessionId,
+        testId: state.test.id,
         language: state.language,
         nativeLanguage: state.nativeLanguage,
-        test: state.test,
         answers: state.answers,
         email: state.userInfo.email,
         firstName: state.userInfo.firstName,

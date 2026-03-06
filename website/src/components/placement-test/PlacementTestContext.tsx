@@ -22,7 +22,6 @@ export interface PlacementTestState {
   userInfo: UserInfo | null;
   language: string | null;
   nativeLanguage: string;
-  sessionId: string | null;
   test: PlacementTest | null;
   answers: Record<string, string>;
   results: PlacementEvaluationResult | null;
@@ -35,7 +34,7 @@ type Action =
   | { type: 'SET_STEP'; payload: PlacementStep }
   | {
       type: 'REGISTER_SUCCESS';
-      payload: { userInfo: UserInfo; language: string; nativeLanguage: string; sessionId: string };
+      payload: { userInfo: UserInfo; language: string; nativeLanguage: string };
     }
   | { type: 'SET_NATIVE_LANGUAGE'; payload: string }
   | { type: 'SET_GENERATING'; payload: boolean }
@@ -80,7 +79,6 @@ function reducer(state: PlacementTestState, action: Action): PlacementTestState 
         userInfo: action.payload.userInfo,
         language: action.payload.language,
         nativeLanguage: action.payload.nativeLanguage,
-        sessionId: action.payload.sessionId,
         step: 'intro',
         error: null,
       };
@@ -115,7 +113,6 @@ function initialState(): PlacementTestState {
     userInfo: null,
     language: null,
     nativeLanguage: detectNativeLanguage(),
-    sessionId: null,
     test: null,
     answers: {},
     results: null,

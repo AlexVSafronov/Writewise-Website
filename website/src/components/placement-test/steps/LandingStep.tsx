@@ -110,7 +110,7 @@ export function LandingStep() {
   async function onSubmit(data: LandingFormData) {
     setIsSubmitting(true);
     try {
-      const { success, sessionId } = await registerPlacementLead({
+      const { success } = await registerPlacementLead({
         firstName: data.firstName,
         lastName: data.lastName,
         email: data.email,
@@ -129,7 +129,6 @@ export function LandingStep() {
             },
             language: data.language,
             nativeLanguage: state.nativeLanguage,
-            sessionId,
           },
         });
       }

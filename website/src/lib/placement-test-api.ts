@@ -64,10 +64,10 @@ export interface PlacementTest {
 }
 
 export interface DimensionScores {
-  vocabulary: number;
-  grammar: number;
-  reading: number;
-  writing: number;
+  range: number;                // 0-100 — lexis & grammar variety
+  accuracy: number;             // 0-100 — grammar, spelling, punctuation
+  coherenceAndCohesion: number; // 0-100 — organisation & connectors
+  taskFulfilment: number;       // 0-100 — relevance & completeness
 }
 
 export interface QuestionAnalysis {
@@ -115,9 +115,8 @@ export async function registerPlacementLead(data: {
   return res.json();
 }
 
-/** Generate the AI placement test. Returns the test JSON. */
+/** Generate the AI placement test. Returns the test JSON including its id. */
 export async function generatePlacementTest(data: {
-  sessionId: string;
   language: string;
   nativeLanguage: string;
 }): Promise<PlacementTest> {
@@ -133,12 +132,11 @@ export async function generatePlacementTest(data: {
   return res.json();
 }
 
-/** Evaluate answers and get CEFR result. */
+/** Evaluate answers and get CEFR result. Uses testId (from PlacementTest.id) instead of the full test object. */
 export async function evaluatePlacementTest(data: {
-  sessionId: string;
+  testId: string;
   language: string;
   nativeLanguage: string;
-  test: PlacementTest;
   answers: Record<string, string>;
   email: string;
   firstName: string;

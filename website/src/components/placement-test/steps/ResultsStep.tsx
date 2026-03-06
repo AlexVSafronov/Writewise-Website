@@ -41,10 +41,10 @@ export function ResultsStep() {
   const signupUrl = `${APP_URL}?mode=signup&level=${results.cefrLevel}&lang=${encodeURIComponent(state.language ?? '')}`;
 
   const dimensions: Array<{ key: keyof typeof results.dimensionScores; label: string }> = [
-    { key: 'vocabulary', label: 'Vocabulary' },
-    { key: 'grammar', label: 'Grammar' },
-    { key: 'reading', label: 'Reading' },
-    { key: 'writing', label: 'Writing' },
+    { key: 'range', label: 'Range' },
+    { key: 'accuracy', label: 'Accuracy' },
+    { key: 'coherenceAndCohesion', label: 'Coherence & Cohesion' },
+    { key: 'taskFulfilment', label: 'Task Fulfilment' },
   ];
 
   return (
