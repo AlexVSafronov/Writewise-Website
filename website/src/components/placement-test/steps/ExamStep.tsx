@@ -42,6 +42,105 @@ const CEFR_COLORS: Record<string, string> = {
   C2: 'bg-amber-100 text-amber-700',
 };
 
+// ─── Sentence Ordering (needs own component for useState) ────────
+
+function SentenceOrderingInput({
+  task,
+  answers,
+  onChange,
+}: {
+  task: PlacementTask;
+  answers: Record<string, string>;
+  onChange: (taskId: string, value: string) => void;
+}) {
+  const val = answers[task.id] ?? '';
+  const [selected, setSelected] = useState<string[]>(() =>
+    val ? val.split(' ').filter(Boolean) : []
+  );
+
+  // Words still available to place (remove one instance per selected word)
+  const remaining = [...(task.shuffledParts ?? [])];
+  selected.forEach((w) => {
+    const idx = remaining.indexOf(w);
+    if (idx !== -1) remaining.splice(idx, 1);
+  });
+
+  function addWord(word: string) {
+    const next = [...selected, word];
+    setSelected(next);
+    onChange(task.id, next.join(' '));
+  }
+
+  function removeWord(i: number) {
+    const next = selected.filter((_, idx) => idx !== i);
+    setSelected(next);
+    onChange(task.id, next.join(' '));
+  }
+
+  function clearAll() {
+    setSelected([]);
+    onChange(task.id, '');
+  }
+
+  return (
+    <div className="space-y-3">
+      <p className="text-sm text-foreground font-medium">
+        Tap words to build the sentence:
+      </p>
+
+      {/* Available word chips */}
+      <div className="flex flex-wrap gap-1.5 min-h-[32px]">
+        {remaining.map((w, i) => (
+          <Badge
+            key={`avail-${w}-${i}`}
+            variant="secondary"
+            className="text-sm py-1 px-2.5 cursor-pointer select-none hover:bg-primary hover:text-primary-foreground transition-colors"
+            onClick={() => addWord(w)}
+          >
+            {w}
+          </Badge>
+        ))}
+        {remaining.length === 0 && selected.length > 0 && (
+          <span className="text-xs text-muted-foreground italic self-center">All words placed</span>
+        )}
+      </div>
+
+      {/* Answer drop zone */}
+      <div
+        className={cn(
+          'min-h-[42px] rounded-md border px-3 py-2 flex flex-wrap gap-1.5 items-center transition-colors',
+          selected.length > 0 ? 'border-primary/50 bg-primary/5' : 'border-input bg-background'
+        )}
+      >
+        {selected.length === 0 ? (
+          <span className="text-sm text-muted-foreground">Tap words above to build your sentence…</span>
+        ) : (
+          selected.map((w, i) => (
+            <Badge
+              key={`sel-${i}`}
+              className="text-sm py-1 px-2.5 cursor-pointer select-none gap-1"
+              onClick={() => removeWord(i)}
+            >
+              {w}
+              <span className="opacity-60 ml-0.5">×</span>
+            </Badge>
+          ))
+        )}
+      </div>
+
+      {selected.length > 0 && (
+        <button
+          type="button"
+          onClick={clearAll}
+          className="text-xs text-muted-foreground hover:text-foreground underline"
+        >
+          Clear all
+        </button>
+      )}
+    </div>
+  );
+}
+
 // ─── Inline task renderer ────────────────────────────────────────
 
 function TaskInput({
@@ -132,25 +231,7 @@ function TaskInput({
   }
 
   if (task.type === 'sentence_ordering') {
-    return (
-      <div className="space-y-3">
-        <p className="text-sm text-foreground font-medium">
-          Arrange these words into a correct sentence:
-        </p>
-        <div className="flex flex-wrap gap-1.5">
-          {task.shuffledParts?.map((w) => (
-            <Badge key={w} variant="secondary" className="text-sm py-1 px-2.5">
-              {w}
-            </Badge>
-          ))}
-        </div>
-        <Input
-          placeholder="Type the sentence in the correct order…"
-          value={val}
-          onChange={(e) => onChange(task.id, e.target.value)}
-        />
-      </div>
-    );
+    return <SentenceOrderingInput task={task} answers={answers} onChange={onChange} />;
   }
 
   if (task.type === 'error_correction') {
