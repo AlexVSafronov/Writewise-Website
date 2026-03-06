@@ -271,25 +271,19 @@ function TaskInput({
   }
 
   if (task.type === 'matching') {
-    const pairs = val
-      ? val.split(',').reduce(
-          (acc, pair) => {
-            const [left, right] = pair.split('→');
-            if (left?.trim()) acc[left.trim()] = right?.trim() ?? '';
-            return acc;
-          },
-          {} as Record<string, string>
-        )
-      : {};
+    // Use JSON encoding to safely handle commas/arrows inside values
+    const pairs: Record<string, string> = (() => {
+      if (!val) return {};
+      try {
+        return JSON.parse(val);
+      } catch {
+        return {};
+      }
+    })();
 
     function updatePair(left: string, right: string) {
       const newPairs = { ...pairs, [left]: right };
-      onChange(
-        task.id,
-        Object.entries(newPairs)
-          .map(([l, r]) => `${l}→${r}`)
-          .join(',')
-      );
+      onChange(task.id, JSON.stringify(newPairs));
     }
 
     return (
