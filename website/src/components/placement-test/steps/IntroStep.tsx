@@ -49,12 +49,12 @@ export function IntroStep() {
       {/* Header */}
       <header className="border-b bg-card">
         <div className="container mx-auto flex items-center justify-between px-4 py-4">
-          <div className="flex items-center gap-2">
+          <a href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-brand">
               <PenTool className="h-4 w-4 text-white" />
             </div>
             <span className="text-lg font-bold text-foreground">WriteWise</span>
-          </div>
+          </a>
           <Badge variant="outline" className="text-xs">
             Free Assessment
           </Badge>

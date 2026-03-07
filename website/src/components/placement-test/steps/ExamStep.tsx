@@ -455,6 +455,12 @@ export function ExamStep() {
       <header className="sticky top-0 z-10 border-b bg-card/95 backdrop-blur">
         <div className="container mx-auto flex items-center justify-between px-4 py-3">
           <div className="flex items-center gap-3">
+            <a href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity shrink-0">
+              <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-brand">
+                <PenTool className="h-3.5 w-3.5 text-white" />
+              </div>
+              <span className="text-sm font-bold text-foreground hidden sm:inline">WriteWise</span>
+            </a>
             <Button
               variant="ghost"
               size="icon"
