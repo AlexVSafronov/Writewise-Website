@@ -210,7 +210,7 @@ function TaskInput({
     const minWords = task.minWords ?? 40;
     return (
       <div className="space-y-2">
-        <p className="text-sm font-medium text-foreground">{task.prompt}</p>
+        <p className="text-sm font-medium text-foreground">{task.prompt ?? task.question}</p>
         <p className="text-xs text-muted-foreground">Minimum {minWords} words</p>
         <Textarea
           placeholder="Write your response…"
