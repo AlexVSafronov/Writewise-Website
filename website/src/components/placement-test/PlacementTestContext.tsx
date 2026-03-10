@@ -87,7 +87,7 @@ function reducer(state: PlacementTestState, action: Action): PlacementTestState 
     case 'SET_GENERATING':
       return { ...state, isGenerating: action.payload, error: null };
     case 'SET_TEST':
-      return { ...state, test: action.payload, step: 'exam', isGenerating: false };
+      return { ...state, test: action.payload, step: 'exam', isGenerating: false, answers: {} };
     case 'SET_ANSWER':
       return {
         ...state,

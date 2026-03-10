@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -374,6 +374,11 @@ export function ExamStep() {
   const [currentSectionIndex, setCurrentSectionIndex] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Always keep a fresh ref to the latest answers so handleSubmit
+  // never captures a stale closure from an earlier render.
+  const answersRef = useRef(state.answers);
+  answersRef.current = state.answers;
+
   const test = state.test;
   if (!test) return null;
 
@@ -412,11 +417,12 @@ export function ExamStep() {
     dispatch({ type: 'SET_EVALUATING', payload: true });
 
     try {
+      const answers = answersRef.current;
       const results = await evaluatePlacementTest({
         testId: state.test.id,
         language: state.language,
         nativeLanguage: state.nativeLanguage,
-        answers: state.answers,
+        answers,
         email: state.userInfo.email,
         firstName: state.userInfo.firstName,
       });
