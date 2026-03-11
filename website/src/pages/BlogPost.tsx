@@ -3,7 +3,7 @@ import { Layout } from "@/components/layout";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import { SEO } from "@/components/SEO";
+import { SEO, generateArticleSchema } from "@/components/SEO";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ArrowLeft, Calendar, Clock, User, Share2, Bookmark, ThumbsUp } from "lucide-react";
 import { useBlogPost, useBlogPosts } from "@/hooks/use-strapi";
@@ -88,6 +88,13 @@ const BlogPost = () => {
             keywords={`language learning, ${post.category}, WriteWise blog`}
             ogType="article"
             ogImage={imageUrl}
+            structuredData={generateArticleSchema(
+              post.title,
+              post.seoDescription || post.excerpt,
+              post.publishedDate,
+              post.author,
+              imageUrl,
+            )}
           />
 
           {/* Hero */}
