@@ -7,7 +7,7 @@
     "dev": "vite",
     "build": "node scripts/generate-sitemap.js && vite build",
     "build:dev": "vite build --mode development",
-    "build:prerender": "vite build && node scripts/prerender.mjs",
+    "build:prerender": "node scripts/generate-sitemap.js && vite build && node scripts/prerender.mjs",
     "lint": "eslint .",
     "preview": "vite preview",
     "test": "vitest run",
