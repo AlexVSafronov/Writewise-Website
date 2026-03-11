@@ -30,6 +30,7 @@ const STATIC_ROUTES = [
   '/blog',
   '/contact',
   '/for-freelancers',
+  '/placement-test',
   '/resources',
   '/privacy',
   '/terms',
