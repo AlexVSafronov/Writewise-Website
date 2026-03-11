@@ -6,6 +6,20 @@ const NotFound = () => {
 
   useEffect(() => {
     console.error("404 Error: User attempted to access non-existent route:", location.pathname);
+
+    // Tell search engines not to index this page
+    let meta = document.querySelector('meta[name="robots"]') as HTMLMetaElement | null;
+    if (!meta) {
+      meta = document.createElement('meta');
+      meta.setAttribute('name', 'robots');
+      document.head.appendChild(meta);
+    }
+    meta.setAttribute('content', 'noindex, nofollow');
+
+    return () => {
+      // Restore default when navigating away
+      meta?.setAttribute('content', 'index, follow');
+    };
   }, [location.pathname]);
 
   return (
