@@ -33,6 +33,24 @@
       "required": true,
       "min": 1,
       "default": 1
+    },
+    "page": {
+      "type": "enumeration",
+      "enum": [
+        "general",
+        "home",
+        "placement-test",
+        "placement-test-german",
+        "placement-test-english",
+        "pricing",
+        "resources",
+        "blog",
+        "about",
+        "contact",
+        "for-freelancers"
+      ],
+      "required": true,
+      "default": "general"
     }
   }
 }

@@ -75,10 +75,17 @@ class StrapiClient {
     return this.fetch<StrapiResponse<Page[]>>(`/pages?filters[slug][$eq]=${slug}`);
   }
 
-  // FAQs
+  // FAQs — filter by category (used by Pricing page)
   async getFAQs(category?: string): Promise<StrapiResponse<FAQ[]>> {
     const filters = category ? `?filters[category][$eq]=${category}&sort=order:asc` : '?sort=order:asc';
     return this.fetch<StrapiResponse<FAQ[]>>(`/faqs${filters}`);
+  }
+
+  // FAQs — filter by page location (used by placement test landing pages, home, etc.)
+  async getFAQsByPage(page: string): Promise<StrapiResponse<FAQ[]>> {
+    return this.fetch<StrapiResponse<FAQ[]>>(
+      `/faqs?filters[page][$eq]=${encodeURIComponent(page)}&sort=order:asc`
+    );
   }
 }
 

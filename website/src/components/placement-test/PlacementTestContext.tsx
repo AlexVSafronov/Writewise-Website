@@ -32,6 +32,7 @@ export interface PlacementTestState {
 
 type Action =
   | { type: 'SET_STEP'; payload: PlacementStep }
+  | { type: 'START_TEST' }
   | {
       type: 'REGISTER_SUCCESS';
       payload: { userInfo: UserInfo; language: string; nativeLanguage: string };
@@ -73,6 +74,8 @@ function reducer(state: PlacementTestState, action: Action): PlacementTestState 
   switch (action.type) {
     case 'SET_STEP':
       return { ...state, step: action.payload, error: null };
+    case 'START_TEST':
+      return { ...state, step: 'intro', error: null };
     case 'REGISTER_SUCCESS':
       return {
         ...state,
@@ -107,11 +110,11 @@ function reducer(state: PlacementTestState, action: Action): PlacementTestState 
   }
 }
 
-function initialState(): PlacementTestState {
+function initialState(initialLanguage?: string): PlacementTestState {
   return {
     step: 'landing',
     userInfo: null,
-    language: null,
+    language: initialLanguage ?? null,
     nativeLanguage: detectNativeLanguage(),
     test: null,
     answers: {},
@@ -122,20 +125,20 @@ function initialState(): PlacementTestState {
   };
 }
 
-function loadFromSession(): PlacementTestState {
+function loadFromSession(initialLanguage?: string): PlacementTestState {
   try {
     const stored = sessionStorage.getItem(SESSION_KEY);
     if (stored) {
       const parsed = JSON.parse(stored) as PlacementTestState;
-      // Only restore if we're mid-test (not on landing or completed)
-      if (parsed.step !== 'landing') {
+      // Restore mid-test session only if it matches the current language context
+      if (parsed.step !== 'landing' && (!initialLanguage || parsed.language === initialLanguage)) {
         return parsed;
       }
     }
   } catch {
     // Ignore parse errors
   }
-  return initialState();
+  return initialState(initialLanguage);
 }
 
 // ============================================================================
@@ -149,8 +152,18 @@ interface PlacementTestContextValue {
 
 const PlacementTestContext = createContext<PlacementTestContextValue | undefined>(undefined);
 
-export function PlacementTestProvider({ children }: { children: React.ReactNode }) {
-  const [state, dispatch] = useReducer(reducer, undefined, loadFromSession);
+export function PlacementTestProvider({
+  children,
+  initialLanguage,
+}: {
+  children: React.ReactNode;
+  initialLanguage?: string;
+}) {
+  const [state, dispatch] = useReducer(
+    reducer,
+    initialLanguage,
+    loadFromSession,
+  );
 
   // Persist state to sessionStorage (except landing step — no need)
   useEffect(() => {

@@ -70,8 +70,8 @@ const Index = () => {
     <Layout>
       <SEO
         title="WriteWise - AI-Powered Language Learning Platform"
-        description="Master any language with WriteWise. AI-powered writing exercises, personalized feedback, and adaptive learning paths for intermediate learners (A2-C1)."
-        keywords="language learning, AI tutor, writing practice, CEFR, English learning"
+        description="WriteWise helps you master German, English and other languages with AI-powered writing exercises, personalized feedback, and adaptive learning paths (A2–C1)."
+        keywords="German language learning, Deutsch lernen, English language learning, AI language tutor, CEFR placement test, writing practice, language learning app, multilingual AI tutor"
         structuredData={structuredData}
       />
       {/* Hero Section */}
@@ -83,7 +83,7 @@ const Index = () => {
               AI-Powered Real Learning Experience
             </div>
             <h1 className="mb-6 text-4xl font-bold tracking-tight text-foreground md:text-5xl lg:text-6xl">
-              Master Favorite Language with Your{" "}
+              Master Any Language with Your{" "}
               <span className="text-gradient-brand">AI Mentor</span>
             </h1>
             <p className="mx-auto mb-8 max-w-2xl text-lg text-muted-foreground md:text-xl">

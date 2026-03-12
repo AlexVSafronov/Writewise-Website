@@ -122,9 +122,23 @@ export interface Page extends StrapiEntity {
   seoDescription?: string;
 }
 
+export type FAQPage =
+  | 'general'
+  | 'home'
+  | 'placement-test'
+  | 'placement-test-german'
+  | 'placement-test-english'
+  | 'pricing'
+  | 'resources'
+  | 'blog'
+  | 'about'
+  | 'contact'
+  | 'for-freelancers';
+
 export interface FAQ extends StrapiEntity {
   question: string;
   answer: string;
   category: 'General' | 'Pricing' | 'Technical' | 'Account';
   order: number;
+  page: FAQPage;
 }

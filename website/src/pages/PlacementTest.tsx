@@ -1,11 +1,11 @@
 import { PlacementTestProvider, usePlacementTest } from '@/components/placement-test/PlacementTestContext';
-import { LandingStep } from '@/components/placement-test/steps/LandingStep';
+import { LanguageLandingStep } from '@/components/placement-test/steps/LanguageLandingStep';
 import { IntroStep } from '@/components/placement-test/steps/IntroStep';
 import { ExamStep } from '@/components/placement-test/steps/ExamStep';
 import { ResultsStep } from '@/components/placement-test/steps/ResultsStep';
 
 /**
- * Inner component that reads context and renders the appropriate step.
+ * Inner flow — reads context and renders the appropriate step.
  * Separated from the provider so it can consume context.
  */
 function PlacementTestFlow() {
@@ -13,7 +13,7 @@ function PlacementTestFlow() {
 
   switch (state.step) {
     case 'landing':
-      return <LandingStep />;
+      return <LanguageLandingStep />;
     case 'intro':
       return <IntroStep />;
     case 'exam':
@@ -21,25 +21,28 @@ function PlacementTestFlow() {
     case 'results':
       return <ResultsStep />;
     default:
-      return <LandingStep />;
+      return <LanguageLandingStep />;
   }
 }
 
 /**
- * Public route: /placement-test
+ * Shared placement test flow runner.
  *
- * Manages the full placement test user journey:
- *  1. Landing page  — marketing + lead capture form (website design)
- *  2. Intro screen  — what to expect (app design, no header/footer)
- *  3. Exam          — AI-generated CEFR test (app design)
- *  4. Results       — CEFR level + summary + CTAs (app design)
+ * Used by language-specific entry pages (PlacementTestGerman, PlacementTestEnglish).
+ * The `initialLanguage` prop pre-sets the language in context so the landing step
+ * renders the correct language-specific SEO content without needing a form selector.
  *
- * State is managed via PlacementTestContext and persisted to sessionStorage
- * so users don't lose progress on accidental page refresh during the exam.
+ * Flow:
+ *  1. landing  — language-specific SEO page (LanguageLandingStep)
+ *  2. intro    — registration form → test details (IntroStep)
+ *  3. exam     — AI-generated CEFR test (ExamStep)
+ *  4. results  — CEFR level + summary + CTAs (ResultsStep)
+ *
+ * State is persisted to sessionStorage so users don't lose progress on refresh.
  */
-export default function PlacementTest() {
+export default function PlacementTest({ initialLanguage }: { initialLanguage: string }) {
   return (
-    <PlacementTestProvider>
+    <PlacementTestProvider initialLanguage={initialLanguage}>
       <PlacementTestFlow />
     </PlacementTestProvider>
   );

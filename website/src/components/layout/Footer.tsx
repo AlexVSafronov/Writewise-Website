@@ -3,18 +3,23 @@ import { BookOpen, Twitter, Linkedin, Youtube, Mail } from "lucide-react";
 
 const footerLinks = {
   product: [
-    { name: "Features", href: "/#features" },
-    { name: "Pricing", href: "/pricing" },
-    { name: "Blog", href: "/blog" },
+    { name: "Features",  href: "/#features" },
+    { name: "Pricing",   href: "/pricing" },
+    { name: "Blog",      href: "/blog" },
     { name: "Resources", href: "/resources" },
   ],
+  tests: [
+    { name: "German Level Test",  href: "/placement-test/german" },
+    { name: "English Level Test", href: "/placement-test/english" },
+    { name: "All Level Tests",    href: "/placement-test" },
+  ],
   company: [
-    { name: "About", href: "/about" },
-    { name: "Careers", href: "/about#careers" },
-    { name: "Contact", href: "/contact" },
+    { name: "About",    href: "/about" },
+    { name: "Careers",  href: "/about#careers" },
+    { name: "Contact",  href: "/contact" },
   ],
   legal: [
-    { name: "Privacy Policy", href: "/privacy-policy" },
+    { name: "Privacy Policy",   href: "/privacy-policy" },
     { name: "Terms of Service", href: "/user-agreement" },
   ],
 };
@@ -30,7 +35,7 @@ export const Footer = () => {
   return (
     <footer className="border-t bg-muted/30">
       <div className="container mx-auto px-4 py-12">
-        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-5">
+        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-6">
           {/* Brand */}
           <div className="lg:col-span-2">
             <Link to="/" className="flex items-center gap-2">
@@ -63,6 +68,23 @@ export const Footer = () => {
             <h3 className="mb-4 font-semibold text-foreground">Product</h3>
             <ul className="space-y-3">
               {footerLinks.product.map((link) => (
+                <li key={link.name}>
+                  <Link
+                    to={link.href}
+                    className="text-sm text-muted-foreground transition-colors hover:text-primary"
+                  >
+                    {link.name}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Tests Links */}
+          <div>
+            <h3 className="mb-4 font-semibold text-foreground">Level Tests</h3>
+            <ul className="space-y-3">
+              {footerLinks.tests.map((link) => (
                 <li key={link.name}>
                   <Link
                     to={link.href}

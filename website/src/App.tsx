@@ -14,7 +14,9 @@ const VideoResource = lazy(() => import("./pages/VideoResource"));
 const Page = lazy(() => import("./pages/Page"));
 const Contact = lazy(() => import("./pages/Contact"));
 const Freelancers = lazy(() => import("./pages/Freelancers"));
-const PlacementTest = lazy(() => import("./pages/PlacementTest"));
+const PlacementTestHub     = lazy(() => import("./pages/PlacementTestHub"));
+const PlacementTestGerman  = lazy(() => import("./pages/PlacementTestGerman"));
+const PlacementTestEnglish = lazy(() => import("./pages/PlacementTestEnglish"));
 const MarkdownTest = lazy(() => import("./pages/MarkdownTest"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
@@ -44,7 +46,9 @@ const App = () => (
           <Route path="/terms" element={<Page />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/for-freelancers" element={<Freelancers />} />
-          <Route path="/placement-test" element={<PlacementTest />} />
+          <Route path="/placement-test" element={<PlacementTestHub />} />
+          <Route path="/placement-test/german"  element={<PlacementTestGerman />} />
+          <Route path="/placement-test/english" element={<PlacementTestEnglish />} />
           <Route path="/markdown-test" element={<MarkdownTest />} />
 
           {/* App pages */}

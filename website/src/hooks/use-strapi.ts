@@ -74,10 +74,18 @@ export function usePage(slug: string) {
   });
 }
 
-// FAQs
+// FAQs — by category (Pricing page)
 export function useFAQs(category?: string) {
   return useQuery({
     queryKey: ['faqs', category],
     queryFn: () => strapiClient.getFAQs(category),
+  });
+}
+
+// FAQs — by page location (placement test landing pages, home, etc.)
+export function useFAQsByPage(page: string) {
+  return useQuery({
+    queryKey: ['faqs-by-page', page],
+    queryFn: () => strapiClient.getFAQsByPage(page),
   });
 }

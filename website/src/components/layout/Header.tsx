@@ -1,25 +1,53 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Menu, X, BookOpen } from "lucide-react";
+import {
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger,
+} from "@/components/ui/navigation-menu";
+import { Menu, X, BookOpen, ChevronDown } from "lucide-react";
 
-const navLinks = [
-  { name: "Features", href: "/#features" },
-  { name: "Pricing", href: "/pricing" },
-  { name: "Level Test", href: "/placement-test" },
-  { name: "For Tutors", href: "/for-freelancers" },
-  { name: "About", href: "/about" },
-  { name: "Blog", href: "/blog" },
-  { name: "Resources", href: "/resources" },
+// ── Simple nav links (no submenu) ────────────────────────────────────────────
+const simpleNavLinks = [
+  { name: "Features",    href: "/#features" },
+  { name: "Pricing",     href: "/pricing" },
+  { name: "For Tutors",  href: "/for-freelancers" },
+  { name: "About",       href: "/about" },
+  { name: "Blog",        href: "/blog" },
+  { name: "Resources",   href: "/resources" },
+];
+
+// ── "Test your language" submenu entries ────────────────────────────────────
+const testLinks = [
+  {
+    name: "German Level Test",
+    href: "/placement-test/german",
+    desc: "Find your German CEFR level (A1–C2)",
+    flag: "de",
+  },
+  {
+    name: "English Level Test",
+    href: "/placement-test/english",
+    desc: "Find your English CEFR level (A1–C2)",
+    flag: "gb",
+  },
 ];
 
 export const Header = () => {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen]     = useState(false);
+  const [mobileTestOpen, setMobileTestOpen]     = useState(false);
   const location = useLocation();
+
+  const isTestActive = location.pathname.startsWith("/placement-test");
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <nav className="container mx-auto flex h-16 items-center justify-between px-4">
+
         {/* Logo */}
         <Link to="/" className="flex items-center gap-2">
           <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-brand">
@@ -29,8 +57,74 @@ export const Header = () => {
         </Link>
 
         {/* Desktop Navigation */}
-        <div className="hidden md:flex md:items-center md:gap-8">
-          {navLinks.map((link) => (
+        <div className="hidden md:flex md:items-center md:gap-6">
+          {/* Simple links before the submenu */}
+          {simpleNavLinks.slice(0, 2).map((link) => (
+            <Link
+              key={link.name}
+              to={link.href}
+              className={`text-sm font-medium transition-colors hover:text-primary ${
+                location.pathname === link.href ? "text-primary" : "text-muted-foreground"
+              }`}
+            >
+              {link.name}
+            </Link>
+          ))}
+
+          {/* "Test your language" NavigationMenu dropdown */}
+          <NavigationMenu>
+            <NavigationMenuList>
+              <NavigationMenuItem>
+                <NavigationMenuTrigger
+                  className={`h-auto bg-transparent p-0 text-sm font-medium transition-colors hover:bg-transparent hover:text-primary focus:bg-transparent data-[active]:bg-transparent data-[state=open]:bg-transparent ${
+                    isTestActive ? "text-primary" : "text-muted-foreground"
+                  }`}
+                >
+                  Test your language
+                </NavigationMenuTrigger>
+                <NavigationMenuContent>
+                  <ul className="w-64 p-2">
+                    {testLinks.map((item) => (
+                      <li key={item.href}>
+                        <NavigationMenuLink asChild>
+                          <Link
+                            to={item.href}
+                            className="flex items-center gap-3 rounded-lg px-3 py-2.5 transition-colors hover:bg-accent hover:text-accent-foreground"
+                          >
+                            <div className="w-8 h-8 rounded-full overflow-hidden ring-1 ring-border shrink-0">
+                              <img
+                                src={`https://flagcdn.com/w40/${item.flag}.png`}
+                                srcSet={`https://flagcdn.com/w80/${item.flag}.png 2x`}
+                                alt=""
+                                className="w-full h-full object-cover"
+                              />
+                            </div>
+                            <div>
+                              <p className="text-sm font-medium leading-none mb-1">{item.name}</p>
+                              <p className="text-xs text-muted-foreground">{item.desc}</p>
+                            </div>
+                          </Link>
+                        </NavigationMenuLink>
+                      </li>
+                    ))}
+                    <li>
+                      <NavigationMenuLink asChild>
+                        <Link
+                          to="/placement-test"
+                          className="flex items-center gap-3 rounded-lg px-3 py-2 mt-1 border-t transition-colors hover:bg-accent hover:text-accent-foreground"
+                        >
+                          <p className="text-xs text-muted-foreground">See all tests →</p>
+                        </Link>
+                      </NavigationMenuLink>
+                    </li>
+                  </ul>
+                </NavigationMenuContent>
+              </NavigationMenuItem>
+            </NavigationMenuList>
+          </NavigationMenu>
+
+          {/* Remaining simple links */}
+          {simpleNavLinks.slice(2).map((link) => (
             <Link
               key={link.name}
               to={link.href}
@@ -75,19 +169,77 @@ export const Header = () => {
       {mobileMenuOpen && (
         <div className="border-t bg-background md:hidden">
           <div className="container mx-auto px-4 py-4">
-            <div className="flex flex-col gap-4">
-              {navLinks.map((link) => (
+            <div className="flex flex-col gap-1">
+              {/* Simple links before "Test your language" */}
+              {simpleNavLinks.slice(0, 2).map((link) => (
                 <Link
                   key={link.name}
                   to={link.href}
                   onClick={() => setMobileMenuOpen(false)}
-                  className={`text-base font-medium transition-colors hover:text-primary ${
+                  className={`text-base font-medium px-2 py-2.5 rounded-lg transition-colors hover:text-primary ${
                     location.pathname === link.href ? "text-primary" : "text-muted-foreground"
                   }`}
                 >
                   {link.name}
                 </Link>
               ))}
+
+              {/* "Test your language" expandable */}
+              <div>
+                <button
+                  onClick={() => setMobileTestOpen(!mobileTestOpen)}
+                  className={`w-full flex items-center justify-between px-2 py-2.5 rounded-lg text-base font-medium transition-colors hover:text-primary ${
+                    isTestActive ? "text-primary" : "text-muted-foreground"
+                  }`}
+                >
+                  Test your language
+                  <ChevronDown className={`h-4 w-4 transition-transform ${mobileTestOpen ? "rotate-180" : ""}`} />
+                </button>
+                {mobileTestOpen && (
+                  <div className="mt-1 ml-4 flex flex-col gap-1 border-l border-border pl-4">
+                    {testLinks.map((item) => (
+                      <Link
+                        key={item.href}
+                        to={item.href}
+                        onClick={() => { setMobileMenuOpen(false); setMobileTestOpen(false); }}
+                        className="flex items-center gap-2 py-2 text-sm text-muted-foreground hover:text-primary transition-colors"
+                      >
+                        <div className="w-6 h-6 rounded-full overflow-hidden ring-1 ring-border shrink-0">
+                          <img
+                            src={`https://flagcdn.com/w40/${item.flag}.png`}
+                            srcSet={`https://flagcdn.com/w80/${item.flag}.png 2x`}
+                            alt=""
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                        {item.name}
+                      </Link>
+                    ))}
+                    <Link
+                      to="/placement-test"
+                      onClick={() => { setMobileMenuOpen(false); setMobileTestOpen(false); }}
+                      className="py-2 text-xs text-muted-foreground hover:text-primary transition-colors"
+                    >
+                      See all tests →
+                    </Link>
+                  </div>
+                )}
+              </div>
+
+              {/* Remaining simple links */}
+              {simpleNavLinks.slice(2).map((link) => (
+                <Link
+                  key={link.name}
+                  to={link.href}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className={`text-base font-medium px-2 py-2.5 rounded-lg transition-colors hover:text-primary ${
+                    location.pathname === link.href ? "text-primary" : "text-muted-foreground"
+                  }`}
+                >
+                  {link.name}
+                </Link>
+              ))}
+
               <div className="mt-4 flex flex-col gap-3">
                 <Button variant="outline" asChild className="w-full">
                   <a href="https://app.write-wise.com?mode=login" target="_blank" rel="noopener noreferrer">

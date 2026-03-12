@@ -47,6 +47,7 @@ export const SEO = ({
     setMetaTag('og:title', title, true);
     setMetaTag('og:description', description, true);
     setMetaTag('og:type', ogType, true);
+    setMetaTag('og:url', resolvedCanonical, true);
     setMetaTag('og:image', ogImage, true);
 
     // Twitter Card tags
