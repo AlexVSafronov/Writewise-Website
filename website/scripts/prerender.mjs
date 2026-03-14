@@ -246,16 +246,30 @@ async function main() {
     for (const route of allRoutes) {
       const page = await browser.newPage();
       try {
-        // Puppeteer only needs to render the DOM — Strapi calls from the browser
-        // will fail (CORS) but that's fine: we inject the data ourselves below.
+        const state = buildState(route);
+
+        // Inject the dehydrated state BEFORE the page loads so that main.tsx
+        // hydrates TanStack Query before React's first render. This means the
+        // first render already has actual data (no loading skeleton), so the
+        // Puppeteer DOM snapshot contains real content that bots/crawlers can read.
+        if (state) {
+          try {
+            await page.evaluateOnNewDocument((stateData) => {
+              window.__REACT_QUERY_STATE__ = stateData;
+            }, state);
+          } catch (_) { /* non-serialisable — skip pre-injection */ }
+        }
+
         await page.goto(`${BASE_URL}${route}`, { waitUntil: 'networkidle0', timeout: 20_000 });
 
         let html = await page.evaluate(
           () => '<!DOCTYPE html>\n' + document.documentElement.outerHTML,
         );
 
-        // Inject the Node.js-fetched dehydrated state into the HTML.
-        const state = buildState(route);
+        // Also persist the state as a script tag in the saved HTML so that
+        // real browsers loading the pre-rendered file still get a warm cache
+        // (the evaluateOnNewDocument injection only affects the Puppeteer session,
+        // not the file written to disk).
         if (state) {
           try {
             html = html.replace(
