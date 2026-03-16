@@ -19,6 +19,8 @@ import {
 } from "lucide-react";
 import { useFeatures, useTestimonials } from "@/hooks/use-strapi";
 import { getIcon } from "@/lib/icons";
+import { useFeature } from "@growthbook/growthbook-react";
+import { trackEvent } from "@/lib/analytics";
 
 const stats = [
   { value: "1K+", label: "Active Learners" },
@@ -53,6 +55,13 @@ const steps = [
 const Index = () => {
   const { data: featuresData, isLoading: featuresLoading } = useFeatures();
   const { data: testimonialsData, isLoading: testimonialsLoading } = useTestimonials(true); // Get featured testimonials
+  // Experiment: hero CTA copy — control vs variant-b
+  // Define in GrowthBook dashboard as feature flag "hero-cta-copy" (string type)
+  // Control value: "start-learning-free" | Variant B: "start-learning-today"
+  const { value: heroCopyVariant } = useFeature('hero-cta-copy');
+  const heroCtaText = heroCopyVariant === 'start-learning-today'
+    ? 'Start Learning Today'
+    : 'Start Learning Free';
 
   const features = featuresData?.data.map(item => ({
     ...item,
@@ -92,8 +101,13 @@ const Index = () => {
             </p>
             <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
               <Button size="lg" className="bg-gradient-brand px-8 hover:opacity-90" asChild>
-                <a href="https://app.write-wise.com?mode=signup" target="_blank" rel="noopener noreferrer">
-                  Start Learning Free
+                <a
+                  href="https://app.write-wise.com?mode=signup"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() => trackEvent('homepage', 'cta_click', 'hero')}
+                >
+                  {heroCtaText}
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </a>
               </Button>
@@ -277,7 +291,12 @@ const Index = () => {
               Join other learners worldwide and start your journey to fluency today. No credit card required.
             </p>
             <Button size="lg" variant="secondary" className="px-8" asChild>
-              <a href="https://app.write-wise.com?mode=signup" target="_blank" rel="noopener noreferrer">
+              <a
+                href="https://app.write-wise.com?mode=signup"
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => trackEvent('homepage', 'cta_click', 'bottom_cta')}
+              >
                 Get Started Free
                 <ArrowRight className="ml-2 h-5 w-5" />
               </a>

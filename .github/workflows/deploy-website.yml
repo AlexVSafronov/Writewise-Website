@@ -48,6 +48,8 @@ jobs:
             --build-arg VITE_APP_URL=https://write-wise.com \
             --build-arg VITE_API_URL=https://app.write-wise.com \
             --build-arg VITE_STRIPE_PUBLIC_KEY=${{ secrets.STRIPE_PUBLISHABLE_KEY }} \
+            --build-arg VITE_GA4_MEASUREMENT_ID=${{ secrets.GA4_MEASUREMENT_ID }} \
+            --build-arg VITE_GROWTHBOOK_CLIENT_KEY=${{ secrets.GROWTHBOOK_CLIENT_KEY }} \
             -t ${{ env.GCP_REGION }}-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/writewise/${{ env.SERVICE_NAME }}:${{ github.sha }} \
             -t ${{ env.GCP_REGION }}-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/writewise/${{ env.SERVICE_NAME }}:latest .
 
