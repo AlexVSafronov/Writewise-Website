@@ -274,22 +274,17 @@ async function main() {
           if (msg.type() === 'error') console.warn(`  ⚠️  [console.error] ${route}: ${msg.text()}`);
         });
 
-        // Block all external requests (GA4 async script, any CDN assets).
-        // The GA4 <script async> in index.html attempts a connection to
-        // googletagmanager.com. In Docker (no internet) that connection hangs
-        // indefinitely, which prevents lazy React chunks from loading. Aborting
-        // it immediately lets the local chunk fetches complete and networkidle0
-        // fire normally.
-        await page.setRequestInterception(true);
-        page.on('request', (req) => {
-          if (req.url().startsWith(`http://127.0.0.1:${port}`) || req.url().startsWith('data:')) {
-            req.continue();
-          } else {
-            req.abort();
-          }
-        });
+        // waitUntil:'domcontentloaded' fires as soon as the HTML is parsed,
+        // before any async scripts (GA4 gtag.js) or dynamic imports resolve.
+        // We deliberately avoid networkidle0/2 — the GA4 <script async> in
+        // index.html hangs in Docker (no internet) and Chrome retries it,
+        // keeping the network permanently busy.
+        await page.goto(`${BASE_URL}${route}`, { waitUntil: 'domcontentloaded', timeout: 20_000 });
 
-        await page.goto(`${BASE_URL}${route}`, { waitUntil: 'networkidle0', timeout: 30_000 });
+        // Wait for React to mount and render real content.
+        // All marketing pages share a <header> element; once it appears we know
+        // the lazy route component has loaded and React has finished its first render.
+        await page.waitForSelector('header', { timeout: 20_000 });
 
         let html = await page.evaluate(
           () => '<!DOCTYPE html>\n' + document.documentElement.outerHTML,
