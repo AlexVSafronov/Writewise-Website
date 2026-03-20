@@ -1,30 +1,33 @@
-import ReactGA from 'react-ga4';
+// GA4 is loaded via the gtag.js script tag in index.html (G-VSCF3D4V1F).
+// These helpers call window.gtag() directly so event tracking works without
+// any env var configuration.
 
-const GA_ID = import.meta.env.VITE_GA4_MEASUREMENT_ID as string | undefined;
+declare function gtag(...args: unknown[]): void;
+
+const hasGtag = () => typeof gtag !== 'undefined';
 
 export const initGA = () => {
-  if (!GA_ID) return;
-  ReactGA.initialize(GA_ID);
+  // No-op: gtag.js initialises itself via the script tag in index.html.
 };
 
 export const trackPageView = (path: string) => {
-  if (!GA_ID) return;
-  ReactGA.send({ hitType: 'pageview', page: path });
+  if (!hasGtag()) return;
+  gtag('event', 'page_view', { page_path: path });
 };
 
 export const trackEvent = (category: string, action: string, label?: string) => {
-  if (!GA_ID) return;
-  ReactGA.event({ category, action, label });
+  if (!hasGtag()) return;
+  gtag('event', action, { event_category: category, event_label: label });
 };
 
 // Called by the GrowthBook tracking callback when a user is bucketed into an experiment.
-// This sends an `experiment_viewed` event to GA4, which BigQuery exports and GrowthBook
+// Sends an `experiment_viewed` event to GA4, which BigQuery exports and GrowthBook
 // queries to compute statistical significance.
 export const trackExperiment = (experimentId: string, variationId: string) => {
-  if (!GA_ID) return;
-  ReactGA.event({
-    category: 'experiment',
-    action: 'experiment_viewed',
-    label: `${experimentId}:${variationId}`,
+  if (!hasGtag()) return;
+  gtag('event', 'experiment_viewed', {
+    event_category: 'experiment',
+    experiment_id: experimentId,
+    variation_id: variationId,
   });
 };
