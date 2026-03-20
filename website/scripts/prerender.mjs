@@ -248,6 +248,14 @@ async function main() {
       try {
         const state = buildState(route);
 
+        // Signal to main.tsx that we're in a prerender context.
+        // main.tsx uses this to skip GrowthBookProvider (which blocks rendering
+        // when features haven't been loaded) and any other SDK initialisation
+        // that requires live network access.
+        await page.evaluateOnNewDocument(() => {
+          window.__PRERENDER__ = true;
+        });
+
         // Inject the dehydrated state BEFORE the page loads so that main.tsx
         // hydrates TanStack Query before React's first render. This means the
         // first render already has actual data (no loading skeleton), so the
@@ -259,6 +267,12 @@ async function main() {
             }, state);
           } catch (_) { /* non-serialisable — skip pre-injection */ }
         }
+
+        // Log browser-side JS errors so failures are visible in build logs.
+        page.on('pageerror', (err) => console.warn(`  ⚠️  [browser error] ${route}: ${err.message}`));
+        page.on('console', (msg) => {
+          if (msg.type() === 'error') console.warn(`  ⚠️  [console.error] ${route}: ${msg.text()}`);
+        });
 
         // Navigate and wait for DOM to be parsed. We intentionally avoid
         // networkidle0/2 because analytics (GA4) and A/B testing (GrowthBook)
