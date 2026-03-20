@@ -1,7 +1,12 @@
 import { createRoot } from "react-dom/client";
 import { QueryClient, QueryClientProvider, hydrate } from '@tanstack/react-query';
+import { GrowthBookProvider } from '@growthbook/growthbook-react';
 import App from "./App.tsx";
 import "./index.css";
+import { initGA } from "./lib/analytics";
+import { growthbook } from "./lib/growthbook";
+
+initGA();
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -32,6 +37,8 @@ if (prerenderedState) {
 
 createRoot(document.getElementById("root")!).render(
   <QueryClientProvider client={queryClient}>
-    <App />
+    <GrowthBookProvider growthbook={growthbook}>
+      <App />
+    </GrowthBookProvider>
   </QueryClientProvider>
 );

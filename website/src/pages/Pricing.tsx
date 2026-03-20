@@ -6,6 +6,7 @@ import { SEO, generateFAQSchema } from "@/components/SEO";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Check, Sparkles, ArrowRight } from "lucide-react";
 import { useStripePricing, useFAQs } from "@/hooks/use-strapi";
+import { trackEvent } from "@/lib/analytics";
 
 // Currency symbol mapping
 const currencySymbols: Record<string, string> = {
@@ -175,7 +176,12 @@ const Pricing = () => {
                       variant={plan.popular ? "default" : "outline"}
                       asChild
                     >
-                      <a href={plan.ctaLink} target={plan.isContactSales ? "_self" : "_blank"} rel="noopener noreferrer">
+                      <a
+                        href={plan.ctaLink}
+                        target={plan.isContactSales ? "_self" : "_blank"}
+                        rel="noopener noreferrer"
+                        onClick={() => trackEvent('pricing', 'plan_cta_click', plan.name)}
+                      >
                         {plan.cta}
                         <ArrowRight className="ml-2 h-4 w-4" />
                       </a>

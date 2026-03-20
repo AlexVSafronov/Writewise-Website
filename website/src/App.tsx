@@ -1,8 +1,17 @@
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, useEffect } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+import { trackPageView } from "@/lib/analytics";
+
+const RouteTracker = () => {
+  const location = useLocation();
+  useEffect(() => {
+    trackPageView(location.pathname);
+  }, [location.pathname]);
+  return null;
+};
 // Marketing pages — loaded on demand
 const Index = lazy(() => import("./pages/Index"));
 const Pricing = lazy(() => import("./pages/Pricing"));
@@ -32,6 +41,7 @@ const App = () => (
     <Toaster />
     <Sonner />
     <BrowserRouter>
+      <RouteTracker />
       <Suspense fallback={<div className="min-h-screen" />}>
         <Routes>
           {/* Marketing pages */}

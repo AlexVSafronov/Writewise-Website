@@ -24,6 +24,7 @@ import {
 } from "@/components/ui/select";
 import { toast } from "sonner";
 import { Send, CheckCircle } from "lucide-react";
+import { trackEvent } from "@/lib/analytics";
 
 const contactSchema = z.object({
   name: z
@@ -85,6 +86,7 @@ const Contact = () => {
       }
 
       setIsSubmitted(true);
+      trackEvent('contact', 'contact_form_submit');
       toast.success("Message sent successfully!");
 
       // Reset form after delay
