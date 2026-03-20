@@ -248,21 +248,6 @@ async function main() {
       try {
         const state = buildState(route);
 
-        // Block all external network requests during prerender.
-        // Analytics (GA4) and A/B testing (GrowthBook) SDKs open persistent
-        // connections to external services that prevent networkidle0 from firing.
-        // We only need local assets for the DOM snapshot — external SDKs will
-        // operate normally in real browsers loading the saved HTML.
-        await page.setRequestInterception(true);
-        page.on('request', (req) => {
-          const url = req.url();
-          if (url.startsWith(`http://127.0.0.1:${port}`) || url.startsWith('data:')) {
-            req.continue();
-          } else {
-            req.abort();
-          }
-        });
-
         // Inject the dehydrated state BEFORE the page loads so that main.tsx
         // hydrates TanStack Query before React's first render. This means the
         // first render already has actual data (no loading skeleton), so the
@@ -275,7 +260,19 @@ async function main() {
           } catch (_) { /* non-serialisable — skip pre-injection */ }
         }
 
-        await page.goto(`${BASE_URL}${route}`, { waitUntil: 'networkidle0', timeout: 20_000 });
+        // Navigate and wait for DOM to be parsed. We intentionally avoid
+        // networkidle0/2 because analytics (GA4) and A/B testing (GrowthBook)
+        // SDKs keep persistent connections alive and continuously retry them,
+        // so networkidle never fires.
+        await page.goto(`${BASE_URL}${route}`, { waitUntil: 'domcontentloaded', timeout: 20_000 });
+
+        // Wait for React to finish rendering. The Suspense fallback is a bare
+        // <div class="min-h-screen"></div> (~35 chars). Once the route component
+        // mounts and renders, #root will contain substantially more HTML.
+        await page.waitForFunction(
+          () => (document.querySelector('#root')?.innerHTML?.length ?? 0) > 200,
+          { timeout: 15_000 },
+        );
 
         let html = await page.evaluate(
           () => '<!DOCTYPE html>\n' + document.documentElement.outerHTML,
