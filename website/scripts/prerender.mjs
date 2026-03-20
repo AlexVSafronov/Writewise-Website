@@ -274,19 +274,22 @@ async function main() {
           if (msg.type() === 'error') console.warn(`  ⚠️  [console.error] ${route}: ${msg.text()}`);
         });
 
-        // Navigate and wait for DOM to be parsed. We intentionally avoid
-        // networkidle0/2 because analytics (GA4) and A/B testing (GrowthBook)
-        // SDKs keep persistent connections alive and continuously retry them,
-        // so networkidle never fires.
-        await page.goto(`${BASE_URL}${route}`, { waitUntil: 'domcontentloaded', timeout: 20_000 });
+        // Block all external requests (GA4 async script, any CDN assets).
+        // The GA4 <script async> in index.html attempts a connection to
+        // googletagmanager.com. In Docker (no internet) that connection hangs
+        // indefinitely, which prevents lazy React chunks from loading. Aborting
+        // it immediately lets the local chunk fetches complete and networkidle0
+        // fire normally.
+        await page.setRequestInterception(true);
+        page.on('request', (req) => {
+          if (req.url().startsWith(`http://127.0.0.1:${port}`) || req.url().startsWith('data:')) {
+            req.continue();
+          } else {
+            req.abort();
+          }
+        });
 
-        // Wait for React to finish rendering. The Suspense fallback is a bare
-        // <div class="min-h-screen"></div> (~35 chars). Once the route component
-        // mounts and renders, #root will contain substantially more HTML.
-        await page.waitForFunction(
-          () => (document.querySelector('#root')?.innerHTML?.length ?? 0) > 200,
-          { timeout: 15_000 },
-        );
+        await page.goto(`${BASE_URL}${route}`, { waitUntil: 'networkidle0', timeout: 30_000 });
 
         let html = await page.evaluate(
           () => '<!DOCTYPE html>\n' + document.documentElement.outerHTML,
@@ -309,7 +312,16 @@ async function main() {
         console.log(`  ✅ ${route} (${state ? state.queries.length : 0} queries injected)`);
         succeeded++;
       } catch (err) {
-        console.warn(`  ❌ ${route}: ${err.message}`);
+        // Dump #root state to help diagnose what React rendered (or didn't)
+        try {
+          const rootInfo = await page.evaluate(() => ({
+            len: document.querySelector('#root')?.innerHTML?.length ?? -1,
+            preview: (document.querySelector('#root')?.innerHTML ?? '').substring(0, 200),
+          }));
+          console.warn(`  ❌ ${route}: ${err.message} | #root=${rootInfo.len} chars | ${rootInfo.preview}`);
+        } catch (_) {
+          console.warn(`  ❌ ${route}: ${err.message}`);
+        }
         failed++;
       } finally {
         await page.close();
