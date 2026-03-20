@@ -35,10 +35,19 @@ if (prerenderedState) {
   }
 }
 
+// During prerendering (Puppeteer build step), skip GrowthBookProvider.
+// The provider can block rendering when features haven't been fetched yet,
+// which hangs the Puppeteer snapshot. Real browsers always get the provider.
+const isPrerender = !!(window as any).__PRERENDER__;
+
 createRoot(document.getElementById("root")!).render(
   <QueryClientProvider client={queryClient}>
-    <GrowthBookProvider growthbook={growthbook}>
+    {isPrerender ? (
       <App />
-    </GrowthBookProvider>
+    ) : (
+      <GrowthBookProvider growthbook={growthbook}>
+        <App />
+      </GrowthBookProvider>
+    )}
   </QueryClientProvider>
 );
