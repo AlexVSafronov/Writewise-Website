@@ -248,6 +248,21 @@ async function main() {
       try {
         const state = buildState(route);
 
+        // Block all external network requests during prerender.
+        // Analytics (GA4) and A/B testing (GrowthBook) SDKs open persistent
+        // connections to external services that prevent networkidle0 from firing.
+        // We only need local assets for the DOM snapshot — external SDKs will
+        // operate normally in real browsers loading the saved HTML.
+        await page.setRequestInterception(true);
+        page.on('request', (req) => {
+          const url = req.url();
+          if (url.startsWith(`http://127.0.0.1:${port}`) || url.startsWith('data:')) {
+            req.continue();
+          } else {
+            req.abort();
+          }
+        });
+
         // Inject the dehydrated state BEFORE the page loads so that main.tsx
         // hydrates TanStack Query before React's first render. This means the
         // first render already has actual data (no loading skeleton), so the
