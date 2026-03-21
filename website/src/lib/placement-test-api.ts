@@ -1,5 +1,5 @@
 const STRAPI_URL =
-  import.meta.env.VITE_STRAPI_URL ||
+  process.env.NEXT_PUBLIC_STRAPI_URL ||
   'https://writewise-cms-m2xkjyh6ta-oe.a.run.app';
 
 const API_BASE = `${STRAPI_URL}/api`;

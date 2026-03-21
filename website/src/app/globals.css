@@ -1,0 +1,3 @@
+/* Re-export the project-wide CSS — Next.js requires global CSS to be imported
+   in the root layout, so we point it at the existing file. */
+@import '../index.css';
