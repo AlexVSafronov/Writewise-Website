@@ -14,7 +14,7 @@ export const growthbook = new GrowthBook({
 });
 
 // Load feature flags from GrowthBook CDN.
-// Skipped if no client key is configured (local dev without GrowthBook).
-if (CLIENT_KEY) {
+// Skipped during SSG (Node.js has no `window`) and when no client key is set.
+if (CLIENT_KEY && typeof window !== 'undefined') {
   growthbook.loadFeatures({ autoRefresh: true });
 }
