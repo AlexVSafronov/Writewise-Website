@@ -1,10 +1,19 @@
-import { lazy, Suspense, useEffect } from "react";
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
-import { trackPageView } from "@/lib/analytics";
+import { useEffect, useState } from 'react';
+import { Outlet, useLocation } from 'react-router-dom';
+import { QueryClientProvider } from '@tanstack/react-query';
+import { GrowthBookProvider } from '@growthbook/growthbook-react';
+import { Toaster } from '@/components/ui/toaster';
+import { Toaster as Sonner } from '@/components/ui/sonner';
+import { TooltipProvider } from '@/components/ui/tooltip';
+import { trackPageView } from '@/lib/analytics';
+import { growthbook } from '@/lib/growthbook';
+import { queryClient } from '@/lib/queryClient';
 
+/**
+ * Fires a GA4 page_view on every client-side navigation.
+ * useEffect never runs during SSG (Node.js), so this is automatically
+ * browser-only — no additional guards needed.
+ */
 const RouteTracker = () => {
   const location = useLocation();
   useEffect(() => {
@@ -12,69 +21,42 @@ const RouteTracker = () => {
   }, [location.pathname]);
   return null;
 };
-// Marketing pages — loaded on demand
-const Index = lazy(() => import("./pages/Index"));
-const Pricing = lazy(() => import("./pages/Pricing"));
-const About = lazy(() => import("./pages/About"));
-const Blog = lazy(() => import("./pages/Blog"));
-const BlogPost = lazy(() => import("./pages/BlogPost"));
-const Resources = lazy(() => import("./pages/Resources"));
-const VideoResource = lazy(() => import("./pages/VideoResource"));
-const Page = lazy(() => import("./pages/Page"));
-const Contact = lazy(() => import("./pages/Contact"));
-const Freelancers = lazy(() => import("./pages/Freelancers"));
-const PlacementTestHub     = lazy(() => import("./pages/PlacementTestHub"));
-const PlacementTestGerman  = lazy(() => import("./pages/PlacementTestGerman"));
-const PlacementTestEnglish = lazy(() => import("./pages/PlacementTestEnglish"));
-const MarkdownTest = lazy(() => import("./pages/MarkdownTest"));
-const NotFound = lazy(() => import("./pages/NotFound"));
 
-// App pages — loaded on demand
-import { AppLayout } from "./components/app";
-const AppDashboard = lazy(() => import("./pages/app/Dashboard"));
-const TaskDetail = lazy(() => import("./pages/app/TaskDetail"));
-const TasksList = lazy(() => import("./pages/app/TasksList"));
-const ProgressPage = lazy(() => import("./pages/app/Progress"));
+/**
+ * Root application shell used by both the SSG entry (main.ssg.tsx) and
+ * the dev-server entry (main.tsx).
+ *
+ * GrowthBookProvider is mounted only after the first client-side render
+ * (mounted === true) so it is never included in the static HTML snapshot
+ * produced by vite-ssg.  GrowthBook requires a live CDN connection to load
+ * features; skipping it during SSG avoids hanging the build.
+ *
+ * QueryClientProvider is always present.  The pre-rendered React Query cache
+ * (injected into window.__VITE_SSG_CONTEXT__ by vite-ssg) is hydrated in
+ * main.ssg.tsx before React mounts, so the first render sees real data with
+ * no loading states.
+ */
+const App = () => {
+  // false on first render (SSG + browser initial paint), true after mount
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
 
-const App = () => (
-  <TooltipProvider>
-    <Toaster />
-    <Sonner />
-    <BrowserRouter>
-      <RouteTracker />
-      <Suspense fallback={<div className="min-h-screen" />}>
-        <Routes>
-          {/* Marketing pages */}
-          <Route path="/" element={<Index />} />
-          <Route path="/pricing" element={<Pricing />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/blog" element={<Blog />} />
-          <Route path="/blog/:slug" element={<BlogPost />} />
-          <Route path="/resources" element={<Resources />} />
-          <Route path="/resources/videos/:slug" element={<VideoResource />} />
-          <Route path="/privacy" element={<Page />} />
-          <Route path="/terms" element={<Page />} />
-          <Route path="/contact" element={<Contact />} />
-          <Route path="/for-freelancers" element={<Freelancers />} />
-          <Route path="/placement-test" element={<PlacementTestHub />} />
-          <Route path="/placement-test/german"  element={<PlacementTestGerman />} />
-          <Route path="/placement-test/english" element={<PlacementTestEnglish />} />
-          <Route path="/markdown-test" element={<MarkdownTest />} />
+  const content = (
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <RouteTracker />
+        <Outlet />
+      </TooltipProvider>
+    </QueryClientProvider>
+  );
 
-          {/* App pages */}
-          <Route path="/app" element={<AppLayout />}>
-            <Route index element={<AppDashboard />} />
-            <Route path="tasks" element={<TasksList />} />
-            <Route path="tasks/:taskId" element={<TaskDetail />} />
-            <Route path="progress" element={<ProgressPage />} />
-          </Route>
-
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </Suspense>
-    </BrowserRouter>
-  </TooltipProvider>
-);
+  return mounted ? (
+    <GrowthBookProvider growthbook={growthbook}>
+      {content}
+    </GrowthBookProvider>
+  ) : content;
+};
 
 export default App;

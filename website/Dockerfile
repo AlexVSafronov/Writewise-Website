@@ -3,18 +3,8 @@ FROM node:20-alpine AS builder
 
 WORKDIR /app
 
-# Install Chromium and its dependencies for Puppeteer pre-rendering
-RUN apk add --no-cache \
-    chromium \
-    nss \
-    freetype \
-    harfbuzz \
-    ca-certificates \
-    ttf-freefont
-
-# Tell Puppeteer to use the system Chromium instead of downloading its own
-ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
-ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
+# No Chromium needed — vite-ssg pre-renders pages in Node.js directly,
+# eliminating the headless-browser step that previously required Chromium.
 
 # Copy package files
 COPY package*.json ./
@@ -25,20 +15,21 @@ RUN npm ci
 # Copy source code
 COPY . .
 
-# Build arguments for environment variables
+# Build arguments for Vite environment variables (baked in at build time)
 ARG VITE_STRAPI_URL
 ARG VITE_APP_URL
 ARG VITE_API_URL
 ARG VITE_STRIPE_PUBLIC_KEY
+ARG VITE_GROWTHBOOK_CLIENT_KEY
 
-# Set environment variables for build
 ENV VITE_STRAPI_URL=$VITE_STRAPI_URL
 ENV VITE_APP_URL=$VITE_APP_URL
 ENV VITE_API_URL=$VITE_API_URL
 ENV VITE_STRIPE_PUBLIC_KEY=$VITE_STRIPE_PUBLIC_KEY
+ENV VITE_GROWTHBOOK_CLIENT_KEY=$VITE_GROWTHBOOK_CLIENT_KEY
 
-# Build the app and pre-render marketing pages
-RUN npm run build:prerender
+# Generate sitemap, compile with Vite, and pre-render all marketing pages
+RUN npm run build:ssg
 
 # Production stage
 FROM nginx:alpine
