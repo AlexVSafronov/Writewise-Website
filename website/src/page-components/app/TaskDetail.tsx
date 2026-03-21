@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams } from "next/navigation";
+import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -83,7 +84,8 @@ John Doe`,
 };
 
 export const TaskDetail = () => {
-  const { taskId } = useParams();
+  const params = useParams();
+  const taskId = params?.taskId as string | undefined;
   const [answer, setAnswer] = useState(taskData.submission);
   const [activeTab, setActiveTab] = useState("task");
 
@@ -93,7 +95,7 @@ export const TaskDetail = () => {
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center gap-4">
-        <Link to="/app">
+        <Link href="/app">
           <Button variant="ghost" size="icon">
             <ArrowLeft className="h-5 w-5" />
           </Button>

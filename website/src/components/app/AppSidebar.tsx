@@ -1,4 +1,7 @@
-import { NavLink, useLocation } from "react-router-dom";
+'use client';
+
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import {
   LayoutDashboard,
   FileText,
@@ -28,7 +31,7 @@ const bottomItems = [
 
 export const AppSidebar = () => {
   const [collapsed, setCollapsed] = useState(false);
-  const location = useLocation();
+  const pathname = usePathname();
 
   return (
     <aside
@@ -71,11 +74,11 @@ export const AppSidebar = () => {
       {/* Main Navigation */}
       <nav className="flex-1 space-y-1 p-3">
         {navItems.map((item) => {
-          const isActive = location.pathname === item.path;
+          const isActive = pathname === item.path;
           return (
-            <NavLink
+            <Link
               key={item.path}
-              to={item.path}
+              href={item.path}
               className={cn(
                 "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
                 isActive
@@ -85,7 +88,7 @@ export const AppSidebar = () => {
             >
               <item.icon className={cn("h-5 w-5 shrink-0", collapsed && "mx-auto")} />
               {!collapsed && <span>{item.title}</span>}
-            </NavLink>
+            </Link>
           );
         })}
       </nav>
@@ -93,11 +96,11 @@ export const AppSidebar = () => {
       {/* Bottom Navigation */}
       <div className="border-t p-3 space-y-1">
         {bottomItems.map((item) => {
-          const isActive = location.pathname === item.path;
+          const isActive = pathname === item.path;
           return (
-            <NavLink
+            <Link
               key={item.path}
-              to={item.path}
+              href={item.path}
               className={cn(
                 "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
                 isActive
@@ -107,7 +110,7 @@ export const AppSidebar = () => {
             >
               <item.icon className={cn("h-5 w-5 shrink-0", collapsed && "mx-auto")} />
               {!collapsed && <span>{item.title}</span>}
-            </NavLink>
+            </Link>
           );
         })}
 

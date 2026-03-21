@@ -1,4 +1,5 @@
-import { useParams, Link } from "react-router-dom";
+import { useParams } from "next/navigation";
+import Link from "next/link";
 import { Layout } from "@/components/layout";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -13,7 +14,7 @@ import remarkBreaks from "remark-breaks";
 import rehypeRaw from "rehype-raw";
 
 const BlogPost = () => {
-  const { slug } = useParams<{ slug: string }>();
+  const { slug } = useParams() as { slug: string };
   const { data: postData, isLoading, error } = useBlogPost(slug || '');
   const { data: relatedPostsData } = useBlogPosts(); // Get all posts for related articles
 
@@ -24,7 +25,7 @@ const BlogPost = () => {
           <h1 className="mb-4 text-2xl font-bold">Post Not Found</h1>
           <p className="mb-8 text-muted-foreground">The article you're looking for doesn't exist.</p>
           <Button asChild>
-            <Link to="/blog">
+            <Link href="/blog">
               <ArrowLeft className="mr-2 h-4 w-4" />
               Back to Blog
             </Link>
@@ -101,7 +102,7 @@ const BlogPost = () => {
           <section className="bg-gradient-brand-subtle py-8">
             <div className="container mx-auto px-4">
               <Button variant="ghost" size="sm" asChild className="mb-6">
-                <Link to="/blog">
+                <Link href="/blog">
                   <ArrowLeft className="mr-2 h-4 w-4" />
                   Back to Blog
                 </Link>
@@ -201,7 +202,7 @@ const BlogPost = () => {
                           {relatedPosts.map((related) => (
                             <Link
                               key={related.slug}
-                              to={`/blog/${related.slug}`}
+                              href={`/blog/${related.slug}`}
                               className="block rounded-lg p-2 transition-colors hover:bg-muted"
                             >
                               <Badge className="mb-1 bg-primary/10 text-xs text-primary">

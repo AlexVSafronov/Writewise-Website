@@ -1,4 +1,5 @@
-import { Layout } from "@/components/layout";
+'use client';
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { SEO, generateWebsiteSchema, generateOrganizationSchema } from "@/components/SEO";
@@ -19,6 +20,7 @@ import {
 } from "lucide-react";
 import { useFeatures, useTestimonials } from "@/hooks/use-strapi";
 import { getIcon } from "@/lib/icons";
+import type { StrapiResponse, Feature, Testimonial } from "@/types/strapi";
 
 const stats = [
   { value: "1K+", label: "Active Learners" },
@@ -50,16 +52,25 @@ const steps = [
   },
 ];
 
-const Index = () => {
+interface IndexProps {
+  initialFeaturesData?: StrapiResponse<Feature[]>;
+  initialTestimonialsData?: StrapiResponse<Testimonial[]>;
+}
+
+const Index = ({ initialFeaturesData, initialTestimonialsData }: IndexProps = {}) => {
   const { data: featuresData, isLoading: featuresLoading } = useFeatures();
   const { data: testimonialsData, isLoading: testimonialsLoading } = useTestimonials(true); // Get featured testimonials
 
-  const features = featuresData?.data.map(item => ({
+  // Use server-fetched initial data as fallback when client hasn't loaded yet
+  const resolvedFeaturesData = featuresData ?? initialFeaturesData;
+  const resolvedTestimonialsData = testimonialsData ?? initialTestimonialsData;
+
+  const features = resolvedFeaturesData?.data.map(item => ({
     ...item,
     icon: getIcon(item.icon),
   })) || [];
 
-  const testimonials = testimonialsData?.data || [];
+  const testimonials = resolvedTestimonialsData?.data || [];
 
   const structuredData = {
     ...generateWebsiteSchema('WriteWise', 'https://write-wise.com'),
@@ -67,13 +78,8 @@ const Index = () => {
   };
 
   return (
-    <Layout>
-      <SEO
-        title="WriteWise - AI-Powered Language Learning Platform"
-        description="WriteWise helps you master German, English and other languages with AI-powered writing exercises, personalized feedback, and adaptive learning paths (A2–C1)."
-        keywords="German language learning, Deutsch lernen, English language learning, AI language tutor, CEFR placement test, writing practice, language learning app, multilingual AI tutor"
-        structuredData={structuredData}
-      />
+    <>
+      <SEO structuredData={structuredData} />
       {/* Hero Section */}
       <section className="relative overflow-hidden bg-gradient-brand-subtle py-20 lg:py-32">
         <div className="container mx-auto px-4">
@@ -149,7 +155,7 @@ const Index = () => {
             </p>
           </div>
           <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-            {featuresLoading ? (
+            {featuresLoading && !resolvedFeaturesData ? (
               // Loading skeletons
               Array.from({ length: 6 }).map((_, i) => (
                 <Card key={i} className="border-0">
@@ -216,7 +222,7 @@ const Index = () => {
             </p>
           </div>
           <div className="grid gap-8 md:grid-cols-3">
-            {testimonialsLoading ? (
+            {testimonialsLoading && !resolvedTestimonialsData ? (
               // Loading skeletons
               Array.from({ length: 3 }).map((_, i) => (
                 <Card key={i} className="border-0">
@@ -285,7 +291,7 @@ const Index = () => {
           </div>
         </div>
       </section>
-    </Layout>
+    </>
   );
 };
 

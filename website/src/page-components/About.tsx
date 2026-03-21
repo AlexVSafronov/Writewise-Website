@@ -1,7 +1,7 @@
-import { Layout } from "@/components/layout";
+'use client';
+
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { SEO } from "@/components/SEO";
 import { Heart, Globe, Lightbulb, Users, Target, Award, ArrowRight, Mail, MapPin } from "lucide-react";
 
 const values = [
@@ -58,12 +58,7 @@ const milestones = [
 
 const About = () => {
   return (
-    <Layout>
-      <SEO
-        title="About WriteWise - Our Mission & Story"
-        description="Learn about WriteWise's mission to make language learning personal. Discover how our AI-powered platform helps intermediate learners (A2–C1) develop real communication skills."
-        keywords="WriteWise mission, AI language learning company, language learning app, about WriteWise"
-      />
+    <>
       {/* Hero */}
       <section className="bg-gradient-brand-subtle py-20">
         <div className="container mx-auto px-4">
@@ -149,29 +144,6 @@ const About = () => {
         </div>
       </section>
 
-      {/* Team
-      <section className="py-20">
-        <div className="container mx-auto px-4">
-          <h2 className="mb-12 text-center text-3xl font-bold text-foreground md:text-4xl">
-            Meet the <span className="text-gradient-brand">Team</span>
-          </h2>
-          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
-            {team.map((member) => (
-              <Card key={member.name} className="card-elevated border-0">
-                <CardContent className="p-6 text-center">
-                  <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-gradient-brand text-2xl font-bold text-white">
-                    {member.name.split(" ").map(n => n[0]).join("")}
-                  </div>
-                  <h3 className="mb-1 font-semibold text-foreground">{member.name}</h3>
-                  <div className="mb-3 text-sm font-medium text-primary">{member.role}</div>
-                  <p className="text-sm text-muted-foreground">{member.bio}</p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>*/}
-
       {/* Contact */}
       <section id="contact" className="bg-gradient-brand py-20">
         <div className="container mx-auto px-4 text-center">
@@ -199,7 +171,7 @@ const About = () => {
           </Button>
         </div>
       </section>
-    </Layout>
+    </>
   );
 };
 

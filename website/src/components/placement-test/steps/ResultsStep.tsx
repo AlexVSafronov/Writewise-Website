@@ -27,7 +27,7 @@ const CEFR_LABEL: Record<string, string> = {
   C2: 'Proficient',
 };
 
-const APP_URL = import.meta.env.VITE_APP_URL || 'https://app.write-wise.com';
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://app.write-wise.com';
 
 // ─── Component ───────────────────────────────────────────────────
 

@@ -1,4 +1,5 @@
-import { useParams, Link } from "react-router-dom";
+import { useParams } from "next/navigation";
+import Link from "next/link";
 import { Layout } from "@/components/layout";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -32,7 +33,7 @@ const getYouTubeVideoId = (url: string): string | null => {
 };
 
 const VideoResource = () => {
-  const { slug } = useParams<{ slug: string }>();
+  const { slug } = useParams() as { slug: string };
   const { data: resourceData, isLoading, error } = useResource(slug || '');
   const { data: allResourcesData } = useResources(); // For related videos
   const [isPlaying, setIsPlaying] = useState(false);
@@ -44,7 +45,7 @@ const VideoResource = () => {
           <h1 className="mb-4 text-2xl font-bold">Video Not Found</h1>
           <p className="mb-8 text-muted-foreground">The video you're looking for doesn't exist.</p>
           <Button asChild>
-            <Link to="/resources">
+            <Link href="/resources">
               <ArrowLeft className="mr-2 h-4 w-4" />
               Back to Resources
             </Link>
@@ -61,7 +62,7 @@ const VideoResource = () => {
 
   // Use custom thumbnail if uploaded, otherwise use YouTube thumbnail
   const thumbnailUrl = video?.thumbnail?.data?.attributes?.url
-    ? `${import.meta.env.VITE_STRAPI_URL || 'https://writewise-cms-m2xkjyh6ta-oe.a.run.app'}${video.thumbnail.data.attributes.url}`
+    ? `${process.env.NEXT_PUBLIC_STRAPI_URL || 'https://writewise-cms-m2xkjyh6ta-oe.a.run.app'}${video.thumbnail.data.attributes.url}`
     : youtubeVideoId
     ? `https://img.youtube.com/vi/${youtubeVideoId}/maxresdefault.jpg`
     : 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=800&h=450&fit=crop';
@@ -107,7 +108,7 @@ const VideoResource = () => {
           <section className="border-b bg-background py-4">
             <div className="container mx-auto px-4">
               <Button variant="ghost" size="sm" asChild>
-                <Link to="/resources">
+                <Link href="/resources">
                   <ArrowLeft className="mr-2 h-4 w-4" />
                   Back to Resources
                 </Link>
@@ -245,7 +246,7 @@ const VideoResource = () => {
                           {relatedVideos.map((related) => (
                             <Link
                               key={related.slug}
-                              to={`/resources/videos/${related.slug}`}
+                              href={`/resources/videos/${related.slug}`}
                               className="flex items-center gap-3 rounded-lg p-2 transition-colors hover:bg-muted"
                             >
                               <div className="flex-1">

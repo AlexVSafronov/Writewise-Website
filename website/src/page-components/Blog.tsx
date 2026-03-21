@@ -7,10 +7,10 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { ArrowRight, Calendar, Clock, User } from "lucide-react";
 import { useBlogPosts } from "@/hooks/use-strapi";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import Link from "next/link";
 import { toast } from "sonner";
 
-const STRAPI_URL = import.meta.env.VITE_STRAPI_URL || 'https://writewise-cms-m2xkjyh6ta-oe.a.run.app';
+const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_URL || 'https://writewise-cms-m2xkjyh6ta-oe.a.run.app';
 
 const Blog = () => {
   const { data: blogData, isLoading: blogLoading } = useBlogPosts();
@@ -155,7 +155,7 @@ const Blog = () => {
                     </div>
                   </div>
                   <Button className="w-fit bg-gradient-brand hover:opacity-90" asChild>
-                    <Link to={`/blog/${featuredPost.slug}`}>
+                    <Link href={`/blog/${featuredPost.slug}`}>
                       Read Article
                       <ArrowRight className="ml-2 h-4 w-4" />
                     </Link>
@@ -216,7 +216,7 @@ const Blog = () => {
               ))
             ) : (
               filteredPosts.map((post) => (
-                <Link key={post.slug} to={`/blog/${post.slug}`} className="flex">
+                <Link key={post.slug} href={`/blog/${post.slug}`} className="flex">
                   <Card className="card-elevated group flex flex-col cursor-pointer border-0 transition-transform hover:-translate-y-1 w-full">
                     <CardContent className="flex flex-col flex-1 p-6">
                       <Badge className="mb-4 w-fit bg-primary/10 text-primary hover:bg-primary/20">

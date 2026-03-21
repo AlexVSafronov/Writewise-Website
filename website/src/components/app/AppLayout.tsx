@@ -1,14 +1,19 @@
-import { Outlet } from "react-router-dom";
+'use client';
+
 import { AppSidebar } from "./AppSidebar";
 import { Bell, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
-export const AppLayout = () => {
+interface AppLayoutProps {
+  children: React.ReactNode;
+}
+
+export const AppLayout = ({ children }: AppLayoutProps) => {
   return (
     <div className="flex min-h-screen w-full bg-background">
       <AppSidebar />
-      
+
       <div className="flex flex-1 flex-col">
         {/* Top Header */}
         <header className="flex h-16 items-center justify-between border-b bg-card px-6">
@@ -19,7 +24,7 @@ export const AppLayout = () => {
               className="pl-10 bg-muted/50 border-0"
             />
           </div>
-          
+
           <div className="flex items-center gap-4">
             <Button variant="ghost" size="icon" className="relative">
               <Bell className="h-5 w-5" />
@@ -36,7 +41,7 @@ export const AppLayout = () => {
 
         {/* Main Content */}
         <main className="flex-1 overflow-auto p-6">
-          <Outlet />
+          {children}
         </main>
       </div>
     </div>

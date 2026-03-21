@@ -15,7 +15,7 @@ export default function PageViewTracker() {
   const pathname = usePathname();
 
   useEffect(() => {
-    trackPageView(pathname);
+    if (pathname) trackPageView(pathname);
   }, [pathname]);
 
   return null;

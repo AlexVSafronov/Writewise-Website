@@ -4,6 +4,7 @@ const nextConfig: NextConfig = {
   // Produce a self-contained Node.js server for Cloud Run (no nginx needed)
   output: 'standalone',
 
+
   // Disable the built-in X-Powered-By header
   poweredByHeader: false,
 

@@ -26,7 +26,7 @@ import {
   Play,
   Star,
 } from "lucide-react";
-import { Link } from "react-router-dom";
+import Link from "next/link";
 
 // Mock data for radar chart - language skills
 const skillsData = [
@@ -190,7 +190,7 @@ export const AppDashboard = () => {
           <Card className="border-0 shadow-sm">
             <CardHeader className="flex flex-row items-center justify-between pb-2">
               <CardTitle className="text-lg">Recent Tasks</CardTitle>
-              <Link to="/app/tasks">
+              <Link href="/app/tasks">
                 <Button variant="ghost" size="sm">
                   View All
                   <ArrowRight className="ml-2 h-4 w-4" />
@@ -201,7 +201,7 @@ export const AppDashboard = () => {
               {recentTasks.map((task) => (
                 <Link
                   key={task.id}
-                  to={`/app/tasks/${task.id}`}
+                  href={`/app/tasks/${task.id}`}
                   className="flex items-center gap-4 rounded-lg border bg-card p-4 transition-colors hover:bg-muted/50"
                 >
                   {getStatusIcon(task.status)}

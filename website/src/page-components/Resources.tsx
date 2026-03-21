@@ -8,7 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Play, FileText, Download, Clock, BookOpen, Video, HelpCircle, ArrowRight, ExternalLink, Wrench } from "lucide-react";
 import { useResources, useFAQs } from "@/hooks/use-strapi";
-import { Link } from "react-router-dom";
+import Link from "next/link";
 
 // Helper function to extract YouTube video ID from various URL formats
 const getYouTubeVideoId = (url: string): string | null => {
@@ -229,8 +229,8 @@ const Resources = () => {
               ) : (
                 <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                   {articles.map((article) => (
-                    <Card key={article.title} className="card-elevated group cursor-pointer border-0 transition-transform hover:-translate-y-1" asChild>
-                      <a href={article.link} target="_blank" rel="noopener noreferrer">
+                    <a key={article.title} href={article.link} target="_blank" rel="noopener noreferrer">
+                    <Card className="card-elevated group cursor-pointer border-0 transition-transform hover:-translate-y-1">
                         <CardContent className="p-6">
                           <Badge className="mb-4 bg-primary/10 text-primary hover:bg-primary/20">
                             {article.category}
@@ -244,8 +244,8 @@ const Resources = () => {
                             <ArrowRight className="h-4 w-4" />
                           </div>
                         </CardContent>
-                      </a>
                     </Card>
+                    </a>
                   ))}
                 </div>
               )}
@@ -270,11 +270,11 @@ const Resources = () => {
                 <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                   {videos.map((video) => {
                     const thumbnailUrl = video.thumbnail?.data?.attributes?.url
-                      ? `${import.meta.env.VITE_STRAPI_URL || 'https://writewise-cms-m2xkjyh6ta-oe.a.run.app'}${video.thumbnail.data.attributes.url}`
+                      ? `${process.env.NEXT_PUBLIC_STRAPI_URL || 'https://writewise-cms-m2xkjyh6ta-oe.a.run.app'}${video.thumbnail.data.attributes.url}`
                       : getYouTubeThumbnail(video.videoUrl);
 
                     return (
-                      <Link key={video.slug} to={`/resources/videos/${video.slug}`}>
+                      <Link key={video.slug} href={`/resources/videos/${video.slug}`}>
                         <Card className="card-elevated group cursor-pointer border-0 transition-transform hover:-translate-y-1 overflow-hidden">
                           {/* Video Thumbnail */}
                           <div className="relative aspect-video w-full overflow-hidden bg-black">

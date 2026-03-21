@@ -1,8 +1,9 @@
+'use client';
+
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Layout } from "@/components/layout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -23,7 +24,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { SEO } from "@/components/SEO";
 import { toast } from "sonner";
 import {
   Clock,
@@ -43,7 +43,7 @@ import {
 } from "lucide-react";
 
 const STRAPI_URL =
-  import.meta.env.VITE_STRAPI_URL ||
+  process.env.NEXT_PUBLIC_STRAPI_URL ||
   "https://writewise-cms-m2xkjyh6ta-oe.a.run.app";
 
 const applySchema = z.object({
@@ -434,12 +434,7 @@ const pricingHighlights = [
 
 const Freelancers = () => {
   return (
-    <Layout>
-      <SEO
-        title="WriteWise for Freelance Language Tutors — Save Time, Grow Your Business"
-        description="WriteWise helps freelance language tutors cut prep and review time by up to 70%, track student performance with real data, and take on more students without burning out."
-        keywords="freelance language tutor, AI language teaching tool, student progress tracking, CEFR exercises, language tutor software"
-      />
+    <>
 
       {/* Hero */}
       <section className="relative overflow-hidden bg-gradient-brand-subtle py-20 lg:py-32">
@@ -673,7 +668,7 @@ const Freelancers = () => {
           </div>
         </div>
       </section>
-    </Layout>
+    </>
   );
 };
 

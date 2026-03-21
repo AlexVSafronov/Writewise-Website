@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -222,7 +222,7 @@ export const TasksList = () => {
               </Card>
             ) : (
               filteredTasks.map((task) => (
-                <Link key={task.id} to={`/app/tasks/${task.id}`}>
+                <Link key={task.id} href={`/app/tasks/${task.id}`}>
                   <Card className="border-0 shadow-sm transition-all hover:shadow-md hover:-translate-y-0.5">
                     <CardContent className="flex items-center gap-4 p-4">
                       {getStatusIcon(task.status)}

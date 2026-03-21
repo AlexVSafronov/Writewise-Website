@@ -1,6 +1,6 @@
-import { Link } from 'react-router-dom';
-import { Layout } from '@/components/layout';
-import { SEO } from '@/components/SEO';
+'use client';
+
+import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ArrowRight } from 'lucide-react';
@@ -8,14 +8,7 @@ import { HUB_LANGUAGES } from '@/components/placement-test/config/languageConfig
 
 export default function PlacementTestHub() {
   return (
-    <Layout>
-      <SEO
-        title="Free Language Placement Test — Find Your CEFR Level | WriteWise"
-        description="Take our free AI-powered CEFR placement test in German, English, Spanish, French, Italian or Portuguese. Discover your exact level (A1–C2) in 20 minutes."
-        keywords="language placement test, CEFR level test, free language assessment, German placement test, English placement test"
-        canonicalUrl="https://write-wise.com/placement-test"
-      />
-
+    <>
       {/* ── Hero ──────────────────────────────────────────── */}
       <section className="bg-gradient-brand-subtle py-20 lg:py-28">
         <div className="container mx-auto px-4 max-w-3xl text-center">
@@ -48,7 +41,7 @@ export default function PlacementTestHub() {
               active ? (
                 <Link
                   key={language}
-                  to={`/placement-test/${slug}`}
+                  href={`/placement-test/${slug}`}
                   className="group card-elevated rounded-2xl p-5 flex flex-col items-center gap-3 transition-transform hover:-translate-y-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
                 >
                   <div className="w-16 h-16 rounded-full overflow-hidden ring-2 ring-border group-hover:ring-primary transition-colors">
@@ -135,18 +128,18 @@ export default function PlacementTestHub() {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button size="lg" variant="secondary" asChild>
-              <Link to="/placement-test/german">
+              <Link href="/placement-test/german">
                 🇩🇪 Start German Test
               </Link>
             </Button>
             <Button size="lg" variant="secondary" asChild>
-              <Link to="/placement-test/english">
+              <Link href="/placement-test/english">
                 🇬🇧 Start English Test
               </Link>
             </Button>
           </div>
         </div>
       </section>
-    </Layout>
+    </>
   );
 }

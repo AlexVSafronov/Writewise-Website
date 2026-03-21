@@ -1,4 +1,5 @@
-import { Layout } from '@/components/layout';
+'use client';
+
 import { SEO, generateFAQSchema } from '@/components/SEO';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -65,14 +66,8 @@ export function LanguageLandingStep() {
   if (!config) return null;
 
   return (
-    <Layout>
-      <SEO
-        title={config.seoTitle}
-        description={config.seoDescription}
-        keywords={config.seoKeywords}
-        canonicalUrl={`https://write-wise.com/placement-test/${config.slug}`}
-        structuredData={faqSchema}
-      />
+    <>
+      <SEO structuredData={faqSchema} />
 
       {/* ── Hero ──────────────────────────────────────────── */}
       <section className="relative overflow-hidden bg-gradient-to-br from-purple-50 via-white to-blue-50 py-20 lg:py-28">
@@ -234,6 +229,6 @@ export function LanguageLandingStep() {
           </div>
         </section>
       )}
-    </Layout>
+    </>
   );
 }
