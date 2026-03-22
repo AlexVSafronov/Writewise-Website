@@ -1,6 +1,5 @@
 'use client';
 
-import { Layout } from "@/components/layout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -88,7 +87,7 @@ const Resources = ({ initialResourcesData, initialFaqData }: ResourcesProps = {}
   const defaultTab = availableTabs.length > 0 ? availableTabs[0].value : 'guides';
 
   return (
-    <Layout>
+    <>
       <SEO
         title="Learning Resources - WriteWise"
         description="Video tutorials, guides, tools, and FAQs to help you get the most out of WriteWise. Everything you need to accelerate your language learning journey."
@@ -408,7 +407,7 @@ const Resources = ({ initialResourcesData, initialFaqData }: ResourcesProps = {}
           </Button>
         </div>
       </section>
-    </Layout>
+    </>
   );
 };
 

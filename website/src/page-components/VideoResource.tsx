@@ -1,6 +1,5 @@
 import { useParams } from "next/navigation";
 import Link from "next/link";
-import { Layout } from "@/components/layout";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
@@ -40,7 +39,7 @@ const VideoResource = () => {
 
   if (error) {
     return (
-      <Layout>
+      <>
         <div className="container mx-auto px-4 py-16 text-center">
           <h1 className="mb-4 text-2xl font-bold">Video Not Found</h1>
           <p className="mb-8 text-muted-foreground">The video you're looking for doesn't exist.</p>
@@ -51,7 +50,7 @@ const VideoResource = () => {
             </Link>
           </Button>
         </div>
-      </Layout>
+      </>
     );
   }
 
@@ -78,7 +77,7 @@ const VideoResource = () => {
     })) || [];
 
   return (
-    <Layout>
+    <>
       {isLoading ? (
         <>
           {/* Loading State */}
@@ -270,7 +269,7 @@ const VideoResource = () => {
           </section>
         </>
       ) : null}
-    </Layout>
+    </>
   );
 };
 

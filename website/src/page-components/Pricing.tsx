@@ -1,6 +1,5 @@
 'use client';
 
-import { Layout } from "@/components/layout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
@@ -99,7 +98,7 @@ const Pricing = ({ initialPricingData, initialFaqData }: PricingProps = {}) => {
   const plans = [...stripePlans, businessPlan];
 
   return (
-    <Layout>
+    <>
       <SEO
         title="Pricing - WriteWise Language Learning Plans"
         description="Choose from Free, Pro ($19/mo), or Premium ($49/mo) plans. AI-powered language learning with personalized feedback. Start free, upgrade anytime."
@@ -246,7 +245,7 @@ const Pricing = ({ initialPricingData, initialFaqData }: PricingProps = {}) => {
           </Button>
         </div>
       </section>
-    </Layout>
+    </>
   );
 };
 

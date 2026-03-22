@@ -1,4 +1,3 @@
-import { Layout } from "@/components/layout";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import remarkBreaks from "remark-breaks";
@@ -107,7 +106,7 @@ Here's a paragraph with **bold**, *italic*, \`code\`, and a [link](/about).
 
 const MarkdownTest = () => {
   return (
-    <Layout>
+    <>
       <section className="py-16">
         <div className="container mx-auto px-4">
           <div className="mx-auto max-w-4xl">
@@ -131,7 +130,7 @@ const MarkdownTest = () => {
           </div>
         </div>
       </section>
-    </Layout>
+    </>
   );
 };
 
