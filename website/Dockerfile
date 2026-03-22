@@ -1,47 +1,42 @@
-# Build stage
-FROM node:20-alpine AS builder
-
+# ── Stage 1: Install dependencies ────────────────────────────────────────────
+FROM node:20-alpine AS deps
 WORKDIR /app
-
-# No Chromium needed — vite-ssg pre-renders pages in Node.js directly,
-# eliminating the headless-browser step that previously required Chromium.
-
-# Copy package files
 COPY package*.json ./
-
-# Install dependencies
 RUN npm ci
 
-# Copy source code
+# ── Stage 2: Build ────────────────────────────────────────────────────────────
+FROM node:20-alpine AS builder
+WORKDIR /app
+COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-# Build arguments for Vite environment variables (baked in at build time)
-ARG VITE_STRAPI_URL
-ARG VITE_APP_URL
-ARG VITE_API_URL
-ARG VITE_STRIPE_PUBLIC_KEY
-ARG VITE_GROWTHBOOK_CLIENT_KEY
+# Build-time env vars (NEXT_PUBLIC_* are baked into the JS bundle)
+ARG NEXT_PUBLIC_STRAPI_URL
+ARG NEXT_PUBLIC_APP_URL
+ARG NEXT_PUBLIC_API_URL
+ARG NEXT_PUBLIC_STRIPE_PUBLIC_KEY
+ARG NEXT_PUBLIC_GROWTHBOOK_CLIENT_KEY
 
-ENV VITE_STRAPI_URL=$VITE_STRAPI_URL
-ENV VITE_APP_URL=$VITE_APP_URL
-ENV VITE_API_URL=$VITE_API_URL
-ENV VITE_STRIPE_PUBLIC_KEY=$VITE_STRIPE_PUBLIC_KEY
-ENV VITE_GROWTHBOOK_CLIENT_KEY=$VITE_GROWTHBOOK_CLIENT_KEY
+ENV NEXT_PUBLIC_STRAPI_URL=$NEXT_PUBLIC_STRAPI_URL
+ENV NEXT_PUBLIC_APP_URL=$NEXT_PUBLIC_APP_URL
+ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
+ENV NEXT_PUBLIC_STRIPE_PUBLIC_KEY=$NEXT_PUBLIC_STRIPE_PUBLIC_KEY
+ENV NEXT_PUBLIC_GROWTHBOOK_CLIENT_KEY=$NEXT_PUBLIC_GROWTHBOOK_CLIENT_KEY
 
-# Generate sitemap, compile with Vite, and pre-render all marketing pages
-RUN npm run build:ssg
+RUN npm run build
 
-# Production stage
-FROM nginx:alpine
+# ── Stage 3: Production runtime ───────────────────────────────────────────────
+FROM node:20-alpine AS runner
+WORKDIR /app
 
-# Copy built assets from builder
-COPY --from=builder /app/dist /usr/share/nginx/html
+ENV NODE_ENV=production
+ENV PORT=8080
 
-# Copy nginx configuration
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+# Next.js standalone output
+COPY --from=builder /app/.next/standalone ./
+COPY --from=builder /app/.next/static ./.next/static
+COPY --from=builder /app/public ./public
 
-# Expose port 8080 (Cloud Run requirement)
 EXPOSE 8080
 
-# Start nginx
-CMD ["nginx", "-g", "daemon off;"]
+CMD ["node", "server.js"]

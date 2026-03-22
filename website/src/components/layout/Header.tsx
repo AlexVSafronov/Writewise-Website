@@ -1,5 +1,8 @@
+'use client';
+
 import { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {
   NavigationMenu,
@@ -40,16 +43,16 @@ const testLinks = [
 export const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen]     = useState(false);
   const [mobileTestOpen, setMobileTestOpen]     = useState(false);
-  const location = useLocation();
+  const pathname = usePathname();
 
-  const isTestActive = location.pathname.startsWith("/placement-test");
+  const isTestActive = pathname?.startsWith("/placement-test") ?? false;
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <nav className="container mx-auto flex h-16 items-center justify-between px-4">
 
         {/* Logo */}
-        <Link to="/" className="flex items-center gap-2">
+        <Link href="/" className="flex items-center gap-2">
           <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-brand">
             <BookOpen className="h-5 w-5 text-white" />
           </div>
@@ -62,9 +65,9 @@ export const Header = () => {
           {simpleNavLinks.slice(0, 2).map((link) => (
             <Link
               key={link.name}
-              to={link.href}
+              href={link.href}
               className={`text-sm font-medium transition-colors hover:text-primary ${
-                location.pathname === link.href ? "text-primary" : "text-muted-foreground"
+                pathname === link.href ? "text-primary" : "text-muted-foreground"
               }`}
             >
               {link.name}
@@ -88,7 +91,7 @@ export const Header = () => {
                       <li key={item.href}>
                         <NavigationMenuLink asChild>
                           <Link
-                            to={item.href}
+                            href={item.href}
                             className="flex items-center gap-3 rounded-lg px-3 py-2.5 transition-colors hover:bg-accent hover:text-accent-foreground"
                           >
                             <div className="w-8 h-8 rounded-full overflow-hidden ring-1 ring-border shrink-0">
@@ -110,7 +113,7 @@ export const Header = () => {
                     <li>
                       <NavigationMenuLink asChild>
                         <Link
-                          to="/placement-test"
+                          href="/placement-test"
                           className="flex items-center gap-3 rounded-lg px-3 py-2 mt-1 border-t transition-colors hover:bg-accent hover:text-accent-foreground"
                         >
                           <p className="text-xs text-muted-foreground">See all tests →</p>
@@ -127,9 +130,9 @@ export const Header = () => {
           {simpleNavLinks.slice(2).map((link) => (
             <Link
               key={link.name}
-              to={link.href}
+              href={link.href}
               className={`text-sm font-medium transition-colors hover:text-primary ${
-                location.pathname === link.href ? "text-primary" : "text-muted-foreground"
+                pathname === link.href ? "text-primary" : "text-muted-foreground"
               }`}
             >
               {link.name}
@@ -174,10 +177,10 @@ export const Header = () => {
               {simpleNavLinks.slice(0, 2).map((link) => (
                 <Link
                   key={link.name}
-                  to={link.href}
+                  href={link.href}
                   onClick={() => setMobileMenuOpen(false)}
                   className={`text-base font-medium px-2 py-2.5 rounded-lg transition-colors hover:text-primary ${
-                    location.pathname === link.href ? "text-primary" : "text-muted-foreground"
+                    pathname === link.href ? "text-primary" : "text-muted-foreground"
                   }`}
                 >
                   {link.name}
@@ -200,7 +203,7 @@ export const Header = () => {
                     {testLinks.map((item) => (
                       <Link
                         key={item.href}
-                        to={item.href}
+                        href={item.href}
                         onClick={() => { setMobileMenuOpen(false); setMobileTestOpen(false); }}
                         className="flex items-center gap-2 py-2 text-sm text-muted-foreground hover:text-primary transition-colors"
                       >
@@ -216,7 +219,7 @@ export const Header = () => {
                       </Link>
                     ))}
                     <Link
-                      to="/placement-test"
+                      href="/placement-test"
                       onClick={() => { setMobileMenuOpen(false); setMobileTestOpen(false); }}
                       className="py-2 text-xs text-muted-foreground hover:text-primary transition-colors"
                     >
@@ -230,10 +233,10 @@ export const Header = () => {
               {simpleNavLinks.slice(2).map((link) => (
                 <Link
                   key={link.name}
-                  to={link.href}
+                  href={link.href}
                   onClick={() => setMobileMenuOpen(false)}
                   className={`text-base font-medium px-2 py-2.5 rounded-lg transition-colors hover:text-primary ${
-                    location.pathname === link.href ? "text-primary" : "text-muted-foreground"
+                    pathname === link.href ? "text-primary" : "text-muted-foreground"
                   }`}
                 >
                   {link.name}

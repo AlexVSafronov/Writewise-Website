@@ -1,13 +1,13 @@
 import { GrowthBook } from '@growthbook/growthbook-react';
 import { trackExperiment } from './analytics';
 
-const CLIENT_KEY = import.meta.env.VITE_GROWTHBOOK_CLIENT_KEY as string | undefined;
+const CLIENT_KEY = process.env.NEXT_PUBLIC_GROWTHBOOK_CLIENT_KEY as string | undefined;
 
 export const growthbook = new GrowthBook({
   apiHost: 'https://cdn.growthbook.io',
   clientKey: CLIENT_KEY || '',
   // Renders the GrowthBook dev toolbar in development (toggle experiments locally)
-  enableDevMode: import.meta.env.DEV,
+  enableDevMode: process.env.NODE_ENV === 'development',
   trackingCallback: (experiment, result) => {
     trackExperiment(experiment.key, String(result.variationId));
   },
