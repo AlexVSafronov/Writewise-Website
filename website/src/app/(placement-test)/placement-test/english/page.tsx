@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { PlacementTestLanding } from '@/components/pages/PlacementTestLanding';
+import PlacementTestEnglish from '@/page-components/PlacementTestEnglish';
 
 export const revalidate = false;
 
@@ -22,12 +22,5 @@ export const metadata: Metadata = {
 };
 
 export default function PlacementTestEnglishPage() {
-  return (
-    <PlacementTestLanding
-      language="English"
-      flagEmoji="🇬🇧"
-      flagCode="gb"
-      externalTestUrl="https://app.write-wise.com/placement-test/english"
-    />
-  );
+  return <PlacementTestEnglish />;
 }

@@ -1,3 +1,5 @@
+'use client';
+
 import PlacementTest from './PlacementTest';
 
 /** Entry point for /placement-test/english */
