@@ -1,3 +1,5 @@
+'use client';
+
 import { Layout } from "@/components/layout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -6,6 +8,12 @@ import { SEO, generateFAQSchema } from "@/components/SEO";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Check, Sparkles, ArrowRight } from "lucide-react";
 import { useStripePricing, useFAQs } from "@/hooks/use-strapi";
+import type { StrapiResponse, PricingPlan, FAQ } from "@/types/strapi";
+
+interface PricingProps {
+  initialPricingData?: StrapiResponse<PricingPlan[]>;
+  initialFaqData?: StrapiResponse<FAQ[]>;
+}
 
 // Currency symbol mapping
 const currencySymbols: Record<string, string> = {
@@ -16,9 +24,11 @@ const currencySymbols: Record<string, string> = {
   AUD: "A$",
 };
 
-const Pricing = () => {
-  const { data: pricingData, isLoading: pricingLoading } = useStripePricing();
-  const { data: faqData, isLoading: faqLoading } = useFAQs('Pricing');
+const Pricing = ({ initialPricingData, initialFaqData }: PricingProps = {}) => {
+  const { data: fetchedPricingData, isLoading: pricingLoading } = useStripePricing();
+  const { data: fetchedFaqData, isLoading: faqLoading } = useFAQs('Pricing');
+  const pricingData = fetchedPricingData ?? initialPricingData;
+  const faqData = fetchedFaqData ?? initialFaqData;
 
   const faqs = faqData?.data.map(item => ({
     question: item.question,

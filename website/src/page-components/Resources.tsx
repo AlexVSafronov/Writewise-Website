@@ -1,3 +1,5 @@
+'use client';
+
 import { Layout } from "@/components/layout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -9,6 +11,12 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { Play, FileText, Download, Clock, BookOpen, Video, HelpCircle, ArrowRight, ExternalLink, Wrench } from "lucide-react";
 import { useResources, useFAQs } from "@/hooks/use-strapi";
 import Link from "next/link";
+import type { StrapiResponse, Resource, FAQ } from "@/types/strapi";
+
+interface ResourcesProps {
+  initialResourcesData?: StrapiResponse<Resource[]>;
+  initialFaqData?: StrapiResponse<FAQ[]>;
+}
 
 // Helper function to extract YouTube video ID from various URL formats
 const getYouTubeVideoId = (url: string): string | null => {
@@ -39,9 +47,11 @@ const getYouTubeThumbnail = (videoUrl: string | undefined): string => {
   return `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
 };
 
-const Resources = () => {
-  const { data: resourcesData, isLoading: resourcesLoading } = useResources();
-  const { data: faqData, isLoading: faqLoading } = useFAQs(); // Fetch all FAQs
+const Resources = ({ initialResourcesData, initialFaqData }: ResourcesProps = {}) => {
+  const { data: fetchedResourcesData, isLoading: resourcesLoading } = useResources();
+  const { data: fetchedFaqData, isLoading: faqLoading } = useFAQs(); // Fetch all FAQs
+  const resourcesData = fetchedResourcesData ?? initialResourcesData;
+  const faqData = fetchedFaqData ?? initialFaqData;
 
   const allResources = resourcesData?.data || [];
 

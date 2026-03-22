@@ -1,0 +1,76 @@
+import type { Metadata } from 'next';
+import { notFound } from 'next/navigation';
+import { strapiClient } from '@/lib/strapi';
+import BlogPostPage from '@/page-components/BlogPostPage';
+
+export const revalidate = 3600;
+export const dynamicParams = true;
+
+export async function generateStaticParams() {
+  try {
+    const posts = await strapiClient.getBlogPosts();
+    return posts.data.map((post) => ({ slug: post.slug }));
+  } catch {
+    return [];
+  }
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  try {
+    const data = await strapiClient.getBlogPost(slug);
+    const post = data.data[0];
+    if (!post) return { title: 'Post Not Found | WriteWise Blog' };
+
+    const imageUrl =
+      post.featuredImage?.url ||
+      'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=1200&h=600&fit=crop';
+
+    return {
+      title: `${post.title} | WriteWise Blog`,
+      description: post.seoDescription || post.excerpt,
+      alternates: { canonical: `https://write-wise.com/blog/${slug}` },
+      openGraph: {
+        title: `${post.title} | WriteWise Blog`,
+        description: post.seoDescription || post.excerpt,
+        url: `https://write-wise.com/blog/${slug}`,
+        type: 'article',
+        images: [{ url: imageUrl }],
+      },
+    };
+  } catch {
+    return { title: 'Post Not Found | WriteWise Blog' };
+  }
+}
+
+export default async function BlogPostRoute({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  const { slug } = await params;
+
+  const [postResult, allPostsResult] = await Promise.allSettled([
+    strapiClient.getBlogPost(slug),
+    strapiClient.getBlogPosts(),
+  ]);
+
+  const postData = postResult.status === 'fulfilled' ? postResult.value : null;
+  const allPostsData = allPostsResult.status === 'fulfilled' ? allPostsResult.value : null;
+
+  if (!postData || postData.data.length === 0) {
+    notFound();
+  }
+
+  const post = postData.data[0];
+  const relatedPosts = (allPostsData?.data ?? [])
+    .filter((p) => p.slug !== slug && p.category === post.category)
+    .slice(0, 2)
+    .map((p) => ({ slug: p.slug, title: p.title, category: p.category }));
+
+  return <BlogPostPage post={post} relatedPosts={relatedPosts} />;
+}

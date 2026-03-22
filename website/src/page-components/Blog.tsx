@@ -1,3 +1,5 @@
+'use client';
+
 import { Layout } from "@/components/layout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -9,11 +11,17 @@ import { useBlogPosts } from "@/hooks/use-strapi";
 import { useState } from "react";
 import Link from "next/link";
 import { toast } from "sonner";
+import type { StrapiResponse, BlogPost } from "@/types/strapi";
 
 const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_URL || 'https://writewise-cms-m2xkjyh6ta-oe.a.run.app';
 
-const Blog = () => {
-  const { data: blogData, isLoading: blogLoading } = useBlogPosts();
+interface BlogProps {
+  initialData?: StrapiResponse<BlogPost[]>;
+}
+
+const Blog = ({ initialData }: BlogProps = {}) => {
+  const { data: fetchedData, isLoading: blogLoading } = useBlogPosts();
+  const blogData = fetchedData ?? initialData;
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [newsletterEmail, setNewsletterEmail] = useState("");
   const [newsletterLoading, setNewsletterLoading] = useState(false);
