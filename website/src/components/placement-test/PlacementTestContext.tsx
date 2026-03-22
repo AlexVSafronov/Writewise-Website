@@ -60,6 +60,7 @@ const LOCALE_TO_LANGUAGE: Record<string, string> = {
 };
 
 export function detectNativeLanguage(): string {
+  if (typeof navigator === 'undefined') return 'English';
   const locale = (navigator.language || 'en').split('-')[0].toLowerCase();
   return LOCALE_TO_LANGUAGE[locale] ?? 'English';
 }
