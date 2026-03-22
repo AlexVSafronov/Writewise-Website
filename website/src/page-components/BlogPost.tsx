@@ -1,6 +1,5 @@
 import { useParams } from "next/navigation";
 import Link from "next/link";
-import { Layout } from "@/components/layout";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
@@ -20,7 +19,7 @@ const BlogPost = () => {
 
   if (error) {
     return (
-      <Layout>
+      <>
         <div className="container mx-auto px-4 py-16 text-center">
           <h1 className="mb-4 text-2xl font-bold">Post Not Found</h1>
           <p className="mb-8 text-muted-foreground">The article you're looking for doesn't exist.</p>
@@ -31,7 +30,7 @@ const BlogPost = () => {
             </Link>
           </Button>
         </div>
-      </Layout>
+      </>
     );
   }
 
@@ -51,7 +50,7 @@ const BlogPost = () => {
     })) || [];
 
   return (
-    <Layout>
+    <>
       {isLoading ? (
         <>
           <SEO
@@ -240,7 +239,7 @@ const BlogPost = () => {
           </section>
         </>
       ) : null}
-    </Layout>
+    </>
   );
 };
 

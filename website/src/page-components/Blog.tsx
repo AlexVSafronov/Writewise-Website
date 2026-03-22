@@ -1,6 +1,5 @@
 'use client';
 
-import { Layout } from "@/components/layout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -88,7 +87,7 @@ const Blog = ({ initialData }: BlogProps = {}) => {
   };
 
   return (
-    <Layout>
+    <>
       <SEO
         title="WriteWise Blog - Language Learning Tips & AI Insights"
         description="Expert articles on language learning, AI technology, and effective communication. Tips for intermediate learners (A2-C1)."
@@ -289,7 +288,7 @@ const Blog = ({ initialData }: BlogProps = {}) => {
           </form>
         </div>
       </section>
-    </Layout>
+    </>
   );
 };
 
