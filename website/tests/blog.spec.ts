@@ -25,20 +25,21 @@ test.describe('T6 — Blog listing', () => {
 
   test('T6.3 — Category filter buttons are visible', async ({ page }) => {
     await page.goto('/blog');
-    await page.waitForLoadState('networkidle');
-    // "All" button is always present
+    // "All" button is rendered by the client component once hydrated
     const allButton = page.getByRole('button', { name: /^all$/i });
-    await expect(allButton).toBeVisible();
+    await expect(allButton).toBeVisible({ timeout: 8000 });
   });
 
   test('T6.4 — Clicking "All" shows posts', async ({ page }) => {
     await page.goto('/blog');
-    await page.waitForLoadState('networkidle');
+    // Wait for React to hydrate and render blog posts first
+    const cards = page.locator('article, a[href^="/blog/"]');
+    await expect(cards.first()).toBeVisible({ timeout: 8000 });
+    // Then optionally click "All" filter button
     const allButton = page.getByRole('button', { name: /^all$/i });
     if (await allButton.isVisible()) {
       await allButton.click();
     }
-    const cards = page.locator('article, a[href^="/blog/"]');
     await expect(cards.first()).toBeVisible();
   });
 

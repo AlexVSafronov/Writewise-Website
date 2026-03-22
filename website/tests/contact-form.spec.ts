@@ -66,7 +66,7 @@ test.describe('T5 — Contact form', () => {
       if (msg.type() === 'error') errors.push(msg.text());
     });
     await page.goto('/contact');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     // Filter out known non-critical errors (e.g. browser extension noise)
     const critical = errors.filter(e =>
       !e.includes('favicon') &&

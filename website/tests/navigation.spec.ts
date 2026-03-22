@@ -74,9 +74,7 @@ test.describe('T4 — Mobile navigation', () => {
 
   test('T4.7 — Mobile hamburger opens menu', async ({ page }) => {
     await page.goto('/');
-    const hamburger = page.locator('header button[aria-label], header button').filter({
-      has: page.locator('svg'),
-    }).first();
+    const hamburger = page.locator('button[aria-label="Toggle menu"]');
     await hamburger.click();
     // At least one nav link should be visible after opening
     await expect(
@@ -87,7 +85,7 @@ test.describe('T4 — Mobile navigation', () => {
   test('T4.8 — Mobile menu closes when X is clicked', async ({ page }) => {
     await page.goto('/');
     // Open
-    const hamburger = page.locator('header button').filter({ has: page.locator('svg') }).first();
+    const hamburger = page.locator('button[aria-label="Toggle menu"]');
     await hamburger.click();
     // Close — click again (toggle) or find close button
     await hamburger.click();
@@ -104,7 +102,7 @@ test.describe('T4 — Mobile navigation', () => {
 
   test('T4.9 — Mobile nav links work', async ({ page }) => {
     await page.goto('/');
-    const hamburger = page.locator('header button').filter({ has: page.locator('svg') }).first();
+    const hamburger = page.locator('button[aria-label="Toggle menu"]');
     await hamburger.click();
     const pricingLink = page.getByRole('link', { name: /pricing/i }).first();
     await expect(pricingLink).toBeVisible();
