@@ -9,9 +9,11 @@
 
 import rateLimit from 'koa-ratelimit';
 
-// In-memory store for rate limiting
-// For production with multiple instances, consider using Redis
-const db = new Map();
+// Separate in-memory stores per limiter — shared Map causes counts to bleed
+// across limiters (admin requests consume the API quota and vice-versa).
+const loginDb = new Map();
+const adminDb = new Map();
+const apiDb = new Map();
 
 export default (config, { strapi }) => {
   return async (ctx, next) => {
@@ -19,7 +21,7 @@ export default (config, { strapi }) => {
     if (ctx.url === '/admin/login' && ctx.method === 'POST') {
       const loginRateLimit = rateLimit({
         driver: 'memory',
-        db: db,
+        db: loginDb,
         duration: 60000, // 1 minute
         errorMessage: 'Too many login attempts. Please try again in a minute.',
         id: (ctx) => ctx.ip, // Rate limit by IP address
@@ -48,7 +50,7 @@ export default (config, { strapi }) => {
     if (ctx.url.startsWith('/admin') || ctx.url.startsWith('/api/admin')) {
       const adminRateLimit = rateLimit({
         driver: 'memory',
-        db: db,
+        db: adminDb,
         duration: 60000, // 1 minute
         errorMessage: 'Too many requests. Please wait a moment.',
         id: (ctx) => ctx.ip,
@@ -57,7 +59,7 @@ export default (config, { strapi }) => {
           reset: 'Rate-Limit-Reset',
           total: 'Rate-Limit-Total',
         },
-        max: 200, // Max 200 requests per minute (admin panel loads many resources)
+        max: 600, // Strapi admin loads 50+ assets/API calls simultaneously on open
         disableHeader: false,
       });
 
@@ -68,7 +70,7 @@ export default (config, { strapi }) => {
     if (ctx.url.startsWith('/api')) {
       const apiRateLimit = rateLimit({
         driver: 'memory',
-        db: db,
+        db: apiDb,
         duration: 60000, // 1 minute
         errorMessage: 'Too many requests. Please slow down.',
         id: (ctx) => ctx.ip,
