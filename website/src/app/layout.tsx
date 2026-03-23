@@ -22,6 +22,13 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     site: '@WriteWise',
   },
+  icons: {
+    icon: [
+      { url: '/favicon.ico', sizes: '16x16 32x32 48x48', type: 'image/x-icon' },
+      { url: '/favicon.svg', type: 'image/svg+xml' },
+    ],
+    apple: { url: '/favicon.svg', type: 'image/svg+xml' },
+  },
   robots: { index: true, follow: true },
 };
 
