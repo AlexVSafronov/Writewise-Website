@@ -79,7 +79,7 @@ export const Header = () => {
             <NavigationMenuList>
               <NavigationMenuItem>
                 <NavigationMenuTrigger
-                  className={`h-auto bg-transparent p-0 text-sm font-medium transition-colors hover:bg-transparent hover:text-primary focus:bg-transparent data-[active]:bg-transparent data-[state=open]:bg-transparent ${
+                  className={`h-auto bg-transparent p-0 text-sm font-medium transition-colors hover:bg-transparent hover:text-primary focus:bg-transparent focus:text-inherit data-[active]:bg-transparent data-[state=open]:bg-transparent data-[state=open]:text-inherit ${
                     isTestActive ? "text-primary" : "text-muted-foreground"
                   }`}
                 >
