@@ -1,6 +1,4 @@
 import type { Core } from '@strapi/strapi';
-import https from 'https';
-import http from 'http';
 import { URL } from 'url';
 
 export default {
@@ -32,28 +30,19 @@ export default {
         return;
       }
 
-      await new Promise<void>((resolve) => {
-        const client = parsed.protocol === 'https:' ? https : http;
-        const req = client.get(rawUrl, (res) => {
-          ctx.status = res.statusCode || 200;
-          ctx.set('Content-Type', res.headers['content-type'] || 'application/octet-stream');
-          ctx.set('Cache-Control', 'public, max-age=3600');
-          ctx.body = res;
-          res.on('end', resolve);
-          res.on('error', () => resolve());
-        });
-        req.setTimeout(10000, () => {
-          req.destroy();
-          ctx.status = 504;
-          ctx.body = 'Image proxy timeout';
-          resolve();
-        });
-        req.on('error', () => {
-          ctx.status = 502;
-          ctx.body = 'Failed to fetch image';
-          resolve();
-        });
-      });
+      try {
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 10000);
+        const res = await fetch(rawUrl, { signal: controller.signal });
+        clearTimeout(timeout);
+        ctx.status = res.status;
+        ctx.set('Content-Type', res.headers.get('content-type') || 'application/octet-stream');
+        ctx.set('Cache-Control', 'public, max-age=3600');
+        ctx.body = res.body;
+      } catch {
+        ctx.status = 502;
+        ctx.body = 'Failed to fetch image';
+      }
     });
   },
 
