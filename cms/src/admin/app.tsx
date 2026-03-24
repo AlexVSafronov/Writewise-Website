@@ -7,7 +7,9 @@ function toProxyUrl(src: string): string {
   try {
     const url = new URL(src);
     if (url.hostname === GCS_HOST) {
-      return PROXY_BASE + encodeURIComponent(src);
+      // Use only the pathname (drop ?updatedAt cache-buster) to avoid double-encoding
+      const cleanUrl = `${url.protocol}//${url.host}${url.pathname}`;
+      return PROXY_BASE + encodeURIComponent(cleanUrl);
     }
   } catch {
     // not an absolute URL, leave as-is
