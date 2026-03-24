@@ -34,13 +34,21 @@ export default {
 
       await new Promise<void>((resolve) => {
         const client = parsed.protocol === 'https:' ? https : http;
-        client.get(rawUrl, (res) => {
+        const req = client.get(rawUrl, (res) => {
           ctx.status = res.statusCode || 200;
           ctx.set('Content-Type', res.headers['content-type'] || 'application/octet-stream');
           ctx.set('Cache-Control', 'public, max-age=3600');
           ctx.body = res;
           res.on('end', resolve);
-        }).on('error', () => {
+          res.on('error', () => resolve());
+        });
+        req.setTimeout(10000, () => {
+          req.destroy();
+          ctx.status = 504;
+          ctx.body = 'Image proxy timeout';
+          resolve();
+        });
+        req.on('error', () => {
           ctx.status = 502;
           ctx.body = 'Failed to fetch image';
           resolve();
