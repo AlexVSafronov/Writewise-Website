@@ -19,7 +19,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${base}/terms`, lastModified: new Date(), changeFrequency: 'yearly', priority: 0.3 },
   ];
 
-  // Dynamic blog posts
+  // Dynamic blog posts (with hero images for Google Image Search indexing)
   let blogRoutes: MetadataRoute.Sitemap = [];
   try {
     const posts = await strapiClient.getBlogPosts();
@@ -28,6 +28,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: new Date(post.updatedAt),
       changeFrequency: 'monthly' as const,
       priority: 0.7,
+      ...(post.featuredImage?.url ? { images: [post.featuredImage.url] } : {}),
     }));
   } catch { /* CMS unreachable at build time is OK */ }
 
