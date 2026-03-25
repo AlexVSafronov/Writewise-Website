@@ -68,6 +68,9 @@ const BlogPostPage = ({ post, relatedPosts }: Props) => {
               src={imageUrl}
               alt={post.featuredImage?.alternativeText || post.title}
               className="h-auto w-full object-cover"
+              data-pin-description={post.excerpt || post.title}
+              data-pin-url={`https://write-wise.com/blog/${post.slug}`}
+              data-pin-media={imageUrl}
             />
           </div>
         </div>
