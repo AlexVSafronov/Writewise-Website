@@ -30,6 +30,15 @@ export async function generateMetadata({
       post.featuredImage?.url ||
       'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=1200&h=600&fit=crop';
 
+    const imageWidth = post.featuredImage?.width ?? 1200;
+    const imageHeight = post.featuredImage?.height ?? 630;
+    const imageAlt = post.featuredImage?.alternativeText ?? post.title;
+
+    // Normalise publishedDate to a valid ISO-8601 string for article:published_time
+    const publishedTime = post.publishedDate
+      ? new Date(post.publishedDate).toISOString()
+      : undefined;
+
     return {
       title: `${post.title} | WriteWise Blog`,
       description: post.seoDescription || post.excerpt,
@@ -39,7 +48,18 @@ export async function generateMetadata({
         description: post.seoDescription || post.excerpt,
         url: `https://write-wise.com/blog/${slug}`,
         type: 'article',
-        images: [{ url: imageUrl }],
+        publishedTime,
+        authors: [post.author],
+        section: post.category,
+        tags: [post.category, 'German learning', 'language learning', 'WriteWise'],
+        images: [
+          {
+            url: imageUrl,
+            width: imageWidth,
+            height: imageHeight,
+            alt: imageAlt,
+          },
+        ],
       },
     };
   } catch {
