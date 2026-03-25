@@ -38,7 +38,7 @@ export default {
         ctx.status = res.status;
         ctx.set('Content-Type', res.headers.get('content-type') || 'application/octet-stream');
         ctx.set('Cache-Control', 'public, max-age=3600');
-        ctx.body = res.body;
+        ctx.body = Buffer.from(await res.arrayBuffer());
       } catch {
         ctx.status = 502;
         ctx.body = 'Failed to fetch image';
