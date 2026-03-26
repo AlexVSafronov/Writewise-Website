@@ -6,17 +6,22 @@ export const generateOrganizationSchema = (name: string, url: string, logoUrl?: 
   name,
   url,
   description:
-    'WriteWise is an AI-powered language learning platform helping intermediate learners (A2–C1) master writing, grammar and vocabulary through personalized exercises and real-time AI feedback.',
+    'WriteWise helps intermediate English and German learners (A2–B2) break through the plateau with AI-powered writing practice and real-time feedback at exactly the right level of challenge.',
   ...(logoUrl && {
     logo: {
       '@type': 'ImageObject',
       url: logoUrl,
     },
   }),
-  sameAs: ['https://twitter.com/WriteWise'],
+  sameAs: [
+    'https://twitter.com/WriteWise',
+    'https://www.linkedin.com/company/write-wise-language-improvement/',
+    'https://www.youtube.com/@write-wise',
+  ],
   contactPoint: {
     '@type': 'ContactPoint',
     contactType: 'customer support',
+    email: 'support@write-wise.com',
     url: 'https://write-wise.com/contact',
   },
 });
@@ -44,31 +49,17 @@ export const generateSoftwareApplicationSchema = () => ({
   operatingSystem: 'Web',
   url: 'https://write-wise.com',
   description:
-    'AI-powered language learning for intermediate learners (A2–C1). Practice writing, grammar and vocabulary with personalized AI feedback and adaptive learning paths covering 6+ languages.',
-  offers: [
-    {
-      '@type': 'Offer',
-      name: 'Free',
-      price: '0',
-      priceCurrency: 'USD',
-    },
-    {
-      '@type': 'Offer',
-      name: 'Pro',
-      price: '19',
-      priceCurrency: 'USD',
-    },
-    {
-      '@type': 'Offer',
-      name: 'Premium',
-      price: '49',
-      priceCurrency: 'USD',
-    },
-  ],
+    'AI writing coach for intermediate English and German learners (A2–B2). Adaptive exercises, real-time grammar and vocabulary feedback, designed to push past the intermediate plateau.',
+  offers: {
+    '@type': 'Offer',
+    name: 'Free',
+    price: '0',
+    priceCurrency: 'USD',
+  },
   aggregateRating: {
     '@type': 'AggregateRating',
     ratingValue: '4.9',
-    ratingCount: '1000',
+    ratingCount: '1043',
     bestRating: '5',
     worstRating: '1',
   },
@@ -76,7 +67,7 @@ export const generateSoftwareApplicationSchema = () => ({
 
 // Pre-computed WriteWise schemas — avoids redundant object creation and JSON.stringify on every request.
 export const WRITEWISE_ORG_SCHEMA_JSON = JSON.stringify(
-  generateOrganizationSchema('WriteWise', 'https://write-wise.com', 'https://write-wise.com/og-image.png'),
+  generateOrganizationSchema('WriteWise', 'https://write-wise.com', 'https://write-wise.com/logo.png'),
 );
 export const WRITEWISE_WEBSITE_SCHEMA_JSON = JSON.stringify(
   generateWebsiteSchema('WriteWise', 'https://write-wise.com'),
