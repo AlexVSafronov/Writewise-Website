@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { strapiClient } from '@/lib/strapi';
 import BlogPostPage from '@/page-components/BlogPostPage';
+import { generateArticleSchema } from '@/lib/seo';
 
 export const revalidate = 3600;
 export const dynamicParams = true;
@@ -92,5 +93,23 @@ export default async function BlogPostRoute({
     .slice(0, 2)
     .map((p) => ({ slug: p.slug, title: p.title, category: p.category }));
 
-  return <BlogPostPage post={post} relatedPosts={relatedPosts} />;
+  const articleSchema = generateArticleSchema({
+    title: post.title,
+    description: post.seoDescription || post.excerpt,
+    url: `https://write-wise.com/blog/${post.slug}`,
+    datePublished: new Date(post.publishedDate).toISOString(),
+    dateModified: post.updatedAt,
+    author: post.author,
+    image: post.featuredImage?.url,
+  });
+
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}
+      />
+      <BlogPostPage post={post} relatedPosts={relatedPosts} />
+    </>
+  );
 }
