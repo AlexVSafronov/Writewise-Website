@@ -110,6 +110,24 @@ export const generateArticleSchema = (params: {
   ...(params.image && { image: [params.image] }),
 });
 
+export const generateQAPageSchema = (params: {
+  question: string;
+  answer: string;
+  answerCount?: number;
+}) => ({
+  '@context': 'https://schema.org',
+  '@type': 'QAPage',
+  mainEntity: {
+    '@type': 'Question',
+    name: params.question,
+    answerCount: params.answerCount ?? 1,
+    acceptedAnswer: {
+      '@type': 'Answer',
+      text: params.answer,
+    },
+  },
+});
+
 export const generateFAQSchema = (faqs: { question: string; answer: string }[]) => ({
   '@context': 'https://schema.org',
   '@type': 'FAQPage',
