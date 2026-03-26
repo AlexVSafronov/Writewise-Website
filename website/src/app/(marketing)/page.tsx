@@ -1,6 +1,11 @@
 import type { Metadata } from 'next';
 import { strapiClient } from '@/lib/strapi';
 import IndexPage from '@/page-components/Index';
+import {
+  WRITEWISE_ORG_SCHEMA_JSON,
+  WRITEWISE_WEBSITE_SCHEMA_JSON,
+  WRITEWISE_APP_SCHEMA_JSON,
+} from '@/lib/seo';
 
 export const revalidate = 3600;
 
@@ -34,9 +39,14 @@ export default async function HomePage() {
     testimonialsResult.status === 'fulfilled' ? testimonialsResult.value : undefined;
 
   return (
-    <IndexPage
-      initialFeaturesData={initialFeatures}
-      initialTestimonialsData={initialTestimonials}
-    />
+    <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: WRITEWISE_ORG_SCHEMA_JSON }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: WRITEWISE_WEBSITE_SCHEMA_JSON }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: WRITEWISE_APP_SCHEMA_JSON }} />
+      <IndexPage
+        initialFeaturesData={initialFeatures}
+        initialTestimonialsData={initialTestimonials}
+      />
+    </>
   );
 }
