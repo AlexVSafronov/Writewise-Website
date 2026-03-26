@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { strapiClient } from '@/lib/strapi';
 import PricingPage from '@/page-components/Pricing';
-import { WRITEWISE_APP_SCHEMA_JSON } from '@/lib/seo';
+import { WRITEWISE_APP_SCHEMA_JSON, generateFAQSchema } from '@/lib/seo';
 
 export const revalidate = 900;
 
@@ -33,9 +33,17 @@ export default async function PricingRoute() {
   const initialFaqData =
     faqResult.status === 'fulfilled' ? faqResult.value : undefined;
 
+  const faqs = (initialFaqData?.data ?? []).map((f) => ({ question: f.question, answer: f.answer }));
+
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: WRITEWISE_APP_SCHEMA_JSON }} />
+      {faqs.length > 0 && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(generateFAQSchema(faqs)) }}
+        />
+      )}
       <PricingPage
         initialPricingData={initialPricingData}
         initialFaqData={initialFaqData}
