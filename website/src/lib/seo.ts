@@ -110,6 +110,33 @@ export const generateArticleSchema = (params: {
   ...(params.image && { image: [params.image] }),
 });
 
+export const generateReviewSchema = (params: {
+  authorName: string;
+  ratingValue: number;
+  reviewBody: string;
+  datePublished?: string;
+}) => ({
+  '@context': 'https://schema.org',
+  '@type': 'Review',
+  author: {
+    '@type': 'Person',
+    name: params.authorName,
+  },
+  itemReviewed: {
+    '@type': 'SoftwareApplication',
+    name: 'WriteWise',
+    url: 'https://write-wise.com',
+  },
+  reviewRating: {
+    '@type': 'Rating',
+    ratingValue: params.ratingValue,
+    bestRating: 5,
+    worstRating: 1,
+  },
+  reviewBody: params.reviewBody,
+  ...(params.datePublished && { datePublished: params.datePublished }),
+});
+
 export const generateQAPageSchema = (params: {
   question: string;
   answer: string;
