@@ -5,6 +5,7 @@ import {
   WRITEWISE_ORG_SCHEMA_JSON,
   WRITEWISE_WEBSITE_SCHEMA_JSON,
   WRITEWISE_APP_SCHEMA_JSON,
+  generateReviewSchema,
 } from '@/lib/seo';
 
 export const revalidate = 3600;
@@ -38,11 +39,23 @@ export default async function HomePage() {
   const initialTestimonials =
     testimonialsResult.status === 'fulfilled' ? testimonialsResult.value : undefined;
 
+  const reviews = (initialTestimonials?.data ?? []).map((t) =>
+    generateReviewSchema({
+      authorName: t.name,
+      ratingValue: t.rating,
+      reviewBody: t.content,
+      datePublished: t.publishedAt ? new Date(t.publishedAt).toISOString().split('T')[0] : undefined,
+    }),
+  );
+
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: WRITEWISE_ORG_SCHEMA_JSON }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: WRITEWISE_WEBSITE_SCHEMA_JSON }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: WRITEWISE_APP_SCHEMA_JSON }} />
+      {reviews.map((schema, i) => (
+        <script key={i} type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
+      ))}
       <IndexPage
         initialFeaturesData={initialFeatures}
         initialTestimonialsData={initialTestimonials}
