@@ -88,13 +88,15 @@ const BlogPost = () => {
             keywords={`language learning, ${post.category}, WriteWise blog`}
             ogType="article"
             ogImage={imageUrl}
-            structuredData={generateArticleSchema(
-              post.title,
-              post.seoDescription || post.excerpt,
-              post.publishedDate,
-              post.author,
-              imageUrl,
-            )}
+            structuredData={generateArticleSchema({
+              title: post.title,
+              description: post.seoDescription || post.excerpt,
+              url: `https://write-wise.com/blog/${post.slug}`,
+              datePublished: new Date(post.publishedDate).toISOString(),
+              dateModified: post.updatedAt,
+              author: post.author,
+              image: imageUrl,
+            })}
           />
 
           {/* Hero */}
