@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { strapiClient } from '@/lib/strapi';
 import PricingPage from '@/page-components/Pricing';
+import { WRITEWISE_APP_SCHEMA_JSON } from '@/lib/seo';
 
 export const revalidate = 900;
 
@@ -33,9 +34,12 @@ export default async function PricingRoute() {
     faqResult.status === 'fulfilled' ? faqResult.value : undefined;
 
   return (
-    <PricingPage
-      initialPricingData={initialPricingData}
-      initialFaqData={initialFaqData}
-    />
+    <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: WRITEWISE_APP_SCHEMA_JSON }} />
+      <PricingPage
+        initialPricingData={initialPricingData}
+        initialFaqData={initialFaqData}
+      />
+    </>
   );
 }

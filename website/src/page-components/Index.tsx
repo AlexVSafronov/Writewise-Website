@@ -2,7 +2,6 @@
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { SEO, generateWebsiteSchema, generateOrganizationSchema } from "@/components/SEO";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   BookOpen,
@@ -72,14 +71,8 @@ const Index = ({ initialFeaturesData, initialTestimonialsData }: IndexProps = {}
 
   const testimonials = resolvedTestimonialsData?.data || [];
 
-  const structuredData = {
-    ...generateWebsiteSchema('WriteWise', 'https://write-wise.com'),
-    ...generateOrganizationSchema('WriteWise', 'https://write-wise.com', '/logo.png'),
-  };
-
   return (
     <>
-      <SEO structuredData={structuredData} />
       {/* Hero Section */}
       <section className="relative overflow-hidden bg-gradient-brand-subtle py-20 lg:py-32">
         <div className="container mx-auto px-4">
