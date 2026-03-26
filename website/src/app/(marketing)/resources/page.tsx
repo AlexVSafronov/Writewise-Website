@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { strapiClient } from '@/lib/strapi';
 import ResourcesPage from '@/page-components/Resources';
+import { generateFAQSchema } from '@/lib/seo';
 
 export const revalidate = 3600;
 
@@ -32,10 +33,20 @@ export default async function ResourcesRoute() {
   const initialFaqData =
     faqResult.status === 'fulfilled' ? faqResult.value : undefined;
 
+  const faqs = (initialFaqData?.data ?? []).map((f) => ({ question: f.question, answer: f.answer }));
+
   return (
-    <ResourcesPage
-      initialResourcesData={initialResourcesData}
-      initialFaqData={initialFaqData}
-    />
+    <>
+      {faqs.length > 0 && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(generateFAQSchema(faqs)) }}
+        />
+      )}
+      <ResourcesPage
+        initialResourcesData={initialResourcesData}
+        initialFaqData={initialFaqData}
+      />
+    </>
   );
 }
