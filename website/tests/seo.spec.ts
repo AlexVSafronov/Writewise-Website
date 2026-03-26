@@ -75,13 +75,33 @@ for (const route of META_PAGES) {
   });
 }
 
-// ── T2.11–T2.13  Structured data (JSON-LD) ───────────────────────────────────
+// ── T2.11–T2.14  Structured data (JSON-LD) ───────────────────────────────────
 
-test('T2 — / homepage has Organization JSON-LD', async ({ request }) => {
+test('T2 — / homepage has Organization JSON-LD (server-rendered)', async ({ request }) => {
   const response = await request.get('/');
   const html = await response.text();
   expect(html).toMatch(/application\/ld\+json/);
-  expect(html).toMatch(/"@type"\s*:\s*"(Organization|WebSite)"/);
+  expect(html).toMatch(/"@type"\s*:\s*"Organization"/);
+  // Logo must be an ImageObject, not a bare string path
+  expect(html).toMatch(/"logo"\s*:\s*\{/);
+  // description must be present
+  expect(html).toMatch(/"description"\s*:/);
+});
+
+test('T2 — / homepage has SoftwareApplication JSON-LD (server-rendered)', async ({ request }) => {
+  const response = await request.get('/');
+  const html = await response.text();
+  expect(html).toMatch(/"@type"\s*:\s*"SoftwareApplication"/);
+  expect(html).toMatch(/"applicationCategory"\s*:\s*"EducationApplication"/);
+  expect(html).toMatch(/"offers"/);
+  expect(html).toMatch(/"aggregateRating"/);
+});
+
+test('T2 — /pricing has SoftwareApplication JSON-LD (server-rendered)', async ({ request }) => {
+  const response = await request.get('/pricing');
+  const html = await response.text();
+  expect(html).toMatch(/"@type"\s*:\s*"SoftwareApplication"/);
+  expect(html).toMatch(/"offers"/);
 });
 
 test('T2 — /pricing has FAQPage JSON-LD', async ({ request }) => {
