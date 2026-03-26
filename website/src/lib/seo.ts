@@ -44,6 +44,7 @@ export const generateWebsiteSchema = (name: string, url: string) => ({
 export const generateSoftwareApplicationSchema = () => ({
   '@context': 'https://schema.org',
   '@type': 'SoftwareApplication',
+  '@id': 'https://write-wise.com/#app',
   name: 'WriteWise',
   applicationCategory: 'EducationApplication',
   operatingSystem: 'Web',
@@ -123,9 +124,7 @@ export const generateReviewSchema = (params: {
     name: params.authorName,
   },
   itemReviewed: {
-    '@type': 'SoftwareApplication',
-    name: 'WriteWise',
-    url: 'https://write-wise.com',
+    '@id': 'https://write-wise.com/#app',
   },
   reviewRating: {
     '@type': 'Rating',
