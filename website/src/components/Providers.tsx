@@ -14,7 +14,7 @@ import { GrowthBookProvider } from '@growthbook/growthbook-react';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { Toaster } from '@/components/ui/toaster';
 import { Toaster as Sonner } from '@/components/ui/sonner';
-import { growthbook } from '@/lib/growthbook';
+import { growthbook, getAnonymousId } from '@/lib/growthbook';
 import PageViewTracker from './PageViewTracker';
 
 // Create a stable QueryClient singleton — one per browser session.
@@ -50,6 +50,11 @@ export default function Providers({ children }: { children: React.ReactNode }) {
   const [gbMounted, setGbMounted] = useState(false);
 
   useEffect(() => {
+    growthbook.setAttributes({
+      id: getAnonymousId(),
+      url: window.location.href,
+      path: window.location.pathname,
+    });
     setGbMounted(true);
   }, []);
 

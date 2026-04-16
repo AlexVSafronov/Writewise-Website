@@ -17,9 +17,28 @@ import {
   Brain,
   PenTool,
 } from "lucide-react";
+import { useFeature } from "@growthbook/growthbook-react";
 import { useFeatures, useTestimonials } from "@/hooks/use-strapi";
 import { getIcon } from "@/lib/icons";
+import { trackEvent } from "@/lib/analytics";
 import type { StrapiResponse, Feature, Testimonial } from "@/types/strapi";
+
+interface HeroContent {
+  headline: string;
+  headlineHighlight: string;
+  badge: string;
+  subheading: string;
+  primaryCta: string;
+}
+
+const DEFAULT_HERO: HeroContent = {
+  headline: "Master Any Language with Your",
+  headlineHighlight: "AI Mentor",
+  badge: "AI-Powered Real Learning Experience",
+  subheading:
+    "WriteWise helps intermediate learners (A2-C1) improve their active language skills through personalized writing exercises, real-time feedback, and adaptive learning paths.",
+  primaryCta: "Start Learning Free",
+};
 
 const stats = [
   { value: "1K+", label: "Active Learners" },
@@ -57,6 +76,9 @@ interface IndexProps {
 }
 
 const Index = ({ initialFeaturesData, initialTestimonialsData }: IndexProps = {}) => {
+  const heroFeature = useFeature<HeroContent>('hero_messaging');
+  const hero = heroFeature.value ?? DEFAULT_HERO;
+
   const { data: featuresData, isLoading: featuresLoading } = useFeatures();
   const { data: testimonialsData, isLoading: testimonialsLoading } = useTestimonials(true); // Get featured testimonials
 
@@ -79,20 +101,24 @@ const Index = ({ initialFeaturesData, initialTestimonialsData }: IndexProps = {}
           <div className="mx-auto max-w-4xl text-center">
             <div className="mb-6 inline-flex items-center gap-2 rounded-full bg-primary/10 px-4 py-2 text-sm font-medium text-primary">
               <Zap className="h-4 w-4" />
-              AI-Powered Real Learning Experience
+              {hero.badge}
             </div>
             <h1 className="mb-6 text-4xl font-bold tracking-tight text-foreground md:text-5xl lg:text-6xl">
-              Master Any Language with Your{" "}
-              <span className="text-gradient-brand">AI Mentor</span>
+              {hero.headline}{" "}
+              <span className="text-gradient-brand">{hero.headlineHighlight}</span>
             </h1>
             <p className="mx-auto mb-8 max-w-2xl text-lg text-muted-foreground md:text-xl">
-              WriteWise helps intermediate learners (A2-C1) improve their active language skills through
-              personalized writing exercises, real-time feedback, and adaptive learning paths.
+              {hero.subheading}
             </p>
             <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
               <Button size="lg" className="bg-gradient-brand px-8 hover:opacity-90" asChild>
-                <a href="https://app.write-wise.com?mode=signup" target="_blank" rel="noopener noreferrer">
-                  Start Learning Free
+                <a
+                  href="https://app.write-wise.com?mode=signup"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() => trackEvent('cta', 'click', `hero_primary|${hero.primaryCta}`)}
+                >
+                  {hero.primaryCta}
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </a>
               </Button>
