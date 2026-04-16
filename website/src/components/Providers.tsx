@@ -8,7 +8,7 @@
  * here, in a 'use client' boundary, and be imported as children of the layout.
  */
 
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { GrowthBookProvider } from '@growthbook/growthbook-react';
 import { TooltipProvider } from '@/components/ui/tooltip';
@@ -44,38 +44,26 @@ function getQueryClient() {
 export default function Providers({ children }: { children: React.ReactNode }) {
   const queryClient = getQueryClient();
 
-  // Defer GrowthBookProvider mounting until the browser has loaded features
-  // from the CDN.  Rendering without the provider first avoids blocking the
-  // initial paint when the CDN is slow or unavailable.
-  const [gbMounted, setGbMounted] = useState(false);
-
+  // Set user attributes once the browser is available so GrowthBook can
+  // bucket the user correctly. The provider itself always wraps children —
+  // useFeature must have a context even during SSR pre-rendering.
   useEffect(() => {
     growthbook.setAttributes({
       id: getAnonymousId(),
       url: window.location.href,
       path: window.location.pathname,
     });
-    setGbMounted(true);
   }, []);
 
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
-        {gbMounted ? (
-          <GrowthBookProvider growthbook={growthbook}>
-            <PageViewTracker />
-            <Toaster />
-            <Sonner />
-            {children}
-          </GrowthBookProvider>
-        ) : (
-          <>
-            <PageViewTracker />
-            <Toaster />
-            <Sonner />
-            {children}
-          </>
-        )}
+        <GrowthBookProvider growthbook={growthbook}>
+          <PageViewTracker />
+          <Toaster />
+          <Sonner />
+          {children}
+        </GrowthBookProvider>
       </TooltipProvider>
     </QueryClientProvider>
   );
