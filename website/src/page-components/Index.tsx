@@ -76,8 +76,8 @@ interface IndexProps {
 }
 
 const Index = ({ initialFeaturesData, initialTestimonialsData }: IndexProps = {}) => {
-  const heroFeature = useFeature<HeroContent>('hero_messaging');
-  const hero = heroFeature.value ?? DEFAULT_HERO;
+  const heroFeature = useFeature('hero_messaging');
+  const hero = (heroFeature.value as HeroContent) ?? DEFAULT_HERO;
 
   const { data: featuresData, isLoading: featuresLoading } = useFeatures();
   const { data: testimonialsData, isLoading: testimonialsLoading } = useTestimonials(true); // Get featured testimonials
