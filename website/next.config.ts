@@ -4,6 +4,12 @@ const nextConfig: NextConfig = {
   // Produce a self-contained Node.js server for Cloud Run (no nginx needed)
   output: 'standalone',
 
+  experimental: {
+    // Enables per-import tree-shaking for large packages so only used icons/
+    // components end up in the bundle, instead of the entire library.
+    optimizePackageImports: ['lucide-react', '@radix-ui/react-navigation-menu'],
+  },
+
 
   // Disable the built-in X-Powered-By header
   poweredByHeader: false,

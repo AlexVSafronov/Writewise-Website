@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { strapiClient } from '@/lib/strapi';
+import type { StrapiResponse, Feature, Testimonial } from '@/types/strapi';
 
 // Blog Posts
 export function useBlogPosts(featured?: boolean) {
@@ -18,18 +19,23 @@ export function useBlogPost(slug: string) {
 }
 
 // Features
-export function useFeatures() {
+export function useFeatures(opts?: { initialData?: StrapiResponse<Feature[]> }) {
   return useQuery({
     queryKey: ['features'],
     queryFn: () => strapiClient.getFeatures(),
+    initialData: opts?.initialData,
+    // Treat server-prefetched data as fresh so the client doesn't immediately refetch.
+    initialDataUpdatedAt: opts?.initialData ? Date.now() : undefined,
   });
 }
 
 // Testimonials
-export function useTestimonials(featured?: boolean) {
+export function useTestimonials(featured?: boolean, opts?: { initialData?: StrapiResponse<Testimonial[]> }) {
   return useQuery({
     queryKey: ['testimonials', featured],
     queryFn: () => strapiClient.getTestimonials(featured),
+    initialData: opts?.initialData,
+    initialDataUpdatedAt: opts?.initialData ? Date.now() : undefined,
   });
 }
 
