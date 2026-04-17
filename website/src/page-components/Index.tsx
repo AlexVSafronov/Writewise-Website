@@ -79,12 +79,8 @@ const Index = ({ initialFeaturesData, initialTestimonialsData }: IndexProps = {}
   const heroFeature = useFeature('hero_messaging');
   const hero = (heroFeature.value as HeroContent) ?? DEFAULT_HERO;
 
-  const { data: featuresData, isLoading: featuresLoading } = useFeatures();
-  const { data: testimonialsData, isLoading: testimonialsLoading } = useTestimonials(true); // Get featured testimonials
-
-  // Use server-fetched initial data as fallback when client hasn't loaded yet
-  const resolvedFeaturesData = featuresData ?? initialFeaturesData;
-  const resolvedTestimonialsData = testimonialsData ?? initialTestimonialsData;
+  const { data: resolvedFeaturesData, isLoading: featuresLoading } = useFeatures({ initialData: initialFeaturesData });
+  const { data: resolvedTestimonialsData, isLoading: testimonialsLoading } = useTestimonials(true, { initialData: initialTestimonialsData });
 
   const features = resolvedFeaturesData?.data.map(item => ({
     ...item,
@@ -141,9 +137,9 @@ const Index = ({ initialFeaturesData, initialTestimonialsData }: IndexProps = {}
           </div>
         </div>
 
-        {/* Decorative elements */}
-        <div className="absolute -left-20 -top-20 h-64 w-64 rounded-full bg-primary/10 blur-3xl" />
-        <div className="absolute -bottom-20 -right-20 h-64 w-64 rounded-full bg-accent/10 blur-3xl" />
+        {/* Decorative elements — simple gradients, no blur filter (blur-3xl is GPU-heavy on mobile) */}
+        <div className="absolute -left-20 -top-20 h-64 w-64 rounded-full bg-primary/10" />
+        <div className="absolute -bottom-20 -right-20 h-64 w-64 rounded-full bg-accent/10" />
       </section>
 
       {/* Stats Section */}

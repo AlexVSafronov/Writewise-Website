@@ -27,8 +27,14 @@ export const growthbook = new GrowthBook({
   },
 });
 
-// Load feature flags from GrowthBook CDN.
-// Skipped during SSG (Node.js has no `window`) and when no client key is set.
+// Load feature flags from GrowthBook CDN after the initial paint so it does
+// not block LCP. Falls back to setTimeout when requestIdleCallback is absent.
+// Skipped during SSR (no `window`) and when no client key is configured.
 if (CLIENT_KEY && typeof window !== 'undefined') {
-  growthbook.loadFeatures({ autoRefresh: true });
+  const load = () => growthbook.loadFeatures({ autoRefresh: true });
+  if ('requestIdleCallback' in window) {
+    requestIdleCallback(load);
+  } else {
+    setTimeout(load, 0);
+  }
 }
