@@ -36,13 +36,25 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" suppressHydrationWarning>
       <body>
-        {/* Google Analytics 4 — deferred until browser is idle to avoid blocking LCP */}
+        {/* 1. Consent Mode v2 defaults — deny all until user chooses; must run before GA4 */}
+        <Script id="consent-defaults" strategy="beforeInteractive">
+          {`window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('consent','default',{'ad_storage':'denied','analytics_storage':'denied','ad_user_data':'denied','ad_personalization':'denied','wait_for_update':500});`}
+        </Script>
+
+        {/* 2. CookieYes — shows banner, fires gtag('consent','update',...) on user action */}
+        <Script
+          id="cookieyes"
+          src="https://cdn-cookieyes.com/client_data/6ed95aba6362ac13e63e3aae20e0fef6/script.js"
+          strategy="beforeInteractive"
+        />
+
+        {/* 3. GA4 — loads lazily, respects consent state set above */}
         <Script
           src={`https://www.googletagmanager.com/gtag/js?id=${GA4_ID}`}
           strategy="lazyOnload"
         />
         <Script id="ga4-init" strategy="lazyOnload">
-          {`window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${GA4_ID}');`}
+          {`gtag('js',new Date());gtag('config','${GA4_ID}');`}
         </Script>
 
         <Providers>{children}</Providers>
